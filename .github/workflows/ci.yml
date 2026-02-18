@@ -1,0 +1,155 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+env:
+  NODE_VERSION: '20'
+
+jobs:
+  # ── Backend: Lint + Type check + Test ──────────────────────────────────────
+  backend:
+    name: Backend CI
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB:       restrosync_test
+          POSTGRES_USER:     restrosync
+          POSTGRES_PASSWORD: test_password
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+      redis:
+        image: redis:7-alpine
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 6379:6379
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: backend/package-lock.json
+
+      - name: Install dependencies
+        working-directory: backend
+        run: npm ci
+
+      - name: Generate Prisma client
+        working-directory: backend
+        run: npx prisma generate
+
+      - name: TypeScript type check
+        working-directory: backend
+        run: npx tsc --noEmit
+
+      - name: Run unit tests
+        working-directory: backend
+        env:
+          DATABASE_URL: postgresql://restrosync:test_password@localhost:5432/restrosync_test
+          REDIS_HOST:   localhost
+          REDIS_PORT:   6379
+          JWT_SECRET:   test-jwt-secret-ci
+          JWT_REFRESH_SECRET: test-refresh-secret-ci
+          NODE_ENV:     test
+        run: npx jest --no-coverage --passWithNoTests
+
+      - name: Build
+        working-directory: backend
+        run: npm run build
+
+      - name: Docker build (dry run)
+        working-directory: backend
+        run: docker build --no-cache -t restrosync-backend:ci .
+        if: github.ref == 'refs/heads/main'
+
+  # ── Frontend: Type check + Lint + Build ──────────────────────────────────
+  frontend:
+    name: Frontend CI
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        working-directory: frontend
+        run: npm ci
+
+      - name: TypeScript type check
+        working-directory: frontend
+        run: npx tsc --noEmit
+
+      - name: Build
+        working-directory: frontend
+        env:
+          VITE_API_URL: http://localhost:3000
+        run: npm run build
+
+      - name: Docker build (dry run)
+        working-directory: frontend
+        run: docker build --no-cache -t restrosync-frontend:ci .
+        if: github.ref == 'refs/heads/main'
+
+  # ── Deploy (main branch only) ─────────────────────────────────────────────
+  deploy:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    needs: [backend, frontend]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    environment: production
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build and push Docker images
+        env:
+          DOCKER_REGISTRY: ${{ secrets.DOCKER_REGISTRY }}
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+        run: |
+          echo "$DOCKER_PASSWORD" | docker login $DOCKER_REGISTRY -u "$DOCKER_USERNAME" --password-stdin
+          docker build -t $DOCKER_REGISTRY/restrosync-backend:${{ github.sha }} -t $DOCKER_REGISTRY/restrosync-backend:latest ./backend
+          docker build -t $DOCKER_REGISTRY/restrosync-frontend:${{ github.sha }} -t $DOCKER_REGISTRY/restrosync-frontend:latest ./frontend
+          docker push $DOCKER_REGISTRY/restrosync-backend:${{ github.sha }}
+          docker push $DOCKER_REGISTRY/restrosync-backend:latest
+          docker push $DOCKER_REGISTRY/restrosync-frontend:${{ github.sha }}
+          docker push $DOCKER_REGISTRY/restrosync-frontend:latest
+
+      - name: Deploy to server via SSH
+        uses: appleboy/ssh-action@v1
+        with:
+          host:     ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key:      ${{ secrets.DEPLOY_SSH_KEY }}
+          script: |
+            cd /opt/restrosync
+            docker compose -f docker-compose.prod.yml pull
+            docker compose -f docker-compose.prod.yml up -d --remove-orphans
+            docker compose -f docker-compose.prod.yml exec -T backend npx prisma migrate deploy
+            docker system prune -f

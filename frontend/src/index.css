@@ -1,0 +1,150 @@
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap');
+@import "tailwindcss";
+
+:root {
+  --sidebar-bg: #0f172a;
+  --sidebar-hover: #1e293b;
+  --sidebar-active: #f59e0b;
+  --sidebar-width: 260px;
+  --sidebar-collapsed-width: 68px;
+  --accent: #f59e0b;
+  --accent-dark: #d97706;
+  --content-bg: #f1f5f9;
+  --card-bg: #ffffff;
+  --border: #e2e8f0;
+  --text-primary: #0f172a;
+  --text-secondary: #64748b;
+  --text-muted: #94a3b8;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--content-bg);
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.font-display { font-family: 'Syne', sans-serif; }
+
+/* Sidebar transitions */
+.sidebar-transition {
+  transition: width 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.label-transition {
+  transition: opacity 0.18s ease, max-width 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+/* Scrollbars */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 9999px; }
+::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+/* Animations */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes slideInRight {
+  from { transform: translateX(100%); }
+  to   { transform: translateX(0); }
+}
+
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.96); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+.anim-fade-up   { animation: fadeInUp 0.3s ease both; }
+.anim-fade      { animation: fadeIn 0.25s ease both; }
+.anim-slide-in  { animation: slideInRight 0.3s cubic-bezier(0.4, 0, 0.2, 1) both; }
+.anim-scale-in  { animation: scaleIn 0.2s cubic-bezier(0.4, 0, 0.2, 1) both; }
+
+.delay-50  { animation-delay: 50ms; }
+.delay-100 { animation-delay: 100ms; }
+.delay-150 { animation-delay: 150ms; }
+.delay-200 { animation-delay: 200ms; }
+
+/* Toggle switch */
+.toggle-wrap { position: relative; display: inline-flex; align-items: center; cursor: pointer; }
+.toggle-input { position: absolute; opacity: 0; width: 0; height: 0; }
+.toggle-track {
+  width: 44px; height: 24px;
+  background: #cbd5e1;
+  border-radius: 12px;
+  position: relative;
+  transition: background 0.2s;
+  flex-shrink: 0;
+}
+.toggle-track::after {
+  content: '';
+  position: absolute;
+  left: 3px; top: 3px;
+  width: 18px; height: 18px;
+  background: white;
+  border-radius: 50%;
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+}
+.toggle-input:checked ~ .toggle-track { background: var(--accent); }
+.toggle-input:checked ~ .toggle-track::after { transform: translateX(20px); }
+
+/* Skeleton */
+@keyframes shimmer {
+  from { background-position: -200% 0; }
+  to   { background-position: 200% 0; }
+}
+.skeleton {
+  background: linear-gradient(90deg, #e2e8f0 25%, #f1f5f9 50%, #e2e8f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s ease infinite;
+  border-radius: 6px;
+}
+
+/* Form utility classes (used in inventory pages and modals) */
+.input {
+  width: 100%;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 8px 12px;
+  font-size: 14px;
+  background: white;
+  color: #0f172a;
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.input:focus {
+  border-color: #f59e0b;
+  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.15);
+}
+.label {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 4px;
+}
+
+/* Nav active pip */
+.nav-active-pip {
+  position: absolute;
+  left: 0; top: 50%;
+  transform: translateY(-50%);
+  width: 3px; height: 70%;
+  background: var(--accent);
+  border-radius: 0 3px 3px 0;
+}

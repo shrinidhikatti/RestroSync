@@ -1,0 +1,1302 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ==================== ENUMS ====================
+
+enum UserRole {
+  SUPER_ADMIN
+  OWNER
+  MANAGER
+  BILLER
+  CAPTAIN
+  KITCHEN
+}
+
+enum OperatingMode {
+  COUNTER
+  TABLE_SIMPLE
+  FULL_SERVICE
+}
+
+enum RestaurantStatus {
+  ACTIVE
+  SUSPENDED
+  DELETED
+}
+
+enum OrderStatus {
+  NEW
+  ACCEPTED
+  PREPARING
+  READY
+  SERVED
+  BILLED
+  COMPLETED
+  CANCELLED
+}
+
+enum OrderType {
+  DINE_IN
+  TAKEAWAY
+  DELIVERY
+  COMPLIMENTARY
+}
+
+enum OrderItemStatus {
+  PENDING
+  PREPARING
+  READY
+  SERVED
+  VOIDED
+}
+
+enum Priority {
+  NORMAL
+  RUSH
+  VIP
+}
+
+enum PaymentMethod {
+  CASH
+  CARD
+  UPI
+  WALLET
+  CREDIT
+  TIP
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  REFUNDED
+}
+
+enum BillStatus {
+  UNPAID
+  PARTIALLY_PAID
+  PAID
+  VOID
+}
+
+enum KotType {
+  REGULAR
+  VOID
+  REPRINT
+}
+
+enum DiscountType {
+  FLAT
+  PERCENTAGE
+}
+
+enum DiscountScope {
+  BILL
+  ITEM
+  CATEGORY
+}
+
+enum RefundType {
+  FULL
+  PARTIAL
+}
+
+enum RefundStatus {
+  PENDING
+  APPROVED
+  COMPLETED
+  REJECTED
+}
+
+enum ReservationStatus {
+  CONFIRMED
+  SEATED
+  CANCELLED
+  NO_SHOW
+}
+
+enum TableStatus {
+  AVAILABLE
+  OCCUPIED
+  RESERVED
+  BILLING
+}
+
+enum ChargeType {
+  PERCENTAGE
+  FLAT
+}
+
+enum TaxComponentType {
+  CGST
+  SGST
+  IGST
+  VAT
+  CESS
+}
+
+enum StockTransactionType {
+  PURCHASE
+  CONSUMPTION
+  WASTAGE
+  ADJUSTMENT
+  TRANSFER
+}
+
+enum CreditTransactionType {
+  CHARGE
+  PAYMENT
+}
+
+enum SyncStatus {
+  PENDING
+  SYNCING
+  SYNCED
+  FAILED
+}
+
+enum DayCloseStatus {
+  IN_PROGRESS
+  COMPLETED
+}
+
+enum RoundingDirection {
+  UP
+  DOWN
+  NEAREST
+}
+
+// ==================== CORE ====================
+
+model Restaurant {
+  id                  String           @id @default(uuid())
+  name                String
+  address             String?
+  city                String?
+  phone               String?
+  email               String?
+  gstin               String?
+  fssaiNumber         String?
+  logoUrl             String?
+  operatingMode       OperatingMode?
+  status              RestaurantStatus @default(ACTIVE)
+  timezone            String           @default("Asia/Kolkata")
+  businessDayCutoff   String           @default("05:00")
+  roundingDirection   RoundingDirection @default(NEAREST)
+  taxInclusive        Boolean          @default(false)
+  menuVersion         Int              @default(0)
+  dpdpaConsentGiven   Boolean          @default(false)
+  dpdpaConsentDate    DateTime?
+  upiMerchantId       String?
+  planId              String?
+  planExpiresAt       DateTime?
+  loyaltyPointsPerHundred Int          @default(10)   // earn 10 points per ₹100 spent
+  loyaltyRedeemValue  Decimal          @default(0.50) @db.Decimal(6, 2)  // 1 point = ₹0.50 off
+  createdAt           DateTime         @default(now())
+  updatedAt           DateTime         @updatedAt
+
+  plan                Plan?            @relation(fields: [planId], references: [id])
+  branches            Branch[]
+  users               User[]
+  categories          Category[]
+  menuItems           MenuItem[]
+  discounts           Discount[]
+  discountConfig      DiscountConfig?
+  fraudAlertConfig    FraudAlertConfig?
+  taxGroups           TaxGroup[]
+  chargeConfigs       ChargeConfig[]
+  customers           Customer[]
+  permissions         Permission[]
+  rolePermissions     RolePermission[]
+  onboardingProgress  OnboardingProgress?
+  comboItems          ComboItem[]
+  customerCreditAccounts CustomerCreditAccount[]
+
+  @@map("restaurants")
+}
+
+model Branch {
+  id                  String           @id @default(uuid())
+  restaurantId        String
+  name                String
+  address             String?
+  phone               String?
+  isActive            Boolean          @default(true)
+  createdAt           DateTime         @default(now())
+  updatedAt           DateTime         @updatedAt
+
+  restaurant          Restaurant       @relation(fields: [restaurantId], references: [id])
+  users               User[]
+  tables              Table[]
+  orders              Order[]
+  bills               Bill[]
+  kots                Kot[]
+  stock               Stock[]
+  stockBatches        StockBatch[]
+  stockTransactions   StockTransaction[]
+  devices             Device[]
+  numberRanges        NumberRange[]
+  receiptSettings     ReceiptSettings?
+  reservations        Reservation[]
+  dayCloseLocks       DayCloseLock[]
+  staffAttendance     StaffAttendance[]
+  dailyReports        DailyReport[]
+  menuOverrides       BranchMenuOverride[]
+  stockTransfersFrom  StockTransfer[]      @relation("TransferFrom")
+  stockTransfersTo    StockTransfer[]      @relation("TransferTo")
+
+  @@map("branches")
+}
+
+model User {
+  id                  String           @id @default(uuid())
+  restaurantId        String?
+  branchId            String?
+  name                String
+  email               String?
+  phone               String?
+  password            String
+  pin                 String?
+  role                UserRole
+  isActive            Boolean          @default(true)
+  mustChangePassword  Boolean          @default(false)
+  pinAttempts         Int              @default(0)
+  pinLockedUntil      DateTime?
+  lastLogin           DateTime?
+  createdAt           DateTime         @default(now())
+  updatedAt           DateTime         @updatedAt
+
+  restaurant          Restaurant?      @relation(fields: [restaurantId], references: [id])
+  branch              Branch?          @relation(fields: [branchId], references: [id])
+  refreshTokens       RefreshToken[]
+  staffAttendance     StaffAttendance[]
+
+  @@unique([email])
+  @@unique([phone, restaurantId])
+  @@map("users")
+}
+
+model RefreshToken {
+  id                  String           @id @default(uuid())
+  userId              String
+  token               String           @unique
+  expiresAt           DateTime
+  createdAt           DateTime         @default(now())
+
+  user                User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("refresh_tokens")
+}
+
+model Permission {
+  id                  String           @id @default(uuid())
+  restaurantId        String?
+  code                String
+  name                String
+  description         String?
+  createdAt           DateTime         @default(now())
+
+  restaurant          Restaurant?      @relation(fields: [restaurantId], references: [id])
+  rolePermissions     RolePermission[]
+
+  @@unique([code, restaurantId])
+  @@map("permissions")
+}
+
+model RolePermission {
+  id                  String           @id @default(uuid())
+  restaurantId        String
+  role                UserRole
+  permissionId        String
+  createdAt           DateTime         @default(now())
+
+  restaurant          Restaurant       @relation(fields: [restaurantId], references: [id])
+  permission          Permission       @relation(fields: [permissionId], references: [id])
+
+  @@unique([restaurantId, role, permissionId])
+  @@map("role_permissions")
+}
+
+model Device {
+  id                  String           @id @default(uuid())
+  restaurantId        String
+  branchId            String
+  name                String
+  deviceFingerprint   String?
+  isActive            Boolean          @default(true)
+  lastSeen            DateTime?
+  registeredBy        String?
+  createdAt           DateTime         @default(now())
+
+  branch              Branch           @relation(fields: [branchId], references: [id])
+
+  @@map("devices")
+}
+
+// ==================== MENU ====================
+
+model Category {
+  id                  String           @id @default(uuid())
+  restaurantId        String
+  name                String
+  color               String?
+  imageUrl            String?
+  sortOrder           Int              @default(0)
+  isActive            Boolean          @default(true)
+  createdAt           DateTime         @default(now())
+  updatedAt           DateTime         @updatedAt
+
+  restaurant          Restaurant       @relation(fields: [restaurantId], references: [id])
+  menuItems           MenuItem[]
+
+  @@map("categories")
+}
+
+model MenuItem {
+  id                  String           @id @default(uuid())
+  restaurantId        String
+  categoryId          String
+  name                String
+  shortName           String?
+  description         String?
+  price               Decimal          @db.Decimal(10, 2)
+  imageUrl            String?
+  foodType            String?          // VEG, NON_VEG, EGG
+  taxGroupId          String?
+  kitchenStation      String?          // KITCHEN, BAR, DESSERT
+  barcode             String?
+  isAvailable         Boolean          @default(true)
+  isArchived          Boolean          @default(false)
+  sortOrder           Int              @default(0)
+  createdAt           DateTime         @default(now())
+  updatedAt           DateTime         @updatedAt
+
+  restaurant          Restaurant       @relation(fields: [restaurantId], references: [id])
+  category            Category         @relation(fields: [categoryId], references: [id])
+  taxGroup            TaxGroup?        @relation(fields: [taxGroupId], references: [id])
+  variants            ItemVariant[]
+  addons              ItemAddon[]
+  priceOverrides      ItemPriceOverride[]
+  branchOverrides     BranchMenuOverride[]
+  recipeIngredients   Recipe[]
+
+  @@unique([barcode, restaurantId])
+  @@map("menu_items")
+}
+
+model ItemVariant {
+  id                  String           @id @default(uuid())
+  menuItemId          String
+  name                String           // "Half", "Full", "Small", "Medium", "Large"
+  price               Decimal          @db.Decimal(10, 2)
+  isActive            Boolean          @default(true)
+  sortOrder           Int              @default(0)
+  createdAt           DateTime         @default(now())
+  updatedAt           DateTime         @updatedAt
+
+  menuItem            MenuItem         @relation(fields: [menuItemId], references: [id])
+
+  @@map("item_variants")
+}
+
+model ItemAddon {
+  id                  String           @id @default(uuid())
+  menuItemId          String
+  name                String           // "Extra Cheese", "Extra Gravy"
+  price               Decimal          @db.Decimal(10, 2)
+  isActive            Boolean          @default(true)
+  sortOrder           Int              @default(0)
+  createdAt           DateTime         @default(now())
+  updatedAt           DateTime         @updatedAt
+
+  menuItem            MenuItem         @relation(fields: [menuItemId], references: [id])
+
+  @@map("item_addons")
+}
+
+model ComboItem {
+  id                  String           @id @default(uuid())
+  restaurantId        String
+  name                String
+  price               Decimal          @db.Decimal(10, 2)
+  description         String?
+  imageUrl            String?
+  isActive            Boolean          @default(true)
+  createdAt           DateTime         @default(now())
+  updatedAt           DateTime         @updatedAt
+
+  restaurant          Restaurant       @relation(fields: [restaurantId], references: [id])
+  entries             ComboItemEntry[]
+
+  @@map("combo_items")
+}
+
+model ComboItemEntry {
+  id                  String           @id @default(uuid())
+  comboItemId         String
+  menuItemId          String
+  quantity            Int              @default(1)
+
+  comboItem           ComboItem        @relation(fields: [comboItemId], references: [id])
+
+  @@map("combo_item_entries")
+}
+
+model ItemPriceOverride {
+  id                  String           @id @default(uuid())
+  menuItemId          String
+  variantId           String?
+  orderType           OrderType
+  price               Decimal          @db.Decimal(10, 2)
+  isActive            Boolean          @default(true)
+  createdAt           DateTime         @default(now())
+
+  menuItem            MenuItem         @relation(fields: [menuItemId], references: [id])
+
+  @@unique([menuItemId, variantId, orderType])
+  @@map("item_price_overrides")
+}
+
+model BranchMenuOverride {
+  id                  String           @id @default(uuid())
+  branchId            String
+  menuItemId          String
+  isAvailable         Boolean          @default(true)
+  priceOverride       Decimal?         @db.Decimal(10, 2)
+  createdAt           DateTime         @default(now())
+  updatedAt           DateTime         @updatedAt
+
+  branch              Branch           @relation(fields: [branchId], references: [id])
+  menuItem            MenuItem         @relation(fields: [menuItemId], references: [id])
+
+  @@unique([branchId, menuItemId])
+  @@map("branch_menu_overrides")
+}
+
+model StockTransfer {
+  id                  String           @id @default(uuid())
+  fromBranchId        String
+  toBranchId          String
+  ingredientId        String
+  quantity            Decimal          @db.Decimal(10, 3)
+  unit                String
+  notes               String?
+  status              String           @default("PENDING")  // PENDING, COMPLETED, CANCELLED
+  createdBy           String
+  completedAt         DateTime?
+  createdAt           DateTime         @default(now())
+  updatedAt           DateTime         @updatedAt
+
+  fromBranch          Branch           @relation("TransferFrom", fields: [fromBranchId], references: [id])
+  toBranch            Branch           @relation("TransferTo",   fields: [toBranchId],   references: [id])
+
+  @@map("stock_transfers")
+}
+
+// ==================== TABLES & RESERVATIONS ====================
+
+model Table {
+  id                  String           @id @default(uuid())
+  branchId            String
+  number              String
+  capacity            Int              @default(4)
+  floor               String?
+  section             String?
+  status              TableStatus      @default(AVAILABLE)
+  occupiedSince       DateTime?
+  isActive            Boolean          @default(true)
+  createdAt           DateTime         @default(now())
+  updatedAt           DateTime         @updatedAt
+
+  branch              Branch           @relation(fields: [branchId], references: [id])
+  orders              Order[]
+  reservations        Reservation[]
+
+  @@unique([branchId, number])
+  @@map("tables")
+}
+
+model Reservation {
+  id                  String             @id @default(uuid())
+  branchId            String
+  tableId             String
+  customerName        String
+  customerPhone       String?
+  partySize           Int
+  reservationDate     DateTime           @db.Date
+  reservationTime     String
+  endTime             String?
+  status              ReservationStatus  @default(CONFIRMED)
+  notes               String?
+  createdBy           String
+  createdAt           DateTime           @default(now())
+  updatedAt           DateTime           @updatedAt
+
+  branch              Branch             @relation(fields: [branchId], references: [id])
+  table               Table              @relation(fields: [tableId], references: [id])
+
+  @@map("reservations")
+}
+
+// ==================== ORDERS & BILLING ====================
+
+model Order {
+  id                    String           @id @default(uuid())
+  branchId              String
+  tableId               String?
+  orderType             OrderType        @default(DINE_IN)
+  status                OrderStatus      @default(NEW)
+  priority              Priority         @default(NORMAL)
+  tokenNumber           Int?
+  version               Int              @default(1)
+  customerName          String?
+  customerPhone         String?
+  customerAddress       String?
+  complimentaryReason   String?
+  complimentaryNote     String?
+  subtotal              Decimal          @default(0) @db.Decimal(10, 2)
+  discountTotal         Decimal          @default(0) @db.Decimal(10, 2)
+  chargesTotal          Decimal          @default(0) @db.Decimal(10, 2)
+  taxTotal              Decimal          @default(0) @db.Decimal(10, 2)
+  grandTotal            Decimal          @default(0) @db.Decimal(10, 2)
+  notes                 String?
+  createdBy             String
+  cancelledBy           String?
+  cancelReason          String?
+  businessDate          DateTime?        @db.Date
+  createdAt             DateTime         @default(now())
+  updatedAt             DateTime         @updatedAt
+
+  branch                Branch           @relation(fields: [branchId], references: [id])
+  table                 Table?           @relation(fields: [tableId], references: [id])
+  items                 OrderItem[]
+  kots                  Kot[]
+  bills                 Bill[]
+  orderDiscounts        OrderDiscount[]
+
+  @@index([branchId, status])
+  @@index([branchId, businessDate])
+  @@index([branchId, createdAt])
+  @@index([customerPhone])
+  @@map("orders")
+}
+
+model OrderItem {
+  id                  String           @id @default(uuid())
+  orderId             String
+  kotId               String?
+  menuItemId          String?
+  roundNumber         Int              @default(1)
+  // Price snapshot (frozen at order time)
+  itemName            String
+  itemShortName       String?
+  variantName         String?
+  unitPrice           Decimal          @db.Decimal(10, 2)
+  quantity            Int
+  taxPercent          Decimal          @default(0) @db.Decimal(5, 2)
+  taxGroupName        String?
+  discountAmount      Decimal          @default(0) @db.Decimal(10, 2)
+  addons              Json?            // [{ name, price }]
+  specialInstructions String?
+  priority            Priority         @default(NORMAL)
+  status              OrderItemStatus  @default(PENDING)
+  voidedAt            DateTime?
+  voidedBy            String?
+  voidReason          String?
+  createdAt           DateTime         @default(now())
+  updatedAt           DateTime         @updatedAt
+
+  order               Order            @relation(fields: [orderId], references: [id])
+  kot                 Kot?             @relation(fields: [kotId], references: [id])
+  refundItems         RefundItem[]
+
+  @@map("order_items")
+}
+
+model Kot {
+  id                  String           @id @default(uuid())
+  branchId            String
+  orderId             String
+  kotNumber           String
+  type                KotType          @default(REGULAR)
+  roundNumber         Int              @default(1)
+  kitchenStation      String?
+  printedAt           DateTime?
+  createdAt           DateTime         @default(now())
+
+  branch              Branch           @relation(fields: [branchId], references: [id])
+  order               Order            @relation(fields: [orderId], references: [id])
+  items               OrderItem[]
+
+  @@map("kots")
+}
+
+model Bill {
+  id                  String           @id @default(uuid())
+  branchId            String
+  orderId             String
+  billNumber          String
+  subtotal            Decimal          @db.Decimal(10, 2)
+  discountTotal       Decimal          @default(0) @db.Decimal(10, 2)
+  chargesTotal        Decimal          @default(0) @db.Decimal(10, 2)
+  taxTotal            Decimal          @db.Decimal(10, 2)
+  cgstAmount          Decimal          @default(0) @db.Decimal(10, 2)
+  sgstAmount          Decimal          @default(0) @db.Decimal(10, 2)
+  igstAmount          Decimal          @default(0) @db.Decimal(10, 2)
+  roundOff            Decimal          @default(0) @db.Decimal(10, 2)
+  grandTotal          Decimal          @db.Decimal(10, 2)
+  tipAmount           Decimal          @default(0) @db.Decimal(10, 2)
+  status              BillStatus       @default(UNPAID)
+  printCount          Int              @default(0)
+  isVoid              Boolean          @default(false)
+  voidReason          String?
+  voidedBy            String?
+  voidedAt            DateTime?
+  financialYear       String?
+  businessDate        DateTime?        @db.Date
+  createdBy           String
+  createdAt           DateTime         @default(now())
+  updatedAt           DateTime         @updatedAt
+
+  branch              Branch           @relation(fields: [branchId], references: [id])
+  order               Order            @relation(fields: [orderId], references: [id])
+  payments            Payment[]
+  refunds             Refund[]
+  voidCashReturn      VoidCashReturn?
+
+  @@index([branchId, status])
+  @@index([branchId, createdAt])
+  @@index([branchId, businessDate])
+  @@map("bills")
+}
+
+model Payment {
+  id                  String           @id @default(uuid())
+  billId              String
+  orderId             String
+  method              PaymentMethod
+  amount              Decimal          @db.Decimal(10, 2)
+  status              PaymentStatus    @default(PENDING)
+  reference           String?
+  splitLabel          String?
+  createdBy           String
+  createdAt           DateTime         @default(now())
+
+  bill                Bill             @relation(fields: [billId], references: [id])
+
+  @@map("payments")
+}
+
+model Refund {
+  id                  String           @id @default(uuid())
+  billId              String
+  orderId             String
+  type                RefundType
+  amount              Decimal          @db.Decimal(10, 2)
+  reason              String
+  refundMethod        String
+  approvedBy          String
+  createdBy           String
+  status              RefundStatus     @default(PENDING)
+  notes               String?
+  createdAt           DateTime         @default(now())
+
+  bill                Bill             @relation(fields: [billId], references: [id])
+  items               RefundItem[]
+
+  @@map("refunds")
+}
+
+model RefundItem {
+  id                  String           @id @default(uuid())
+  refundId            String
+  orderItemId         String
+  quantity            Int
+  amount              Decimal          @db.Decimal(10, 2)
+  reason              String?
+
+  refund              Refund           @relation(fields: [refundId], references: [id])
+  orderItem           OrderItem        @relation(fields: [orderItemId], references: [id])
+
+  @@map("refund_items")
+}
+
+model VoidCashReturn {
+  id                  String           @id @default(uuid())
+  billId              String           @unique
+  amount              Decimal          @db.Decimal(10, 2)
+  returnedBy          String
+  verifiedBy          String
+  createdAt           DateTime         @default(now())
+
+  bill                Bill             @relation(fields: [billId], references: [id])
+
+  @@map("void_cash_returns")
+}
+
+// ==================== DISCOUNTS ====================
+
+model Discount {
+  id                    String           @id @default(uuid())
+  restaurantId          String
+  name                  String
+  type                  DiscountType
+  scope                 DiscountScope
+  value                 Decimal          @db.Decimal(10, 2)
+  maxDiscount           Decimal?         @db.Decimal(10, 2)
+  minOrderValue         Decimal?         @db.Decimal(10, 2)
+  applicableTo          Json?            // { categories: [], items: [] }
+  couponCode            String?
+  startTime             String?
+  endTime               String?
+  startDate             DateTime?        @db.Date
+  endDate               DateTime?        @db.Date
+  maxUsageTotal         Int?
+  maxUsagePerCustomer   Int?
+  usageCount            Int              @default(0)
+  isActive              Boolean          @default(true)
+  requiresPin           Boolean          @default(false)
+  createdBy             String
+  createdAt             DateTime         @default(now())
+  updatedAt             DateTime         @updatedAt
+
+  restaurant            Restaurant       @relation(fields: [restaurantId], references: [id])
+  orderDiscounts        OrderDiscount[]
+
+  @@map("discounts")
+}
+
+model OrderDiscount {
+  id                  String           @id @default(uuid())
+  orderId             String
+  discountId          String?
+  type                DiscountType
+  scope               DiscountScope
+  value               Decimal          @db.Decimal(10, 2)
+  amount              Decimal          @db.Decimal(10, 2)
+  reason              String?
+  couponCode          String?
+  appliedBy           String
+  approvedBy          String?
+  orderItemId         String?
+  createdAt           DateTime         @default(now())
+
+  order               Order            @relation(fields: [orderId], references: [id])
+  discount            Discount?        @relation(fields: [discountId], references: [id])
+
+  @@map("order_discounts")
+}
+
+model DiscountConfig {
+  id                        String    @id @default(uuid())
+  restaurantId              String    @unique
+  maxDiscountWithoutPin     Decimal   @default(10) @db.Decimal(5, 2)
+  maxFlatDiscountWithoutPin Decimal   @default(200) @db.Decimal(10, 2)
+  alertThresholdPercent     Int       @default(20)
+  createdAt                 DateTime  @default(now())
+  updatedAt                 DateTime  @updatedAt
+
+  restaurant                Restaurant @relation(fields: [restaurantId], references: [id])
+
+  @@map("discount_configs")
+}
+
+model FraudAlertConfig {
+  id                      String    @id @default(uuid())
+  restaurantId            String    @unique
+  maxVoidsPerDay          Int       @default(3)
+  maxVoidAmountPerDay     Decimal   @default(1000) @db.Decimal(10, 2)
+  maxDiscountFrequency    Int       @default(20)
+  alertChannel            String    @default("DASHBOARD")
+  createdAt               DateTime  @default(now())
+  updatedAt               DateTime  @updatedAt
+
+  restaurant              Restaurant @relation(fields: [restaurantId], references: [id])
+
+  @@map("fraud_alert_configs")
+}
+
+// ==================== TAX & CHARGES ====================
+
+model TaxGroup {
+  id                  String           @id @default(uuid())
+  restaurantId        String
+  name                String           // "GST 5%", "GST 18%", "VAT"
+  isActive            Boolean          @default(true)
+  createdAt           DateTime         @default(now())
+  updatedAt           DateTime         @updatedAt
+
+  restaurant          Restaurant       @relation(fields: [restaurantId], references: [id])
+  components          TaxComponent[]
+  menuItems           MenuItem[]
+
+  @@map("tax_groups")
+}
+
+model TaxComponent {
+  id                  String             @id @default(uuid())
+  taxGroupId          String
+  name                String             // "CGST", "SGST"
+  rate                Decimal            @db.Decimal(5, 2)
+  type                TaxComponentType
+  createdAt           DateTime           @default(now())
+
+  taxGroup            TaxGroup           @relation(fields: [taxGroupId], references: [id])
+
+  @@map("tax_components")
+}
+
+model ChargeConfig {
+  id                  String           @id @default(uuid())
+  restaurantId        String
+  name                String           // "Service Charge", "Packing Charge"
+  type                ChargeType
+  value               Decimal          @db.Decimal(10, 2)
+  applicableTo        String           @default("ALL") // DINE_IN, TAKEAWAY, DELIVERY, ALL
+  isTaxable           Boolean          @default(false)
+  isOptional          Boolean          @default(false)
+  isActive            Boolean          @default(true)
+  sortOrder           Int              @default(0)
+  createdAt           DateTime         @default(now())
+  updatedAt           DateTime         @updatedAt
+
+  restaurant          Restaurant       @relation(fields: [restaurantId], references: [id])
+
+  @@map("charge_configs")
+}
+
+model ReceiptSettings {
+  id                  String           @id @default(uuid())
+  branchId            String           @unique
+  headerLine1         String?
+  headerLine2         String?
+  headerLine3         String?
+  gstin               String?
+  fssaiNumber         String?
+  footerLine1         String?          @default("Thank you! Visit again")
+  footerLine2         String?
+  footerLine3         String?
+  showLogo            Boolean          @default(false)
+  logoUrl             String?
+  paperWidth          String           @default("80mm")
+  showGstBreakdown    Boolean          @default(true)
+  showItemTax         Boolean          @default(false)
+  showFssai           Boolean          @default(true)
+  showOrderNumber     Boolean          @default(true)
+  showTableNumber     Boolean          @default(true)
+  showCustomerName    Boolean          @default(true)
+  showDateTime        Boolean          @default(true)
+  showUpiQr           Boolean          @default(false)
+  kotShowItemPrice    Boolean          @default(false)
+  createdAt           DateTime         @default(now())
+  updatedAt           DateTime         @updatedAt
+
+  branch              Branch           @relation(fields: [branchId], references: [id])
+
+  @@map("receipt_settings")
+}
+
+// ==================== INVENTORY ====================
+
+model Ingredient {
+  id                  String           @id @default(uuid())
+  restaurantId        String
+  name                String
+  unit                String           // KG, LITRE, PIECE, etc.
+  minStockLevel       Decimal?         @db.Decimal(10, 3)
+  yieldPercent        Decimal          @default(100) @db.Decimal(5, 2)
+  isActive            Boolean          @default(true)
+  createdAt           DateTime         @default(now())
+  updatedAt           DateTime         @updatedAt
+
+  stock               Stock[]
+  stockBatches        StockBatch[]
+  recipeIngredients   RecipeIngredient[]
+
+  @@map("ingredients")
+}
+
+model Recipe {
+  id                  String           @id @default(uuid())
+  menuItemId          String?
+  name                String
+  isSubRecipe         Boolean          @default(false)
+  yieldQuantity       Decimal?         @db.Decimal(10, 3)
+  yieldUnit           String?
+  createdAt           DateTime         @default(now())
+  updatedAt           DateTime         @updatedAt
+
+  menuItem            MenuItem?        @relation(fields: [menuItemId], references: [id])
+  ingredients         RecipeIngredient[]
+
+  @@map("recipes")
+}
+
+model RecipeIngredient {
+  id                  String           @id @default(uuid())
+  recipeId            String
+  ingredientId        String?
+  subRecipeId         String?
+  quantity            Decimal          @db.Decimal(10, 3)
+  unit                String
+
+  recipe              Recipe           @relation(fields: [recipeId], references: [id])
+  ingredient          Ingredient?      @relation(fields: [ingredientId], references: [id])
+
+  @@map("recipe_ingredients")
+}
+
+model Stock {
+  id                  String           @id @default(uuid())
+  branchId            String
+  ingredientId        String
+  currentQuantity     Decimal          @default(0) @db.Decimal(10, 3)
+  updatedAt           DateTime         @updatedAt
+
+  branch              Branch           @relation(fields: [branchId], references: [id])
+  ingredient          Ingredient       @relation(fields: [ingredientId], references: [id])
+
+  @@unique([branchId, ingredientId])
+  @@map("stock")
+}
+
+model StockBatch {
+  id                  String           @id @default(uuid())
+  branchId            String
+  ingredientId        String
+  batchNumber         String?
+  purchaseDate        DateTime         @db.Date
+  expiryDate          DateTime?        @db.Date
+  quantityIn          Decimal          @db.Decimal(10, 3)
+  quantityUsed        Decimal          @default(0) @db.Decimal(10, 3)
+  quantityRemaining   Decimal          @db.Decimal(10, 3)
+  supplierId          String?
+  costPerUnit         Decimal          @db.Decimal(10, 2)
+  createdAt           DateTime         @default(now())
+
+  branch              Branch           @relation(fields: [branchId], references: [id])
+  ingredient          Ingredient       @relation(fields: [ingredientId], references: [id])
+
+  @@map("stock_batches")
+}
+
+model StockTransaction {
+  id                  String                @id @default(uuid())
+  branchId            String
+  ingredientId        String
+  type                StockTransactionType
+  quantity            Decimal               @db.Decimal(10, 3)
+  reason              String?
+  purchaseOrderId     String?
+  createdBy           String
+  createdAt           DateTime              @default(now())
+
+  branch              Branch                @relation(fields: [branchId], references: [id])
+
+  @@map("stock_transactions")
+}
+
+model Supplier {
+  id                  String           @id @default(uuid())
+  restaurantId        String
+  name                String
+  phone               String?
+  email               String?
+  address             String?
+  isActive            Boolean          @default(true)
+  createdAt           DateTime         @default(now())
+  updatedAt           DateTime         @updatedAt
+
+  purchaseOrders      PurchaseOrder[]
+
+  @@map("suppliers")
+}
+
+model PurchaseOrder {
+  id                  String           @id @default(uuid())
+  branchId            String
+  supplierId          String
+  status              String           @default("DRAFT") // DRAFT, SENT, RECEIVED, CANCELLED
+  totalAmount         Decimal          @default(0) @db.Decimal(10, 2)
+  notes               String?
+  createdBy           String
+  createdAt           DateTime         @default(now())
+  updatedAt           DateTime         @updatedAt
+
+  supplier            Supplier         @relation(fields: [supplierId], references: [id])
+
+  @@map("purchase_orders")
+}
+
+// ==================== CRM ====================
+
+model Customer {
+  id                  String           @id @default(uuid())
+  restaurantId        String
+  name                String?
+  phone               String
+  email               String?
+  birthday            DateTime?        @db.Date
+  anniversary         DateTime?        @db.Date
+  totalOrders         Int              @default(0)
+  totalSpend          Decimal          @default(0) @db.Decimal(10, 2)
+  lastVisit           DateTime?
+  tags                String?          // VIP, REGULAR, CORPORATE
+  notes               String?
+  consentGiven        Boolean          @default(false)
+  consentDate         DateTime?
+  isAnonymized        Boolean          @default(false)
+  createdAt           DateTime         @default(now())
+  updatedAt           DateTime         @updatedAt
+
+  restaurant          Restaurant       @relation(fields: [restaurantId], references: [id])
+  creditAccount       CustomerCreditAccount?
+  loyaltyPoints       LoyaltyPoint[]
+
+  @@unique([phone, restaurantId])
+  @@index([restaurantId, createdAt])
+  @@map("customers")
+}
+
+model CustomerCreditAccount {
+  id                  String           @id @default(uuid())
+  restaurantId        String
+  customerId          String           @unique
+  creditLimit         Decimal          @default(5000) @db.Decimal(10, 2)
+  currentBalance      Decimal          @default(0) @db.Decimal(10, 2)
+  isActive            Boolean          @default(true)
+  createdBy           String
+  createdAt           DateTime         @default(now())
+  updatedAt           DateTime         @updatedAt
+
+  restaurant          Restaurant       @relation(fields: [restaurantId], references: [id])
+  customer            Customer         @relation(fields: [customerId], references: [id])
+  transactions        CreditTransaction[]
+
+  @@map("customer_credit_accounts")
+}
+
+model CreditTransaction {
+  id                  String                @id @default(uuid())
+  creditAccountId     String
+  type                CreditTransactionType
+  orderId             String?
+  amount              Decimal               @db.Decimal(10, 2)
+  paymentMethod       String?
+  notes               String?
+  createdBy           String
+  createdAt           DateTime              @default(now())
+
+  creditAccount       CustomerCreditAccount @relation(fields: [creditAccountId], references: [id])
+
+  @@map("credit_transactions")
+}
+
+model LoyaltyPoint {
+  id                  String           @id @default(uuid())
+  restaurantId        String
+  customerId          String
+  points              Int
+  orderId             String?
+  description         String?
+  createdAt           DateTime         @default(now())
+
+  customer            Customer         @relation(fields: [customerId], references: [id])
+
+  @@index([restaurantId, customerId])
+  @@index([restaurantId, createdAt])
+  @@map("loyalty_points")
+}
+
+// ==================== STAFF & AUDIT ====================
+
+model StaffAttendance {
+  id                  String           @id @default(uuid())
+  branchId            String
+  userId              String
+  clockIn             DateTime
+  clockOut            DateTime?
+  totalHours          Decimal?         @db.Decimal(5, 2)
+  autoClockOut        Boolean          @default(false)
+  createdAt           DateTime         @default(now())
+
+  branch              Branch           @relation(fields: [branchId], references: [id])
+  user                User             @relation(fields: [userId], references: [id])
+
+  @@map("staff_attendance")
+}
+
+model DailyReport {
+  id                  String           @id @default(uuid())
+  branchId            String
+  businessDate        DateTime         @db.Date
+  totalSales          Decimal          @default(0) @db.Decimal(10, 2)
+  totalOrders         Int              @default(0)
+  averageOrderValue   Decimal          @default(0) @db.Decimal(10, 2)
+  cashCollected       Decimal          @default(0) @db.Decimal(10, 2)
+  cardCollected       Decimal          @default(0) @db.Decimal(10, 2)
+  upiCollected        Decimal          @default(0) @db.Decimal(10, 2)
+  totalDiscounts      Decimal          @default(0) @db.Decimal(10, 2)
+  totalRefunds        Decimal          @default(0) @db.Decimal(10, 2)
+  totalVoids          Decimal          @default(0) @db.Decimal(10, 2)
+  netSales            Decimal          @default(0) @db.Decimal(10, 2)
+  createdAt           DateTime         @default(now())
+
+  branch              Branch           @relation(fields: [branchId], references: [id])
+
+  @@unique([branchId, businessDate])
+  @@map("daily_reports")
+}
+
+model AuditLog {
+  id                  String           @id @default(uuid())
+  restaurantId        String?
+  branchId            String?
+  userId              String
+  action              String           // order:created, bill:voided, discount:applied, etc.
+  entity              String           // order, bill, menu_item, etc.
+  entityId            String?
+  oldValue            Json?
+  newValue            Json?
+  ipAddress           String?
+  deviceId            String?
+  createdAt           DateTime         @default(now())
+
+  @@index([restaurantId, createdAt])
+  @@index([userId, createdAt])
+  @@map("audit_logs")
+}
+
+// ==================== CONFIG & PLANS ====================
+
+model Plan {
+  id                  String           @id @default(uuid())
+  name                String           // FREE, BASIC, PRO, ENTERPRISE
+  maxBranches         Int              @default(1)
+  maxDevices          Int              @default(1)
+  maxStaff            Int              @default(3)
+  maxMenuItems        Int              @default(50)
+  features            Json?            // { inventory: false, crm: true, ... }
+  priceMonthly        Decimal          @default(0) @db.Decimal(10, 2)
+  isActive            Boolean          @default(true)
+  createdAt           DateTime         @default(now())
+  updatedAt           DateTime         @updatedAt
+
+  restaurants         Restaurant[]
+
+  @@map("plans")
+}
+
+model NumberRange {
+  id                  String           @id @default(uuid())
+  branchId            String
+  deviceId            String
+  type                String           // BILL, KOT
+  rangeStart          Int
+  rangeEnd            Int
+  currentNumber       Int
+  financialYear       String
+  createdAt           DateTime         @default(now())
+
+  branch              Branch           @relation(fields: [branchId], references: [id])
+
+  @@map("number_ranges")
+}
+
+model MenuTemplate {
+  id                  String           @id @default(uuid())
+  name                String           // South Indian, North Indian, etc.
+  cuisine             String
+  data                Json             // { categories: [{ name, items: [{ name, price }] }] }
+  isActive            Boolean          @default(true)
+  createdAt           DateTime         @default(now())
+
+  @@map("menu_templates")
+}
+
+model OnboardingProgress {
+  id                        String    @id @default(uuid())
+  restaurantId              String    @unique
+  modeSelected              Boolean   @default(false)
+  menuAdded                 Boolean   @default(false)
+  taxConfigured             Boolean   @default(false)
+  tablesConfigured          Boolean   @default(false)
+  staffAdded                Boolean   @default(false)
+  printerSetup              Boolean   @default(false)
+  isDismissed               Boolean   @default(false)
+  createdAt                 DateTime  @default(now())
+  updatedAt                 DateTime  @updatedAt
+
+  restaurant                Restaurant @relation(fields: [restaurantId], references: [id])
+
+  @@map("onboarding_progress")
+}
+
+model DayCloseLock {
+  id                  String         @id @default(uuid())
+  branchId            String
+  businessDate        DateTime       @db.Date
+  status              DayCloseStatus @default(IN_PROGRESS)
+  initiatedBy         String
+  startedAt           DateTime       @default(now())
+  completedAt         DateTime?
+
+  branch              Branch         @relation(fields: [branchId], references: [id])
+
+  @@unique([branchId, businessDate])
+  @@map("day_close_locks")
+}
+
+// ==================== INTEGRATIONS ====================
+
+model IntegrationConfig {
+  id                  String           @id @default(uuid())
+  restaurantId        String           @unique
+  // Razorpay
+  razorpayKeyId       String?
+  razorpayKeySecret   String?
+  razorpayWebhookSecret String?
+  // Stripe
+  stripePublishableKey String?
+  stripeSecretKey     String?
+  stripeWebhookSecret String?
+  // UPI
+  upiVpa              String?          // merchant UPI ID (e.g. restaurant@upi)
+  // SMS / WhatsApp
+  smsProvider         String?          // TWILIO, MSG91, EXOTEL
+  smsApiKey           String?
+  smsSenderId         String?
+  whatsappApiUrl      String?
+  whatsappToken       String?
+  // Aggregators
+  zomatoEnabled       Boolean          @default(false)
+  zomatoRestaurantId  String?
+  swiggyEnabled       Boolean          @default(false)
+  swiggyRestaurantId  String?
+  createdAt           DateTime         @default(now())
+  updatedAt           DateTime         @updatedAt
+
+  @@map("integration_configs")
+}
+
+model AggregatorOrder {
+  id                  String           @id @default(uuid())
+  restaurantId        String
+  branchId            String
+  platform            String           // ZOMATO, SWIGGY
+  platformOrderId     String           @unique
+  platformOrderRef    String?
+  status              String           @default("PENDING")  // PENDING, ACCEPTED, REJECTED, COMPLETED
+  rawPayload          Json
+  orderId             String?          // linked Order once accepted
+  createdAt           DateTime         @default(now())
+  updatedAt           DateTime         @updatedAt
+
+  @@map("aggregator_orders")
+}

@@ -1,0 +1,51 @@
+name: restrosync
+description: RestroSync POS & Captain App — Restaurant Management System
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.6.1
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.8
+
+  # State management
+  flutter_riverpod: ^2.6.1
+
+  # Navigation
+  go_router: ^14.6.2
+
+  # HTTP client (Dio + interceptors)
+  dio: ^5.8.0
+
+  # Offline storage
+  sqflite: ^2.3.3+1
+  path: ^1.9.0
+
+  # Key-value storage
+  shared_preferences: ^2.3.5
+
+  # Secure token storage
+  flutter_secure_storage: ^9.2.4
+
+  # Real-time Socket.io
+  socket_io_client: ^2.0.3+1
+
+  # Network status
+  connectivity_plus: ^6.1.4
+
+  # UUID for idempotency keys
+  uuid: ^4.5.1
+
+  # Formatting (dates, currency)
+  intl: ^0.20.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+
+flutter:
+  uses-material-design: true
