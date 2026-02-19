@@ -10,7 +10,7 @@ import { RegisterDeviceDto, UpdateDeviceDto } from '../integrations/dto/integrat
 @ApiTags('devices')
 @ApiBearerAuth()
 @UseGuards(AuthGuard('jwt'))
-@Controller('api/v1/devices')
+@Controller('devices')
 export class DeviceController {
   constructor(private readonly deviceService: DeviceService) {}
 

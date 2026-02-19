@@ -1,12 +1,17 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { PlanLimitsService } from '../common/plan-limits.service';
 import { RegisterDeviceDto, UpdateDeviceDto } from '../integrations/dto/integrations.dto';
 
 @Injectable()
 export class DeviceService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private planLimits: PlanLimitsService,
+  ) {}
 
   async register(restaurantId: string, registeredBy: string, dto: RegisterDeviceDto) {
+    await this.planLimits.enforce(restaurantId, 'devices');
     const branch = await this.prisma.branch.findFirst({
       where: { id: dto.branchId, restaurantId },
     });

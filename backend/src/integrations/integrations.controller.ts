@@ -27,7 +27,7 @@ import {
 } from './dto/integrations.dto';
 
 @ApiTags('integrations')
-@Controller('api/v1/integrations')
+@Controller('integrations')
 export class IntegrationsController {
   constructor(
     private readonly prisma:      PrismaService,

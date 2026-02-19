@@ -3,9 +3,13 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'core/router.dart';
 import 'core/theme.dart';
+import 'services/background_sync_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Initialize WorkManager + ForegroundTask for background sync
+  await BackgroundSyncService.initialize();
 
   // Force portrait orientation for phone
   await SystemChrome.setPreferredOrientations([

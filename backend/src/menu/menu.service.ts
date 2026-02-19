@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { AppGateway } from '../gateway/app.gateway';
+import { PlanLimitsService } from '../common/plan-limits.service';
 import {
   CreateMenuItemDto,
   UpdateMenuItemDto,
@@ -25,6 +26,7 @@ export class MenuService {
   constructor(
     private prisma: PrismaService,
     private gateway: AppGateway,
+    private planLimits: PlanLimitsService,
   ) {}
 
   // ─── Menu Items ───────────────────────────────────────────────
@@ -63,6 +65,7 @@ export class MenuService {
   }
 
   async create(restaurantId: string, dto: CreateMenuItemDto) {
+    await this.planLimits.enforce(restaurantId, 'menuItems');
     // Verify category belongs to restaurant
     const category = await this.prisma.category.findFirst({
       where: { id: dto.categoryId, restaurantId },

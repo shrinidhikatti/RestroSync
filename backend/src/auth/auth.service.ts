@@ -329,6 +329,79 @@ export class AuthService {
     return device;
   }
 
+  async forgotPassword(email: string) {
+    const user = await this.prisma.user.findUnique({ where: { email } });
+    // Always return success to prevent email enumeration
+    if (!user) {
+      return { message: 'If that email is registered, you will receive a reset link.' };
+    }
+
+    // Generate a short-lived reset token (store in Redis/DB as a simple UUID)
+    const resetToken = uuidv4();
+    const expiresAt = new Date();
+    expiresAt.setMinutes(expiresAt.getMinutes() + 30); // 30 min expiry
+
+    // Store token in refresh_tokens table with a special prefix
+    await this.prisma.refreshToken.create({
+      data: {
+        userId: user.id,
+        token: `PWD_RESET_${resetToken}`,
+        expiresAt,
+      },
+    });
+
+    // In production, this token would be emailed to the user.
+    // For dev/demo, we return it directly so the frontend can use it.
+    const isDev = this.config.get('NODE_ENV') === 'development';
+    return {
+      message: 'If that email is registered, you will receive a reset link.',
+      ...(isDev ? { resetToken } : {}),
+    };
+  }
+
+  async resetPassword(token: string, newPassword: string) {
+    const storedToken = await this.prisma.refreshToken.findUnique({
+      where: { token: `PWD_RESET_${token}` },
+      include: { user: true },
+    });
+
+    if (!storedToken || storedToken.expiresAt < new Date()) {
+      if (storedToken) await this.prisma.refreshToken.delete({ where: { id: storedToken.id } });
+      throw new BadRequestException({
+        errorCode: 'INVALID_RESET_TOKEN',
+        userMessage: 'Reset link is invalid or has expired. Please request a new one.',
+      });
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    await this.prisma.user.update({
+      where: { id: storedToken.userId },
+      data: { password: hashedPassword, mustChangePassword: false },
+    });
+
+    // Clean up reset token
+    await this.prisma.refreshToken.delete({ where: { id: storedToken.id } });
+
+    return { message: 'Password reset successfully. Please log in with your new password.' };
+  }
+
+  async setPin(userId: string, pin: string) {
+    if (!/^\d{4}$/.test(pin)) {
+      throw new BadRequestException({
+        errorCode: 'INVALID_PIN',
+        userMessage: 'PIN must be exactly 4 digits.',
+      });
+    }
+
+    const hashedPin = await bcrypt.hash(pin, 10);
+    await this.prisma.user.update({
+      where: { id: userId },
+      data: { pin: hashedPin },
+    });
+
+    return { message: 'PIN updated successfully.' };
+  }
+
   // ---- Private helpers ----
 
   private async generateTokens(payload: JwtPayload) {

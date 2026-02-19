@@ -71,13 +71,16 @@ export default function DashboardPage() {
   const [stats, setStats] = useState<Stats>({ todayOrders: 0, todayRevenue: 0, activeTables: 0, pendingKots: 0 });
   const [recentOrders, setRecentOrders] = useState<RecentOrder[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isDemoMode, setIsDemoMode] = useState(false);
+  const [wipingDemo, setWipingDemo] = useState(false);
+  const [seedingDemo, setSeedingDemo] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Fetch health/stats from available endpoints
-        const [tablesRes] = await Promise.allSettled([
+        const [tablesRes, menuRes] = await Promise.allSettled([
           api.get('/tables'),
+          api.get('/menu/items'),
         ]);
 
         if (tablesRes.status === 'fulfilled') {
@@ -85,14 +88,43 @@ export default function DashboardPage() {
           const activeTables = tables.filter((t: any) => t.status === 'OCCUPIED').length;
           setStats((s) => ({ ...s, activeTables }));
         }
+        if (menuRes.status === 'fulfilled') {
+          const items: any[] = menuRes.value.data ?? [];
+          setIsDemoMode(items.some((i) => i.name?.startsWith('[DEMO]')));
+        }
       } catch {
-        // Use demo data
+        // ignore
       } finally {
         setLoading(false);
       }
     };
     fetchData();
   }, []);
+
+  const handleSeedDemo = async () => {
+    setSeedingDemo(true);
+    try {
+      await api.post('/demo/seed');
+      setIsDemoMode(true);
+    } catch (e: any) {
+      alert(e?.response?.data?.message ?? 'Failed to seed demo data.');
+    } finally {
+      setSeedingDemo(false);
+    }
+  };
+
+  const handleWipeDemo = async () => {
+    if (!confirm('This will delete all demo data. Continue?')) return;
+    setWipingDemo(true);
+    try {
+      await api.delete('/demo/wipe');
+      setIsDemoMode(false);
+    } catch {
+      alert('Failed to wipe demo data.');
+    } finally {
+      setWipingDemo(false);
+    }
+  };
 
   const hour = new Date().getHours();
   const greeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
@@ -122,6 +154,43 @@ export default function DashboardPage() {
           </button>
         </div>
       </div>
+
+      {/* Demo Mode Banner */}
+      {isDemoMode && (
+        <div className="mb-6 flex items-center justify-between gap-3 rounded-xl border border-amber-300 bg-amber-50 px-4 py-3">
+          <div className="flex items-center gap-2">
+            <span className="text-amber-600 text-lg">⚠️</span>
+            <div>
+              <p className="font-semibold text-amber-800 text-sm">DEMO MODE — Data is not real</p>
+              <p className="text-amber-600 text-xs">This account contains sample data for exploration. Wipe it before going live.</p>
+            </div>
+          </div>
+          <button
+            onClick={handleWipeDemo}
+            disabled={wipingDemo}
+            className="shrink-0 rounded-lg border border-amber-400 bg-white px-3 py-1.5 text-xs font-semibold text-amber-700 hover:bg-amber-100 transition-colors disabled:opacity-50"
+          >
+            {wipingDemo ? 'Wiping…' : 'Wipe Demo Data'}
+          </button>
+        </div>
+      )}
+
+      {/* Seed Demo (only shown when no demo data) */}
+      {!isDemoMode && !loading && (
+        <div className="mb-6 flex items-center justify-between gap-3 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3">
+          <div>
+            <p className="font-semibold text-slate-700 text-sm">Explore with Demo Data</p>
+            <p className="text-slate-400 text-xs">Seed 30 menu items, 8 tables and 5 sample orders to try out all features.</p>
+          </div>
+          <button
+            onClick={handleSeedDemo}
+            disabled={seedingDemo}
+            className="shrink-0 rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-100 transition-colors disabled:opacity-50"
+          >
+            {seedingDemo ? 'Seeding…' : 'Load Demo Data'}
+          </button>
+        </div>
+      )}
 
       {/* Stats Grid */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">

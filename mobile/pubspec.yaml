@@ -42,6 +42,18 @@ dependencies:
   # Formatting (dates, currency)
   intl: ^0.20.2
 
+  # QR code display (UPI payment QR)
+  qr_flutter: ^4.1.0
+
+  # Barcode scanner (item lookup)
+  mobile_scanner: ^5.2.3
+
+  # Background sync (15-min periodic sync when app is backgrounded)
+  workmanager: ^0.5.2
+
+  # Foreground task notification during sync
+  flutter_foreground_task: ^8.13.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

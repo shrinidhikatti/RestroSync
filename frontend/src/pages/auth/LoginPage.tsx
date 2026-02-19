@@ -123,7 +123,12 @@ export default function LoginPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1.5 font-display">Password</label>
+                <div className="flex items-center justify-between mb-1.5">
+                  <label className="text-sm font-medium text-slate-700 font-display">Password</label>
+                  <Link to="/forgot-password" className="text-xs text-amber-600 hover:text-amber-700 font-medium">
+                    Forgot password?
+                  </Link>
+                </div>
                 <input
                   type="password"
                   value={form.password}
@@ -159,7 +164,10 @@ export default function LoginPage() {
           </div>
 
           <p className="text-center text-xs text-slate-400 mt-6">
-            Super Admin? Use your system credentials.
+            Super Admin?{' '}
+            <Link to="/super-admin/login" className="text-violet-500 hover:text-violet-400 font-medium">
+              Platform login →
+            </Link>
           </p>
         </div>
       </div>

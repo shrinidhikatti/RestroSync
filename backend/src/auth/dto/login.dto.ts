@@ -89,3 +89,28 @@ export class RegisterDeviceDto {
   @IsNotEmpty()
   branchId!: string;
 }
+
+export class ForgotPasswordDto {
+  @ApiProperty({ example: 'owner@restaurant.com' })
+  @IsEmail()
+  email!: string;
+}
+
+export class ResetPasswordDto {
+  @ApiProperty({ description: 'Reset token received via email' })
+  @IsString()
+  @IsNotEmpty()
+  token!: string;
+
+  @ApiProperty({ example: 'newPassword123' })
+  @IsString()
+  @MinLength(6)
+  newPassword!: string;
+}
+
+export class SetPinDto {
+  @ApiProperty({ example: '1234', description: '4-digit PIN for POS login' })
+  @IsString()
+  @MinLength(4)
+  pin!: string;
+}

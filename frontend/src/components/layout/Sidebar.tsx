@@ -80,9 +80,12 @@ const navItems: NavItem[] = [
     icon: SettingsIcon,
     children: [
       { label: 'Restaurant',   path: '/settings/restaurant',   icon: BuildingIcon },
-      { label: 'Tax & Charges',path: '/settings/tax',          icon: TaxIcon },
+      { label: 'Tax',          path: '/settings/tax',          icon: TaxIcon },
+      { label: 'Charges',      path: '/settings/charges',      icon: DollarIcon },
+      { label: 'Payments',     path: '/settings/payments',     icon: DollarIcon },
       { label: 'Discounts',    path: '/settings/discounts',    icon: TagIcon },
       { label: 'Receipt',      path: '/settings/receipt',      icon: ReceiptIcon },
+      { label: 'Security',     path: '/settings/security',     icon: ShieldIcon },
       { label: 'Integrations', path: '/settings/integrations', icon: LinkIcon },
     ],
   },

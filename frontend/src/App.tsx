@@ -2,9 +2,20 @@ import React, { lazy, Suspense } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Layout } from './components/layout/Layout';
 
+// Super Admin
+const SuperAdminLoginPage     = lazy(() => import('./pages/super-admin/SuperAdminLoginPage'));
+const SuperAdminLayout        = lazy(() => import('./pages/super-admin/SuperAdminLayout'));
+const SuperAdminDashboard     = lazy(() => import('./pages/super-admin/SuperAdminDashboard'));
+const RestaurantsListPage     = lazy(() => import('./pages/super-admin/RestaurantsListPage'));
+const AddRestaurantPage       = lazy(() => import('./pages/super-admin/AddRestaurantPage'));
+const RestaurantDetailPage    = lazy(() => import('./pages/super-admin/RestaurantDetailPage'));
+const SuperAdminSystemPage    = lazy(() => import('./pages/super-admin/SuperAdminSystemPage'));
+
 // Lazy-load pages for code splitting
-const LoginPage          = lazy(() => import('./pages/auth/LoginPage'));
-const RegisterPage       = lazy(() => import('./pages/auth/RegisterPage'));
+const LoginPage            = lazy(() => import('./pages/auth/LoginPage'));
+const RegisterPage         = lazy(() => import('./pages/auth/RegisterPage'));
+const ForgotPasswordPage   = lazy(() => import('./pages/auth/ForgotPasswordPage'));
+const ResetPasswordPage    = lazy(() => import('./pages/auth/ResetPasswordPage'));
 const DashboardPage      = lazy(() => import('./pages/dashboard/DashboardPage'));
 const CategoriesPage     = lazy(() => import('./pages/menu/CategoriesPage'));
 const MenuItemsPage      = lazy(() => import('./pages/menu/MenuItemsPage'));
@@ -12,12 +23,21 @@ const MenuItemFormPage   = lazy(() => import('./pages/menu/MenuItemFormPage'));
 const TablesPage         = lazy(() => import('./pages/tables/TablesPage'));
 const ReservationsPage   = lazy(() => import('./pages/reservations/ReservationsPage'));
 const StaffPage          = lazy(() => import('./pages/staff/StaffPage'));
-const RestaurantSettings = lazy(() => import('./pages/settings/RestaurantSettingsPage'));
-const TaxSettings        = lazy(() => import('./pages/settings/TaxSettingsPage'));
-const DiscountsPage      = lazy(() => import('./pages/settings/DiscountsPage'));
-const ReceiptSettings    = lazy(() => import('./pages/settings/ReceiptSettingsPage'));
+const RestaurantSettings  = lazy(() => import('./pages/settings/RestaurantSettingsPage'));
+const TaxSettings         = lazy(() => import('./pages/settings/TaxSettingsPage'));
+const DiscountsPage       = lazy(() => import('./pages/settings/DiscountsPage'));
+const ReceiptSettings     = lazy(() => import('./pages/settings/ReceiptSettingsPage'));
+const PaymentSettings     = lazy(() => import('./pages/settings/PaymentSettingsPage'));
+const ChargesPage         = lazy(() => import('./pages/settings/ChargesPage'));
+const SecuritySettings    = lazy(() => import('./pages/settings/SecuritySettingsPage'));
 const OrdersPage         = lazy(() => import('./pages/orders/OrdersPage'));
 const KitchenDisplay     = lazy(() => import('./pages/kitchen/KitchenDisplay'));
+
+// Onboarding
+const OnboardingPage       = lazy(() => import('./pages/onboarding/OnboardingPage'));
+
+// Counter Token Display (public, no layout)
+const CounterTokenDisplay  = lazy(() => import('./pages/display/CounterTokenDisplay'));
 
 // Multi-Outlet
 const ConsolidatedDashboardPage = lazy(() => import('./pages/multi-outlet/ConsolidatedDashboardPage'));
@@ -74,8 +94,24 @@ function App() {
       <Suspense fallback={<PageLoader />}>
         <Routes>
           {/* Public */}
-          <Route path="/login"    element={<LoginPage />} />
-          <Route path="/register" element={<RegisterPage />} />
+          <Route path="/login"           element={<LoginPage />} />
+          <Route path="/register"        element={<RegisterPage />} />
+          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+          <Route path="/reset-password"  element={<ResetPasswordPage />} />
+          <Route path="/onboarding"      element={<OnboardingPage />} />
+
+          {/* Counter Token Display — full-screen, no auth required */}
+          <Route path="/display/counter/:branchId" element={<CounterTokenDisplay />} />
+
+          {/* Super Admin — separate layout, session-based auth */}
+          <Route path="/super-admin/login" element={<SuperAdminLoginPage />} />
+          <Route element={<SuperAdminLayout />}>
+            <Route path="/super-admin/dashboard"           element={<SuperAdminDashboard />} />
+            <Route path="/super-admin/restaurants"         element={<RestaurantsListPage />} />
+            <Route path="/super-admin/restaurants/new"     element={<AddRestaurantPage />} />
+            <Route path="/super-admin/restaurants/:id"     element={<RestaurantDetailPage />} />
+            <Route path="/super-admin/system"              element={<SuperAdminSystemPage />} />
+          </Route>
 
           {/* Kitchen Display — full-screen, no layout chrome */}
           <Route path="/kitchen" element={<KitchenDisplay />} />
@@ -138,6 +174,9 @@ function App() {
             <Route path="/settings/discounts"    element={<DiscountsPage />} />
             <Route path="/settings/receipt"      element={<ReceiptSettings />} />
             <Route path="/settings/integrations" element={<IntegrationsPage />} />
+            <Route path="/settings/payments"     element={<PaymentSettings />} />
+            <Route path="/settings/charges"      element={<ChargesPage />} />
+            <Route path="/settings/security"     element={<SecuritySettings />} />
 
             {/* Catch-all redirect */}
             <Route path="*" element={<Navigate to="/" replace />} />

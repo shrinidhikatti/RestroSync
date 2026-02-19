@@ -25,13 +25,16 @@ import { MultiOutletModule }  from './multi-outlet/multi-outlet.module';
 import { IntegrationsModule } from './integrations/integrations.module';
 import { DeviceModule }       from './devices/device.module';
 import { JobsModule }         from './jobs/jobs.module';
+import { DayCloseModule }     from './day-close/day-close.module';
+import { NumberRangesModule } from './number-ranges/number-ranges.module';
+import { DemoModule }         from './demo/demo.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
     ThrottlerModule.forRoot([
-      { name: 'short', ttl: 60000, limit: 100 },
-      { name: 'login', ttl: 900000, limit: 5 },
+      { name: 'short', ttl: 60000, limit: process.env.NODE_ENV === 'development' ? 10000 : 100 },
+      { name: 'login', ttl: 900000, limit: process.env.NODE_ENV === 'development' ? 1000 : 5 },
     ]),
     PrismaModule,
     RedisModule,
@@ -55,6 +58,9 @@ import { JobsModule }         from './jobs/jobs.module';
     IntegrationsModule,
     DeviceModule,
     JobsModule,
+    DayCloseModule,
+    NumberRangesModule,
+    DemoModule,
   ],
   providers: [
     { provide: APP_GUARD, useClass: ThrottlerGuard },

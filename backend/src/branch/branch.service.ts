@@ -1,10 +1,14 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { PlanLimitsService } from '../common/plan-limits.service';
 import { CreateBranchDto, UpdateBranchDto } from './dto/branch.dto';
 
 @Injectable()
 export class BranchService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private planLimits: PlanLimitsService,
+  ) {}
 
   async findAll(restaurantId: string) {
     return this.prisma.branch.findMany({
@@ -22,6 +26,7 @@ export class BranchService {
   }
 
   async create(restaurantId: string, dto: CreateBranchDto) {
+    await this.planLimits.enforce(restaurantId, 'branches');
     return this.prisma.branch.create({
       data: { restaurantId, ...dto },
     });

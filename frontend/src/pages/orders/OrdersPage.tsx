@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { orderApi, billApi } from '../../lib/api';
+import { orderApi, billApi, tableApi, categoryApi, menuApi } from '../../lib/api';
 import { Modal } from '../../components/ui/Modal';
 import {
-  PlusIcon, SearchIcon, RefreshIcon, ClockIcon, CheckIcon,
+  PlusIcon, SearchIcon, RefreshIcon, ClockIcon, CheckIcon, TableIcon, MinusIcon,
 } from '../../components/ui/Icons';
 
 interface Order {
@@ -298,6 +298,18 @@ function NewOrderModal({
   });
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
+  const [tables, setTables] = useState<Array<{ id: string; number: string; capacity: number; status: string }>>([]);
+  const [loadingTables, setLoadingTables] = useState(false);
+
+  useEffect(() => {
+    if (open && form.type === 'DINE_IN') {
+      setLoadingTables(true);
+      tableApi.getAll()
+        .then((res) => setTables(res.data ?? []))
+        .catch(() => setTables([]))
+        .finally(() => setLoadingTables(false));
+    }
+  }, [open, form.type]);
 
   const set = (k: string, v: string) => setForm((f) => ({ ...f, [k]: v }));
 
@@ -370,14 +382,37 @@ function NewOrderModal({
 
         {form.type === 'DINE_IN' && (
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1.5 font-display">Table ID (optional)</label>
-            <input
-              type="text"
-              value={form.tableId}
-              onChange={(e) => set('tableId', e.target.value)}
-              placeholder="Paste table UUID or leave blank"
-              className={inputClass}
-            />
+            <label className="block text-sm font-medium text-slate-700 mb-1.5 font-display">
+              <div className="flex items-center gap-2">
+                <TableIcon className="w-4 h-4" />
+                <span>Table (optional)</span>
+              </div>
+            </label>
+            {loadingTables ? (
+              <div className="skeleton h-12 rounded-xl" />
+            ) : (
+              <select
+                value={form.tableId}
+                onChange={(e) => set('tableId', e.target.value)}
+                className={inputClass}
+              >
+                <option value="">No table (counter service)</option>
+                {tables
+                  .filter((t) => t.status === 'AVAILABLE')
+                  .sort((a, b) => Number(a.number) - Number(b.number) || a.number.localeCompare(b.number))
+                  .map((t) => (
+                    <option key={t.id} value={t.id}>
+                      Table {t.number} ({t.capacity} {t.capacity === 1 ? 'seat' : 'seats'})
+                    </option>
+                  ))}
+              </select>
+            )}
+            {!loadingTables && tables.length === 0 && (
+              <p className="text-xs text-slate-400 mt-1.5">No tables available. Create tables in the Tables section.</p>
+            )}
+            {!loadingTables && tables.filter((t) => t.status === 'AVAILABLE').length === 0 && tables.length > 0 && (
+              <p className="text-xs text-amber-600 mt-1.5">All tables are currently occupied.</p>
+            )}
           </div>
         )}
 
@@ -418,6 +453,15 @@ function OrderDetailModal({ orderId, onClose }: { orderId: string; onClose: () =
   const [actionLoading, setActionLoading] = useState('');
   const [paymentAmounts, setPaymentAmounts] = useState<Record<string, string>>({});
 
+  // ── Item Picker state ──────────────────────────────────────────────────────
+  const [showPicker, setShowPicker] = useState(false);
+  const [categories, setCategories] = useState<any[]>([]);
+  const [menuItems, setMenuItems] = useState<any[]>([]);
+  const [selectedCat, setSelectedCat] = useState('');
+  const [cart, setCart] = useState<Record<string, number>>({});
+  const [loadingMenu, setLoadingMenu] = useState(false);
+  const [addingItems, setAddingItems] = useState(false);
+
   const fetchOrder = async () => {
     try {
       const res = await orderApi.getOne(orderId);
@@ -428,6 +472,61 @@ function OrderDetailModal({ orderId, onClose }: { orderId: string; onClose: () =
   };
 
   useEffect(() => { fetchOrder(); }, [orderId]);
+
+  const openPicker = async () => {
+    setShowPicker(true);
+    if (categories.length > 0) return;
+    setLoadingMenu(true);
+    try {
+      const catRes = await categoryApi.getAll();
+      const cats = catRes.data ?? [];
+      setCategories(cats);
+      const firstCatId = cats[0]?.id ?? '';
+      setSelectedCat(firstCatId);
+      const itemRes = await menuApi.getAll(firstCatId || undefined);
+      setMenuItems(itemRes.data ?? []);
+    } catch { } finally {
+      setLoadingMenu(false);
+    }
+  };
+
+  const switchCategory = async (catId: string) => {
+    setSelectedCat(catId);
+    setLoadingMenu(true);
+    try {
+      const res = await menuApi.getAll(catId || undefined);
+      setMenuItems(res.data ?? []);
+    } catch { } finally {
+      setLoadingMenu(false);
+    }
+  };
+
+  const adjustCart = (menuItemId: string, delta: number) => {
+    setCart((prev) => {
+      const next = { ...prev };
+      const cur = next[menuItemId] ?? 0;
+      const val = cur + delta;
+      if (val <= 0) delete next[menuItemId];
+      else next[menuItemId] = val;
+      return next;
+    });
+  };
+
+  const cartCount = Object.values(cart).reduce((s, n) => s + n, 0);
+
+  const handleAddItems = async () => {
+    if (cartCount === 0) return;
+    setAddingItems(true);
+    try {
+      const items = Object.entries(cart).map(([menuItemId, quantity]) => ({ menuItemId, quantity }));
+      await orderApi.addItems(orderId, items);
+      setCart({});
+      setShowPicker(false);
+      await fetchOrder();
+    } catch { } finally {
+      setAddingItems(false);
+    }
+  };
 
   const handleSendKot = async () => {
     setActionLoading('kot');
@@ -523,6 +622,123 @@ function OrderDetailModal({ orderId, onClose }: { orderId: string; onClose: () =
               )}
             </div>
           </div>
+
+          {/* Add Items Picker */}
+          {!['COMPLETED', 'CANCELLED', 'BILLED'].includes(order.status) && !hasPaidBill && (
+            <div>
+              {!showPicker ? (
+                <button
+                  onClick={openPicker}
+                  className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl border-2 border-dashed border-slate-300 text-sm font-semibold font-display text-slate-500 hover:border-amber-400 hover:text-amber-600 transition-colors"
+                >
+                  <PlusIcon className="w-4 h-4" /> Add Items
+                </button>
+              ) : (
+                <div className="border border-slate-200 rounded-2xl overflow-hidden">
+                  {/* Picker header */}
+                  <div className="flex items-center justify-between px-4 py-3 bg-slate-50 border-b border-slate-200">
+                    <p className="text-sm font-semibold font-display text-slate-700">Add Menu Items</p>
+                    <button
+                      onClick={() => { setShowPicker(false); setCart({}); }}
+                      className="text-slate-400 hover:text-slate-600 text-xs"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+
+                  {/* Category tabs */}
+                  {categories.length > 0 && (
+                    <div className="flex gap-1.5 p-3 border-b border-slate-100 overflow-x-auto">
+                      <button
+                        onClick={() => switchCategory('')}
+                        className={`flex-shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold font-display transition-colors ${
+                          selectedCat === '' ? 'bg-amber-400 text-slate-900' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                        }`}
+                      >
+                        All
+                      </button>
+                      {categories.map((cat: any) => (
+                        <button
+                          key={cat.id}
+                          onClick={() => switchCategory(cat.id)}
+                          className={`flex-shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold font-display transition-colors ${
+                            selectedCat === cat.id ? 'bg-amber-400 text-slate-900' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                          }`}
+                        >
+                          {cat.name}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Items list */}
+                  <div className="max-h-64 overflow-y-auto divide-y divide-slate-50">
+                    {loadingMenu ? (
+                      <div className="p-4 space-y-2">
+                        {[1, 2, 3].map((i) => <div key={i} className="skeleton h-10 rounded-lg" />)}
+                      </div>
+                    ) : menuItems.filter((m: any) => m.isAvailable !== false).length === 0 ? (
+                      <p className="p-4 text-sm text-slate-400 text-center">No items in this category</p>
+                    ) : (
+                      menuItems
+                        .filter((m: any) => m.isAvailable !== false)
+                        .map((item: any) => {
+                          const qty = cart[item.id] ?? 0;
+                          return (
+                            <div key={item.id} className="flex items-center justify-between px-4 py-3 hover:bg-slate-50">
+                              <div className="min-w-0 flex-1">
+                                <p className="text-sm font-medium text-slate-800 truncate">{item.name}</p>
+                                <p className="text-xs text-slate-400">₹{Number(item.price).toFixed(2)}</p>
+                              </div>
+                              <div className="flex items-center gap-2 ml-3 flex-shrink-0">
+                                {qty > 0 ? (
+                                  <>
+                                    <button
+                                      onClick={() => adjustCart(item.id, -1)}
+                                      className="w-7 h-7 rounded-lg bg-slate-200 hover:bg-slate-300 flex items-center justify-center text-slate-700"
+                                    >
+                                      <MinusIcon className="w-3 h-3" />
+                                    </button>
+                                    <span className="w-6 text-center text-sm font-semibold font-display text-slate-800">{qty}</span>
+                                    <button
+                                      onClick={() => adjustCart(item.id, 1)}
+                                      className="w-7 h-7 rounded-lg bg-amber-400 hover:bg-amber-500 flex items-center justify-center text-slate-900"
+                                    >
+                                      <PlusIcon className="w-3 h-3" />
+                                    </button>
+                                  </>
+                                ) : (
+                                  <button
+                                    onClick={() => adjustCart(item.id, 1)}
+                                    className="w-7 h-7 rounded-lg bg-slate-100 hover:bg-amber-400 hover:text-slate-900 flex items-center justify-center text-slate-500 transition-colors"
+                                  >
+                                    <PlusIcon className="w-3 h-3" />
+                                  </button>
+                                )}
+                              </div>
+                            </div>
+                          );
+                        })
+                    )}
+                  </div>
+
+                  {/* Add to Order footer */}
+                  {cartCount > 0 && (
+                    <div className="px-4 py-3 bg-slate-50 border-t border-slate-200">
+                      <button
+                        onClick={handleAddItems}
+                        disabled={addingItems}
+                        className="w-full py-2.5 rounded-xl text-sm font-semibold font-display text-slate-900 hover:brightness-95 disabled:opacity-60 transition-all"
+                        style={{ background: 'var(--accent)' }}
+                      >
+                        {addingItems ? 'Adding...' : `Add ${cartCount} item${cartCount > 1 ? 's' : ''} to Order`}
+                      </button>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
 
           {/* KOTs */}
           {order.kots?.length > 0 && (
