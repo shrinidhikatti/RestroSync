@@ -230,9 +230,9 @@ export default function DashboardPage() {
           <div className="space-y-3">
             {[
               { label: 'New Order', icon: PlusIcon, color: 'bg-amber-500 text-slate-900', path: '#' },
-              { label: 'View Tables', icon: GridIcon, color: 'bg-slate-900 text-white', path: '/tables' },
-              { label: 'Reservations', icon: ReceiptIcon, color: 'bg-blue-600 text-white', path: '/reservations' },
-              { label: 'Menu Items', icon: RefreshIcon, color: 'bg-emerald-600 text-white', path: '/menu/items' },
+              { label: 'View Tables', icon: GridIcon, color: 'bg-slate-800 text-white', path: '/tables' },
+              { label: 'Reservations', icon: ReceiptIcon, color: 'bg-blue-500 text-white', path: '/reservations' },
+              { label: 'Menu Items', icon: RefreshIcon, color: 'bg-emerald-500 text-white', path: '/menu/items' },
             ].map((action) => (
               <Link
                 key={action.label}

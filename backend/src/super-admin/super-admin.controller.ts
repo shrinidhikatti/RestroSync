@@ -48,6 +48,24 @@ export class SuperAdminController {
     return this.superAdminService.softDeleteRestaurant(id);
   }
 
+  @Patch('restaurants/:id/operating-mode')
+  @ApiOperation({ summary: 'Change operating mode for a restaurant' })
+  async updateOperatingMode(@Param('id') id: string, @Body() body: { mode: string }) {
+    return this.superAdminService.updateOperatingMode(id, body.mode);
+  }
+
+  @Patch('restaurants/:id/plan')
+  @ApiOperation({ summary: 'Change subscription plan for a restaurant' })
+  async updatePlan(@Param('id') id: string, @Body() body: { planId: string }) {
+    return this.superAdminService.updatePlan(id, body.planId);
+  }
+
+  @Get('plans')
+  @ApiOperation({ summary: 'List all available subscription plans' })
+  async listPlans() {
+    return this.superAdminService.listPlans();
+  }
+
   @Get('stats')
   @ApiOperation({ summary: 'Get platform-wide stats' })
   async getPlatformStats() {

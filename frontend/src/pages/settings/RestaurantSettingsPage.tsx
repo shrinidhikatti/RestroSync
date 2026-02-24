@@ -2,6 +2,15 @@ import React, { useEffect, useState } from 'react';
 import { restaurantApi } from '../../lib/api';
 import { CheckIcon } from '../../components/ui/Icons';
 
+function LockIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+      <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+    </svg>
+  );
+}
+
 const MODES = [
   {
     value: 'COUNTER',
@@ -59,11 +68,6 @@ export default function RestaurantSettingsPage() {
     } finally {
       setSaving(false);
     }
-  };
-
-  const handleModeChange = async (mode: string) => {
-    set('operatingMode', mode);
-    await restaurantApi.setMode(mode);
   };
 
   const inputClass = "w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 bg-white";
@@ -138,29 +142,30 @@ export default function RestaurantSettingsPage() {
           )}
         </div>
 
-        {/* Operating mode */}
+        {/* Operating mode — read-only, managed by Super Admin */}
         <div className={`${sectionCard} anim-fade-up delay-150`}>
-          <h2 className="font-display font-semibold text-slate-800 mb-1">Operating Mode</h2>
+          <div className="flex items-center gap-2 mb-1">
+            <h2 className="font-display font-semibold text-slate-800">Operating Mode</h2>
+            <LockIcon className="w-4 h-4 text-slate-400" />
+          </div>
           <p className="text-slate-500 text-sm mb-4">This determines available features across your POS and kitchen screens.</p>
           <div className="grid gap-3">
             {MODES.map((mode) => {
               const active = form.operatingMode === mode.value;
               return (
-                <button
+                <div
                   key={mode.value}
-                  type="button"
-                  onClick={() => handleModeChange(mode.value)}
                   className={`text-left p-4 rounded-2xl border-2 transition-all ${
                     active
                       ? 'border-amber-400 bg-amber-50'
-                      : 'border-slate-200 hover:border-slate-300 bg-white'
+                      : 'border-slate-100 bg-slate-50 opacity-50'
                   }`}
                 >
                   <div className="flex items-start gap-4">
                     <span className="text-2xl flex-shrink-0">{mode.emoji}</span>
                     <div className="flex-1">
                       <div className="flex items-center justify-between">
-                        <p className={`font-display font-semibold ${active ? 'text-amber-700' : 'text-slate-800'}`}>
+                        <p className={`font-display font-semibold ${active ? 'text-amber-700' : 'text-slate-500'}`}>
                           {mode.label}
                         </p>
                         {active && (
@@ -172,9 +177,21 @@ export default function RestaurantSettingsPage() {
                       <p className="text-sm text-slate-500 mt-0.5">{mode.desc}</p>
                     </div>
                   </div>
-                </button>
+                </div>
               );
             })}
+          </div>
+          {/* Locked notice */}
+          <div className="mt-4 flex items-start gap-3 p-3 bg-slate-50 border border-slate-200 rounded-xl">
+            <LockIcon className="w-4 h-4 text-slate-400 mt-0.5 flex-shrink-0" />
+            <div>
+              <p className="text-sm font-medium text-slate-600 font-display">Managed by RestroSync</p>
+              <p className="text-xs text-slate-400 mt-0.5">
+                Operating mode is set by our team based on your subscription plan.
+                To request a change, contact us at{' '}
+                <a href="mailto:support@restrosync.com" className="text-amber-600 hover:underline">support@restrosync.com</a>
+              </p>
+            </div>
           </div>
         </div>
 

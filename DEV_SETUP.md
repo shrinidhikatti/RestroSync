@@ -165,10 +165,12 @@ cd frontend && npm run dev
 
 ## 6. Default Credentials
 
-| Role | Email | Password |
-|------|-------|----------|
-| Super Admin | admin@restrosync.com | Admin@123 |
-| Demo Owner | owner@demo.com | Owner@123 |
+| Role | Email | Password | Mode |
+|------|-------|----------|------|
+| Super Admin | admin@restrosync.com | Admin@123 | — |
+| Demo Owner (Counter) | counter@demo.com | Demo@123 | COUNTER |
+| Demo Owner (Table Simple) | table@demo.com | Demo@123 | TABLE_SIMPLE |
+| Demo Owner (Full Service) | fullservice@demo.com | Demo@123 | FULL_SERVICE |
 
 ---
 

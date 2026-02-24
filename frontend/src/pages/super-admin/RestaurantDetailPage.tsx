@@ -6,6 +6,12 @@ const MODE_LABELS: Record<string, string> = {
   COUNTER: 'Counter', TABLE_SIMPLE: 'Table Simple', FULL_SERVICE: 'Full Service',
 };
 
+const MODES = [
+  { value: 'COUNTER',      label: 'Counter Service',        emoji: '🏪' },
+  { value: 'TABLE_SIMPLE', label: 'Table Service (Simple)', emoji: '🍽️' },
+  { value: 'FULL_SERVICE', label: 'Full Service',           emoji: '🍾' },
+];
+
 function Stat({ label, value, sub }: { label: string; value: any; sub?: string }) {
   return (
     <div className="bg-slate-800/50 border border-slate-700 rounded-2xl p-4">
@@ -22,13 +28,54 @@ export default function RestaurantDetailPage() {
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState('');
+  const [plans, setPlans] = useState<any[]>([]);
+  const [selectedMode, setSelectedMode] = useState('');
+  const [selectedPlan, setSelectedPlan] = useState('');
+  const [modeLoading, setModeLoading] = useState(false);
+  const [planLoading, setPlanLoading] = useState(false);
 
   useEffect(() => {
-    saApi().get(`/super-admin/restaurants/${id}`)
-      .then((r) => setData(r.data))
+    const api = saApi();
+    Promise.all([
+      api.get(`/super-admin/restaurants/${id}`),
+      api.get('/super-admin/plans'),
+    ])
+      .then(([rDetail, rPlans]) => {
+        setData(rDetail.data);
+        const r = rDetail.data.restaurant ?? rDetail.data;
+        setSelectedMode(r.operatingMode ?? '');
+        setSelectedPlan(r.planId ?? '');
+        setPlans(rPlans.data);
+      })
       .catch(console.error)
       .finally(() => setLoading(false));
   }, [id]);
+
+  const handleModeChange = async () => {
+    setModeLoading(true);
+    try {
+      const r = await saApi().patch(`/super-admin/restaurants/${id}/operating-mode`, { mode: selectedMode });
+      setData((prev: any) => {
+        const base = prev.restaurant ?? prev;
+        return { ...prev, restaurant: { ...base, operatingMode: r.data.operatingMode } };
+      });
+      alert('Operating mode updated successfully.');
+    } catch (e: any) { alert(e.response?.data?.userMessage ?? 'Failed to update mode'); }
+    finally { setModeLoading(false); }
+  };
+
+  const handlePlanChange = async () => {
+    setPlanLoading(true);
+    try {
+      const r = await saApi().patch(`/super-admin/restaurants/${id}/plan`, { planId: selectedPlan });
+      setData((prev: any) => {
+        const base = prev.restaurant ?? prev;
+        return { ...prev, restaurant: { ...base, planId: r.data.planId, plan: r.data.plan } };
+      });
+      alert('Plan updated successfully.');
+    } catch (e: any) { alert(e.response?.data?.userMessage ?? 'Failed to update plan'); }
+    finally { setPlanLoading(false); }
+  };
 
   const doAction = async (action: 'suspend' | 'activate' | 'delete') => {
     if (action === 'delete' && !confirm('Delete this restaurant permanently?')) return;
@@ -171,6 +218,70 @@ export default function RestaurantDetailPage() {
             </div>
           )}
         </div>
+      </div>
+
+      {/* Super Admin Controls */}
+      <div className="bg-slate-900 border border-violet-500/20 rounded-2xl p-5 space-y-5">
+        <div className="flex items-center gap-2">
+          <span className="text-lg">🛠️</span>
+          <h2 className="text-sm font-semibold text-white" style={{ fontFamily: "'Syne', sans-serif" }}>Super Admin Controls</h2>
+          <span className="ml-auto px-2 py-0.5 rounded-full text-xs font-medium bg-violet-500/10 text-violet-400 border border-violet-500/20">Admin Only</span>
+        </div>
+
+        {/* Operating Mode */}
+        <div>
+          <p className="text-xs text-slate-400 mb-2">Operating Mode</p>
+          <div className="flex gap-2 flex-wrap">
+            {MODES.map((mode) => (
+              <button
+                key={mode.value}
+                onClick={() => setSelectedMode(mode.value)}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium border transition-colors ${
+                  selectedMode === mode.value
+                    ? 'bg-violet-600 border-violet-500 text-white'
+                    : 'bg-slate-800 border-slate-700 text-slate-400 hover:border-violet-500/50 hover:text-slate-200'
+                }`}
+              >
+                <span>{mode.emoji}</span> {mode.label}
+              </button>
+            ))}
+            <button
+              onClick={handleModeChange}
+              disabled={modeLoading || selectedMode === (r.operatingMode ?? '')}
+              className="px-3 py-1.5 rounded-xl text-xs font-semibold bg-violet-600 text-white hover:bg-violet-500 disabled:opacity-40 disabled:cursor-not-allowed transition-colors ml-auto"
+            >
+              {modeLoading ? 'Saving…' : 'Apply Mode'}
+            </button>
+          </div>
+        </div>
+
+        {/* Plan */}
+        {plans.length > 0 && (
+          <div>
+            <p className="text-xs text-slate-400 mb-2">Subscription Plan</p>
+            <div className="flex gap-2 flex-wrap items-center">
+              <select
+                value={selectedPlan}
+                onChange={(e) => setSelectedPlan(e.target.value)}
+                className="flex-1 min-w-[180px] px-3 py-1.5 rounded-xl bg-slate-800 border border-slate-700 text-slate-200 text-xs focus:outline-none focus:ring-1 focus:ring-violet-500"
+              >
+                <option value="">— Select plan —</option>
+                {plans.map((p) => (
+                  <option key={p.id} value={p.id}>
+                    {p.name} · ₹{Number(p.priceMonthly).toLocaleString('en-IN')}/mo
+                  </option>
+                ))}
+              </select>
+              <button
+                onClick={handlePlanChange}
+                disabled={planLoading || !selectedPlan || selectedPlan === (r.planId ?? '')}
+                className="px-3 py-1.5 rounded-xl text-xs font-semibold bg-violet-600 text-white hover:bg-violet-500 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+              >
+                {planLoading ? 'Saving…' : 'Apply Plan'}
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

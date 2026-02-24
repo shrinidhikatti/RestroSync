@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Patch, Delete, Body, Param, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Delete, Body, Param, UseGuards, ForbiddenException } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiTags, ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
 import { RestaurantService } from './restaurant.service';
@@ -32,12 +32,12 @@ export class RestaurantController {
 
   @Patch('me/operating-mode')
   @Roles('OWNER')
-  @ApiOperation({ summary: 'Set restaurant operating mode' })
-  async setOperatingMode(
-    @CurrentUser() user: JwtPayload,
-    @Body() dto: SetOperatingModeDto,
-  ) {
-    return this.restaurantService.setOperatingMode(user.restaurantId!, dto);
+  @ApiOperation({ summary: 'Set restaurant operating mode (Super Admin only via /super-admin route)' })
+  async setOperatingMode() {
+    throw new ForbiddenException({
+      errorCode: 'SUPER_ADMIN_ONLY',
+      userMessage: 'Operating mode can only be changed by Super Admin. Please contact support.',
+    });
   }
 
   // ─── Staff management ─────────────────────────────────────────────────────

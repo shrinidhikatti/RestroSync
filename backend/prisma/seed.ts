@@ -70,10 +70,10 @@ async function main() {
   console.log('Plans created.');
 
   // 2. Create Super Admin
-  const superAdminPassword = await bcrypt.hash('admin123', 10);
+  const superAdminPassword = await bcrypt.hash('Admin@123', 10);
   await prisma.user.upsert({
     where: { email: 'admin@restrosync.com' },
-    update: {},
+    update: { password: superAdminPassword },
     create: {
       name: 'Super Admin',
       email: 'admin@restrosync.com',
@@ -83,9 +83,76 @@ async function main() {
       branchId: null,
     },
   });
-  console.log('Super Admin created: admin@restrosync.com / admin123');
+  console.log('Super Admin created: admin@restrosync.com / Admin@123');
 
-  // 3. Create Menu Templates
+  // 3. Create 3 Demo Restaurants (one per operating mode)
+  const demoPassword = await bcrypt.hash('Demo@123', 10);
+
+  const demoRestaurants = [
+    {
+      name: 'QuickBite Counter',
+      email: 'counter@demo.com',
+      phone: '9000000001',
+      city: 'Delhi',
+      address: '10 Counter Lane, Delhi',
+      mode: 'COUNTER' as const,
+      ownerName: 'Raj Sharma',
+    },
+    {
+      name: 'The Table House',
+      email: 'table@demo.com',
+      phone: '9000000002',
+      city: 'Pune',
+      address: '22 Table Street, Pune',
+      mode: 'TABLE_SIMPLE' as const,
+      ownerName: 'Priya Patel',
+    },
+    {
+      name: 'Grand Feast',
+      email: 'fullservice@demo.com',
+      phone: '9000000003',
+      city: 'Mumbai',
+      address: '5 Service Road, Mumbai',
+      mode: 'FULL_SERVICE' as const,
+      ownerName: 'Arjun Mehta',
+    },
+  ];
+
+  for (const demo of demoRestaurants) {
+    const existing = await prisma.restaurant.findFirst({ where: { email: demo.email } });
+    if (!existing) {
+      const restaurant = await prisma.restaurant.create({
+        data: {
+          name: demo.name,
+          email: demo.email,
+          phone: demo.phone,
+          city: demo.city,
+          address: demo.address,
+          planId: proPlan.id,
+          operatingMode: demo.mode,
+        },
+      });
+      await prisma.branch.create({
+        data: { restaurantId: restaurant.id, name: 'Main Branch', address: demo.address },
+      });
+      await prisma.user.create({
+        data: {
+          restaurantId: restaurant.id,
+          name: demo.ownerName,
+          email: demo.email,
+          phone: demo.phone,
+          password: demoPassword,
+          role: 'OWNER',
+        },
+      });
+      await prisma.onboardingProgress.create({ data: { restaurantId: restaurant.id } });
+      console.log(`Demo [${demo.mode}]: ${demo.email} / Demo@123`);
+    } else {
+      console.log(`Demo [${demo.mode}] already exists, skipping.`);
+    }
+  }
+
+  // 4. Create Menu Templates
   const templates = [
     {
       id: 'tmpl-south-indian',
@@ -376,7 +443,7 @@ async function main() {
   }
   console.log('Menu templates created (6 cuisines).');
 
-  // 4. Create global permissions (null restaurantId = system-wide definitions)
+  // 5. Create global permissions (null restaurantId = system-wide definitions)
   const systemPermissions = [
     { code: 'menu:view', name: 'View Menu' },
     { code: 'menu:edit', name: 'Edit Menu' },

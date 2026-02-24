@@ -134,22 +134,23 @@ export default function StockPage() {
   ];
 
   return (
-    <div className="p-6">
+    <div className="p-6 max-w-7xl mx-auto">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">Stock Management</h1>
+          <h1 className="text-2xl font-bold font-display text-slate-900">Stock Management</h1>
           <p className="text-sm text-slate-500 mt-1">Track inventory levels and movements</p>
         </div>
         <div className="flex gap-2">
           <button
             onClick={() => { setStockOutForm({ ingredientId: '', quantity: '', type: 'WASTAGE', reason: '' }); setShowStockOutModal(true); }}
-            className="border border-slate-200 text-slate-600 font-semibold px-4 py-2 rounded-xl text-sm"
+            className="bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 font-semibold px-4 py-2 rounded-xl text-sm transition-colors"
           >
             Stock Out / Wastage
           </button>
           <button
             onClick={() => { setStockInForm({ ingredientId: '', quantity: '', costPerUnit: '', batchNumber: '', purchaseDate: new Date().toISOString().split('T')[0], expiryDate: '' }); setShowStockInModal(true); }}
-            className="bg-amber-500 hover:bg-amber-600 text-black font-semibold px-4 py-2 rounded-xl text-sm"
+            className="font-semibold px-4 py-2 rounded-xl text-sm text-slate-900 hover:brightness-95 transition-colors"
+            style={{ background: 'var(--accent)' }}
           >
             + Stock In
           </button>
@@ -186,12 +187,12 @@ export default function StockPage() {
         <>
           {/* Stock Levels */}
           {tab === 'levels' && (
-            <div className="bg-white rounded-2xl border border-slate-100 overflow-hidden">
+            <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
               <table className="w-full text-sm">
                 <thead className="bg-slate-50 border-b border-slate-100">
                   <tr>
                     {['Ingredient', 'Current Stock', 'Min Level', 'Status'].map((h) => (
-                      <th key={h} className="text-left px-4 py-3 font-semibold text-slate-600 text-xs uppercase tracking-wide">{h}</th>
+                      <th key={h} className="text-left px-4 py-3 text-xs font-semibold text-slate-400 font-display uppercase tracking-wide">{h}</th>
                     ))}
                   </tr>
                 </thead>
@@ -218,7 +219,7 @@ export default function StockPage() {
                           {isLow ? (
                             <span className="bg-red-50 text-red-600 border border-red-200 px-2 py-0.5 rounded-full text-xs font-semibold">Low Stock</span>
                           ) : (
-                            <span className="bg-green-50 text-green-700 border border-green-200 px-2 py-0.5 rounded-full text-xs font-semibold">OK</span>
+                            <span className="bg-emerald-50 text-emerald-700 border border-emerald-200 px-2 py-0.5 rounded-full text-xs font-semibold">OK</span>
                           )}
                         </td>
                       </tr>
@@ -240,7 +241,7 @@ export default function StockPage() {
               ) : (
                 <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
                   {lowStockAlerts.map((s) => (
-                    <div key={s.id} className="bg-white rounded-2xl border border-red-200 p-5">
+                    <div key={s.id} className="bg-white rounded-2xl border border-red-100 shadow-sm p-5">
                       <div className="flex items-start justify-between mb-2">
                         <h3 className="font-semibold text-slate-800">{s.ingredient.name}</h3>
                         <span className="bg-red-50 text-red-600 text-xs font-semibold px-2 py-0.5 rounded-full border border-red-200">LOW</span>
@@ -267,12 +268,12 @@ export default function StockPage() {
                   No batches expiring within 7 days
                 </div>
               ) : (
-                <div className="bg-white rounded-2xl border border-slate-100 overflow-hidden">
+                <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
                   <table className="w-full text-sm">
                     <thead className="bg-slate-50 border-b border-slate-100">
                       <tr>
                         {['Ingredient', 'Batch', 'Expiry Date', 'Remaining Qty', ''].map((h) => (
-                          <th key={h} className="text-left px-4 py-3 font-semibold text-slate-600 text-xs uppercase tracking-wide">{h}</th>
+                          <th key={h} className="text-left px-4 py-3 text-xs font-semibold text-slate-400 font-display uppercase tracking-wide">{h}</th>
                         ))}
                       </tr>
                     </thead>
@@ -284,7 +285,7 @@ export default function StockPage() {
                         const isExpired = daysLeft <= 0;
                         return (
                           <tr key={b.id} className="hover:bg-slate-50">
-                            <td className="px-4 py-3 font-medium">{b.ingredient?.name ?? '—'}</td>
+                            <td className="px-4 py-3 font-medium text-slate-800">{b.ingredient?.name ?? '—'}</td>
                             <td className="px-4 py-3 text-slate-500">{b.batchNumber ?? 'No batch #'}</td>
                             <td className="px-4 py-3">
                               <span className={`font-semibold ${isExpired ? 'text-red-600' : 'text-amber-600'}`}>
@@ -294,7 +295,7 @@ export default function StockPage() {
                                 </span>
                               </span>
                             </td>
-                            <td className="px-4 py-3">{Number(b.quantityRemaining).toFixed(2)} {b.ingredient?.unit}</td>
+                            <td className="px-4 py-3 text-slate-700">{Number(b.quantityRemaining).toFixed(2)} {b.ingredient?.unit}</td>
                             <td className="px-4 py-3 text-right">
                               <button
                                 onClick={() => handleWriteOff(b.id)}
@@ -315,12 +316,12 @@ export default function StockPage() {
 
           {/* Transactions */}
           {tab === 'transactions' && (
-            <div className="bg-white rounded-2xl border border-slate-100 overflow-hidden">
+            <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
               <table className="w-full text-sm">
                 <thead className="bg-slate-50 border-b border-slate-100">
                   <tr>
                     {['Ingredient', 'Type', 'Qty', 'Reason', 'Time'].map((h) => (
-                      <th key={h} className="text-left px-4 py-3 font-semibold text-slate-600 text-xs uppercase tracking-wide">{h}</th>
+                      <th key={h} className="text-left px-4 py-3 text-xs font-semibold text-slate-400 font-display uppercase tracking-wide">{h}</th>
                     ))}
                   </tr>
                 </thead>
@@ -329,10 +330,10 @@ export default function StockPage() {
                     <tr><td colSpan={5} className="text-center py-12 text-slate-400">No transactions yet</td></tr>
                   ) : transactions.map((t: any) => (
                     <tr key={t.id} className="hover:bg-slate-50">
-                      <td className="px-4 py-3 font-medium">{t.ingredientId}</td>
+                      <td className="px-4 py-3 font-medium text-slate-800">{t.ingredientId}</td>
                       <td className="px-4 py-3">
                         <span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${
-                          t.type === 'PURCHASE'    ? 'bg-green-50 text-green-700' :
+                          t.type === 'PURCHASE'    ? 'bg-emerald-50 text-emerald-700' :
                           t.type === 'CONSUMPTION' ? 'bg-blue-50 text-blue-700'  :
                           t.type === 'WASTAGE'     ? 'bg-red-50 text-red-700'    :
                           'bg-slate-100 text-slate-600'
@@ -340,7 +341,7 @@ export default function StockPage() {
                           {t.type}
                         </span>
                       </td>
-                      <td className="px-4 py-3">{Number(t.quantity).toFixed(3)}</td>
+                      <td className="px-4 py-3 text-slate-700">{Number(t.quantity).toFixed(3)}</td>
                       <td className="px-4 py-3 text-slate-500 truncate max-w-xs">{t.reason ?? '—'}</td>
                       <td className="px-4 py-3 text-slate-400 text-xs">
                         {new Date(t.createdAt).toLocaleString()}
@@ -357,15 +358,15 @@ export default function StockPage() {
       {/* Stock-In Modal */}
       {showStockInModal && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl shadow-xl w-full max-w-md p-6">
-            <h2 className="text-lg font-bold mb-4">Add Stock (Purchase)</h2>
+          <div className="bg-white rounded-2xl border border-slate-200 shadow-2xl w-full max-w-md p-6">
+            <h2 className="text-lg font-bold font-display text-slate-900 mb-4">Add Stock (Purchase)</h2>
             <div className="space-y-3">
               <div>
-                <label className="label">Ingredient *</label>
+                <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1.5">Ingredient *</label>
                 <select
                   value={stockInForm.ingredientId}
                   onChange={(e) => setStockInForm({ ...stockInForm, ingredientId: e.target.value })}
-                  className="input"
+                  className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-400"
                 >
                   <option value="">Select ingredient</option>
                   {ingredients.map((i) => (
@@ -375,42 +376,42 @@ export default function StockPage() {
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="label">Quantity *</label>
+                  <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1.5">Quantity *</label>
                   <input type="number" min="0.001" step="0.001" value={stockInForm.quantity}
                     onChange={(e) => setStockInForm({ ...stockInForm, quantity: e.target.value })}
-                    className="input" placeholder="0.000" />
+                    className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-400" placeholder="0.000" />
                 </div>
                 <div>
-                  <label className="label">Cost / Unit (₹) *</label>
+                  <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1.5">Cost / Unit (₹) *</label>
                   <input type="number" min="0" step="0.01" value={stockInForm.costPerUnit}
                     onChange={(e) => setStockInForm({ ...stockInForm, costPerUnit: e.target.value })}
-                    className="input" placeholder="0.00" />
+                    className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-400" placeholder="0.00" />
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="label">Purchase Date *</label>
+                  <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1.5">Purchase Date *</label>
                   <input type="date" value={stockInForm.purchaseDate}
                     onChange={(e) => setStockInForm({ ...stockInForm, purchaseDate: e.target.value })}
-                    className="input" />
+                    className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-400" />
                 </div>
                 <div>
-                  <label className="label">Expiry Date</label>
+                  <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1.5">Expiry Date</label>
                   <input type="date" value={stockInForm.expiryDate}
                     onChange={(e) => setStockInForm({ ...stockInForm, expiryDate: e.target.value })}
-                    className="input" />
+                    className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-400" />
                 </div>
               </div>
               <div>
-                <label className="label">Batch Number</label>
+                <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1.5">Batch Number</label>
                 <input type="text" value={stockInForm.batchNumber}
                   onChange={(e) => setStockInForm({ ...stockInForm, batchNumber: e.target.value })}
-                  className="input" placeholder="Optional" />
+                  className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-400" placeholder="Optional" />
               </div>
             </div>
             <div className="flex gap-3 mt-5">
-              <button onClick={() => setShowStockInModal(false)} className="flex-1 border border-slate-200 text-slate-600 rounded-xl py-2 text-sm font-semibold">Cancel</button>
-              <button onClick={handleStockIn} className="flex-1 bg-amber-500 hover:bg-amber-600 text-black rounded-xl py-2 text-sm font-semibold">Add Stock</button>
+              <button onClick={() => setShowStockInModal(false)} className="flex-1 bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 rounded-xl py-2 text-sm font-semibold transition-colors">Cancel</button>
+              <button onClick={handleStockIn} className="flex-1 text-slate-900 font-semibold rounded-xl py-2 text-sm hover:brightness-95 transition-colors" style={{ background: 'var(--accent)' }}>Add Stock</button>
             </div>
           </div>
         </div>
@@ -419,15 +420,15 @@ export default function StockPage() {
       {/* Stock-Out Modal */}
       {showStockOutModal && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl shadow-xl w-full max-w-md p-6">
-            <h2 className="text-lg font-bold mb-4">Stock Out / Wastage</h2>
+          <div className="bg-white rounded-2xl border border-slate-200 shadow-2xl w-full max-w-md p-6">
+            <h2 className="text-lg font-bold font-display text-slate-900 mb-4">Stock Out / Wastage</h2>
             <div className="space-y-3">
               <div>
-                <label className="label">Ingredient *</label>
+                <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1.5">Ingredient *</label>
                 <select
                   value={stockOutForm.ingredientId}
                   onChange={(e) => setStockOutForm({ ...stockOutForm, ingredientId: e.target.value })}
-                  className="input"
+                  className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-400"
                 >
                   <option value="">Select ingredient</option>
                   {ingredients.map((i) => (
@@ -437,17 +438,17 @@ export default function StockPage() {
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="label">Quantity *</label>
+                  <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1.5">Quantity *</label>
                   <input type="number" min="0.001" step="0.001" value={stockOutForm.quantity}
                     onChange={(e) => setStockOutForm({ ...stockOutForm, quantity: e.target.value })}
-                    className="input" placeholder="0.000" />
+                    className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-400" placeholder="0.000" />
                 </div>
                 <div>
-                  <label className="label">Type</label>
+                  <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1.5">Type</label>
                   <select
                     value={stockOutForm.type}
                     onChange={(e) => setStockOutForm({ ...stockOutForm, type: e.target.value })}
-                    className="input"
+                    className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-400"
                   >
                     <option value="WASTAGE">Wastage</option>
                     <option value="ADJUSTMENT">Adjustment</option>
@@ -455,15 +456,15 @@ export default function StockPage() {
                 </div>
               </div>
               <div>
-                <label className="label">Reason</label>
+                <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1.5">Reason</label>
                 <input type="text" value={stockOutForm.reason}
                   onChange={(e) => setStockOutForm({ ...stockOutForm, reason: e.target.value })}
-                  className="input" placeholder="e.g. Spoiled, Staff meal" />
+                  className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-400" placeholder="e.g. Spoiled, Staff meal" />
               </div>
             </div>
             <div className="flex gap-3 mt-5">
-              <button onClick={() => setShowStockOutModal(false)} className="flex-1 border border-slate-200 text-slate-600 rounded-xl py-2 text-sm font-semibold">Cancel</button>
-              <button onClick={handleStockOut} className="flex-1 bg-red-500 hover:bg-red-600 text-white rounded-xl py-2 text-sm font-semibold">Deduct Stock</button>
+              <button onClick={() => setShowStockOutModal(false)} className="flex-1 bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 rounded-xl py-2 text-sm font-semibold transition-colors">Cancel</button>
+              <button onClick={handleStockOut} className="flex-1 bg-red-500 hover:bg-red-600 text-white rounded-xl py-2 text-sm font-semibold transition-colors">Deduct Stock</button>
             </div>
           </div>
         </div>

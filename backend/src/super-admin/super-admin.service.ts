@@ -200,6 +200,36 @@ export class SuperAdminService {
     });
   }
 
+  async updateOperatingMode(restaurantId: string, mode: string) {
+    const restaurant = await this.prisma.restaurant.findUnique({ where: { id: restaurantId } });
+    if (!restaurant) throw new NotFoundException('Restaurant not found');
+
+    return this.prisma.restaurant.update({
+      where: { id: restaurantId },
+      data: { operatingMode: mode as any },
+      select: { id: true, name: true, operatingMode: true },
+    });
+  }
+
+  async updatePlan(restaurantId: string, planId: string) {
+    const [restaurant, plan] = await Promise.all([
+      this.prisma.restaurant.findUnique({ where: { id: restaurantId } }),
+      this.prisma.plan.findUnique({ where: { id: planId } }),
+    ]);
+    if (!restaurant) throw new NotFoundException('Restaurant not found');
+    if (!plan) throw new NotFoundException('Plan not found');
+
+    return this.prisma.restaurant.update({
+      where: { id: restaurantId },
+      data: { planId },
+      select: { id: true, name: true, planId: true, plan: { select: { name: true } } },
+    });
+  }
+
+  async listPlans() {
+    return this.prisma.plan.findMany({ orderBy: { priceMonthly: 'asc' } });
+  }
+
   async getPlatformStats() {
     const todayStart = new Date();
     todayStart.setHours(0, 0, 0, 0);

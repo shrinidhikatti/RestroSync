@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import api from '../../lib/axios';
 import { orderApi } from '../../lib/api';
 import { connectSocket, disconnectSocket } from '../../lib/socket';
@@ -97,14 +98,19 @@ function playBeep(priority: string = 'NORMAL') {
 function KotCardView({
   kot,
   onItemReady,
+  onItemUnready,
   onAllReady,
 }: {
   kot: KotCard;
   onItemReady: (itemId: string) => void;
+  onItemUnready: (itemId: string) => void;
   onAllReady: (orderId: string) => void;
 }) {
   const [elapsed, setElapsed] = useState(elapsedMinutes(kot.createdAt));
-  const [markedItems, setMarkedItems] = useState<Set<string>>(new Set());
+  // Initialise with server-side READY items so they appear checked from the start
+  const [readyItems, setReadyItems] = useState<Set<string>>(
+    () => new Set(kot.items.filter((i) => i.status === 'READY').map((i) => i.id))
+  );
 
   // Live elapsed timer
   useEffect(() => {
@@ -119,37 +125,61 @@ function KotCardView({
   const priority = kot.order.priority;
   const badge = PRIORITY_BADGE[priority];
 
-  const allMarked = kot.items.every((i) => markedItems.has(i.id) || i.status === 'READY');
+  const allMarked = kot.items.every((i) => readyItems.has(i.id));
 
-  const handleMarkItem = (item: KotItem) => {
-    setMarkedItems((prev) => {
+  // Toggle: mark READY or undo back to PREPARING
+  const handleToggleItem = (item: KotItem) => {
+    const isReady = readyItems.has(item.id);
+    setReadyItems((prev) => {
       const next = new Set(prev);
-      next.add(item.id);
+      isReady ? next.delete(item.id) : next.add(item.id);
       return next;
     });
-    onItemReady(item.id);
+    if (isReady) {
+      onItemUnready(item.id);
+    } else {
+      onItemReady(item.id);
+    }
   };
 
   const handleMarkAll = () => {
-    const newMarked = new Set(markedItems);
-    kot.items.forEach((i) => newMarked.add(i.id));
-    setMarkedItems(newMarked);
+    const newReady = new Set(readyItems);
+    kot.items.forEach((i) => newReady.add(i.id));
+    setReadyItems(newReady);
     onAllReady(kot.order.id);
   };
+
+  const isRunning = kot.roundNumber >= 2;
 
   return (
     <div
       className="rounded-2xl flex flex-col overflow-hidden"
       style={{
-        border: `2px solid ${borderColor}`,
-        background: bgColor,
+        border: `2px solid ${isRunning ? '#f97316' : borderColor}`,
+        background: isRunning ? 'rgba(249,115,22,0.08)' : bgColor,
         minHeight: 220,
+        boxShadow: isRunning ? '0 0 0 1px rgba(249,115,22,0.3), 0 4px 20px rgba(249,115,22,0.2)' : undefined,
       }}
     >
+      {/* Running order banner — full width strip */}
+      {isRunning && (
+        <div
+          className="flex items-center justify-between px-4 py-2 text-xs font-display font-bold tracking-wide"
+          style={{
+            background: 'linear-gradient(90deg, #ea580c, #f97316)',
+            color: '#fff',
+            animation: 'pulse 1.5s cubic-bezier(0.4,0,0.6,1) infinite',
+          }}
+        >
+          <span>🔄 RUNNING ORDER — TABLE ALREADY EATING</span>
+          <span className="opacity-80">Round {kot.roundNumber}</span>
+        </div>
+      )}
+
       {/* Header */}
       <div
         className="px-4 py-3 flex items-start justify-between gap-2"
-        style={{ borderBottom: `1px solid ${borderColor}22` }}
+        style={{ borderBottom: `1px solid ${isRunning ? '#f9731622' : borderColor + '22'}` }}
       >
         <div className="flex items-center gap-2 flex-wrap">
           {/* Order identifier */}
@@ -176,18 +206,12 @@ function KotCardView({
               {badge.label}
             </span>
           )}
-          {/* Round number */}
-          {kot.roundNumber > 1 && (
-            <span className="text-xs px-2 py-0.5 rounded-full bg-purple-900/60 text-purple-300 font-display">
-              Round {kot.roundNumber}
-            </span>
-          )}
         </div>
         {/* Elapsed time */}
         <div className="flex items-center gap-2 flex-shrink-0">
           <span
             className="text-sm font-display font-bold tabular-nums"
-            style={{ color: borderColor }}
+            style={{ color: isRunning ? '#f97316' : borderColor }}
           >
             {elapsed}m
           </span>
@@ -198,7 +222,9 @@ function KotCardView({
       <div className="px-4 pt-2 pb-1 flex items-center gap-3 text-xs text-slate-500">
         <span className="font-mono">{kot.kotNumber}</span>
         {kot.kitchenStation && (
-          <span className="px-2 py-0.5 bg-slate-800 rounded text-slate-400 font-display uppercase tracking-wide">
+          <span className={`px-2 py-0.5 rounded font-display uppercase tracking-wide ${
+            isRunning ? 'bg-orange-900/40 text-orange-400' : 'bg-slate-800 text-slate-400'
+          }`}>
             {kot.kitchenStation}
           </span>
         )}
@@ -214,14 +240,15 @@ function KotCardView({
       {/* Items */}
       <div className="flex-1 px-4 pb-3 space-y-2">
         {kot.items.map((item) => {
-          const itemDone = markedItems.has(item.id) || item.status === 'READY';
+          const isReady = readyItems.has(item.id);
           return (
             <div
               key={item.id}
               className="flex items-start justify-between gap-3 cursor-pointer group"
-              onClick={() => !itemDone && handleMarkItem(item)}
+              onClick={() => handleToggleItem(item)}
+              title={isReady ? 'Tap to undo (mark as not ready)' : 'Tap to mark as ready'}
             >
-              <div className={`flex-1 transition-opacity ${itemDone ? 'opacity-40 line-through' : ''}`}>
+              <div className={`flex-1 transition-opacity ${isReady ? 'opacity-40 line-through' : ''}`}>
                 <div className="flex items-baseline gap-2">
                   <span className="text-white font-display font-semibold text-base">
                     {item.quantity}×
@@ -248,19 +275,23 @@ function KotCardView({
                   </p>
                 )}
               </div>
-              {/* Done indicator */}
+              {/* Ready / undo indicator */}
               <div
                 className={`w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 border-2 transition-all mt-0.5 ${
-                  itemDone
-                    ? 'bg-emerald-500 border-emerald-500'
+                  isReady
+                    ? 'bg-emerald-500 border-emerald-500 group-hover:bg-amber-500 group-hover:border-amber-500'
                     : 'border-slate-600 group-hover:border-emerald-400'
                 }`}
               >
-                {itemDone && (
-                  <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
-                  </svg>
-                )}
+                {isReady ? (
+                  /* On hover shows ↩ undo hint, normally shows ✓ */
+                  <>
+                    <svg className="w-4 h-4 text-white group-hover:hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+                    </svg>
+                    <span className="hidden group-hover:block text-white text-xs font-bold">↩</span>
+                  </>
+                ) : null}
               </div>
             </div>
           );
@@ -272,10 +303,10 @@ function KotCardView({
         <div className="px-4 pb-4">
           <button
             onClick={handleMarkAll}
-            className="w-full py-2.5 rounded-xl text-sm font-display font-bold text-slate-900 transition-all hover:brightness-95 active:scale-95"
-            style={{ background: borderColor }}
+            className="w-full py-2.5 rounded-xl text-sm font-display font-bold text-white transition-all hover:brightness-110 active:scale-95"
+            style={{ background: isRunning ? '#ea580c' : borderColor, color: isRunning ? '#fff' : '#0a0a0f' }}
           >
-            Mark All Ready ✓
+            {isRunning ? '🔄 Mark All Ready — Send Now!' : 'Mark All Ready ✓'}
           </button>
         </div>
       )}
@@ -295,6 +326,7 @@ function KotCardView({
 
 export default function KitchenDisplay() {
   const { user } = useAuthStore();
+  const navigate = useNavigate();
   const [kots, setKots] = useState<KotCard[]>([]);
   const [loading, setLoading] = useState(true);
   const [connected, setConnected] = useState(false);
@@ -311,12 +343,16 @@ export default function KitchenDisplay() {
         params: stationFilter ? { station: stationFilter } : {},
       });
       const data: KotCard[] = res.data;
-      // Sort: VIP first, then RUSH, then NORMAL; within each group by createdAt ASC
+      // Sort: VIP → RUSH → Running (round≥2) → NORMAL; within group by createdAt ASC
       data.sort((a, b) => {
-        const priorityOrder: Record<string, number> = { VIP: 0, RUSH: 1, NORMAL: 2 };
-        const pa = priorityOrder[a.order.priority] ?? 2;
-        const pb = priorityOrder[b.order.priority] ?? 2;
-        if (pa !== pb) return pa - pb;
+        const rank = (k: KotCard) => {
+          if (k.order.priority === 'VIP')  return 0;
+          if (k.order.priority === 'RUSH') return 1;
+          if (k.roundNumber >= 2)          return 2;   // running orders bubble up
+          return 3;
+        };
+        const ra = rank(a), rb = rank(b);
+        if (ra !== rb) return ra - rb;
         return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
       });
       setKots(data);
@@ -381,6 +417,12 @@ export default function KitchenDisplay() {
     } catch { }
   };
 
+  const handleItemUnready = async (itemId: string) => {
+    try {
+      await api.patch(`/order-items/${itemId}/status`, { status: 'PREPARING' });
+    } catch { }
+  };
+
   const handleAllReady = async (orderId: string) => {
     try {
       const order = await orderApi.getOne(orderId);
@@ -425,6 +467,19 @@ export default function KitchenDisplay() {
         style={{ background: '#111118', borderBottom: '1px solid #1e1e2e' }}
       >
         <div className="flex items-center gap-4">
+          {/* Back button */}
+          <button
+            onClick={() => navigate('/')}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-slate-400 hover:text-white transition-colors"
+            style={{ background: '#1e1e2e' }}
+            title="Back to Dashboard"
+          >
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+            </svg>
+            <span className="text-xs font-display font-medium">Back</span>
+          </button>
+
           {/* Brand */}
           <div className="flex items-center gap-2">
             <div
@@ -539,6 +594,7 @@ export default function KitchenDisplay() {
                 key={kot.id}
                 kot={kot}
                 onItemReady={handleItemReady}
+                onItemUnready={handleItemUnready}
                 onAllReady={handleAllReady}
               />
             ))}
@@ -555,6 +611,7 @@ export default function KitchenDisplay() {
           { color: '#3b82f6', label: '< 8 min (Fresh)' },
           { color: '#f59e0b', label: '8–15 min (In progress)' },
           { color: '#ef4444', label: '> 15 min (Delayed)' },
+          { color: '#f97316', label: 'Running order (table already eating)' },
         ].map(({ color, label }) => (
           <div key={label} className="flex items-center gap-2">
             <div className="w-3 h-3 rounded-full" style={{ background: color }} />
@@ -562,7 +619,7 @@ export default function KitchenDisplay() {
           </div>
         ))}
         <div className="ml-auto text-xs text-slate-600">
-          Click items to mark as ready · Tap card to mark all
+          Tap item to mark ready · Tap again to undo · "Mark All" to complete KOT
         </div>
       </div>
     </div>

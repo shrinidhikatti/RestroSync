@@ -14,9 +14,9 @@ interface PurchaseOrder {
 
 const STATUS_COLORS: Record<string, string> = {
   DRAFT:     'bg-slate-100 text-slate-600',
-  SENT:      'bg-blue-50 text-blue-700 border-blue-200',
-  RECEIVED:  'bg-green-50 text-green-700 border-green-200',
-  CANCELLED: 'bg-red-50 text-red-600 border-red-200',
+  SENT:      'bg-blue-50 text-blue-700 border border-blue-200',
+  RECEIVED:  'bg-emerald-50 text-emerald-700 border border-emerald-200',
+  CANCELLED: 'bg-red-50 text-red-600 border border-red-200',
 };
 
 export default function PurchaseOrdersPage() {
@@ -136,15 +136,16 @@ export default function PurchaseOrdersPage() {
   };
 
   return (
-    <div className="p-6">
+    <div className="p-6 max-w-5xl mx-auto">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">Purchase Orders</h1>
+          <h1 className="text-2xl font-bold font-display text-slate-900">Purchase Orders</h1>
           <p className="text-sm text-slate-500 mt-1">Track supplier orders and receive stock</p>
         </div>
         <button
           onClick={() => { setNewForm({ supplierId: '', totalAmount: '', notes: '' }); setShowNewModal(true); }}
-          className="bg-amber-500 hover:bg-amber-600 text-black font-semibold px-4 py-2 rounded-xl text-sm"
+          className="font-semibold px-4 py-2 rounded-xl text-sm text-slate-900 hover:brightness-95 transition-colors"
+          style={{ background: 'var(--accent)' }}
         >
           + New PO
         </button>
@@ -159,12 +160,12 @@ export default function PurchaseOrdersPage() {
           {orders.length === 0 ? (
             <div className="text-center py-16 text-slate-400">No purchase orders yet</div>
           ) : orders.map((po) => (
-            <div key={po.id} className="bg-white rounded-2xl border border-slate-100 p-5">
+            <div key={po.id} className="bg-white rounded-2xl border border-slate-100 shadow-sm p-5">
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div>
                   <div className="flex items-center gap-3 mb-1">
                     <span className="font-semibold text-slate-800">{po.supplier?.name ?? '—'}</span>
-                    <span className={`px-2 py-0.5 rounded-full text-xs font-semibold border ${STATUS_COLORS[po.status] ?? 'bg-slate-100 text-slate-600'}`}>
+                    <span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${STATUS_COLORS[po.status] ?? 'bg-slate-100 text-slate-600'}`}>
                       {po.status}
                     </span>
                   </div>
@@ -191,20 +192,20 @@ export default function PurchaseOrdersPage() {
                   {po.status === 'DRAFT' && (
                     <button
                       onClick={() => handleUpdateStatus(po.id, 'SENT')}
-                      className="text-xs border border-blue-200 text-blue-600 px-3 py-1.5 rounded-lg font-semibold"
+                      className="text-xs border border-blue-200 text-blue-600 hover:bg-blue-50 px-3 py-1.5 rounded-lg font-semibold transition-colors"
                     >
                       Mark as Sent
                     </button>
                   )}
                   <button
                     onClick={() => openReceiveModal(po)}
-                    className="text-xs bg-green-500 hover:bg-green-600 text-white px-3 py-1.5 rounded-lg font-semibold"
+                    className="text-xs bg-emerald-500 hover:bg-emerald-600 text-white px-3 py-1.5 rounded-lg font-semibold transition-colors"
                   >
-                    ✓ Receive & Add Stock
+                    Receive & Add Stock
                   </button>
                   <button
                     onClick={() => handleUpdateStatus(po.id, 'CANCELLED')}
-                    className="text-xs text-red-400 hover:text-red-600 px-3 py-1.5 font-semibold"
+                    className="text-xs text-red-400 hover:text-red-600 px-3 py-1.5 font-semibold transition-colors"
                   >
                     Cancel
                   </button>
@@ -218,34 +219,34 @@ export default function PurchaseOrdersPage() {
       {/* New PO Modal */}
       {showNewModal && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl shadow-xl w-full max-w-md p-6">
-            <h2 className="text-lg font-bold mb-4">New Purchase Order</h2>
+          <div className="bg-white rounded-2xl border border-slate-200 shadow-2xl w-full max-w-md p-6">
+            <h2 className="text-lg font-bold font-display text-slate-900 mb-4">New Purchase Order</h2>
             <div className="space-y-3">
               <div>
-                <label className="label">Supplier *</label>
+                <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1.5">Supplier *</label>
                 <select value={newForm.supplierId}
                   onChange={(e) => setNewForm({ ...newForm, supplierId: e.target.value })}
-                  className="input">
+                  className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-400">
                   <option value="">Select supplier</option>
                   {suppliers.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}
                 </select>
               </div>
               <div>
-                <label className="label">Estimated Amount (₹)</label>
+                <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1.5">Estimated Amount (₹)</label>
                 <input type="number" min="0" value={newForm.totalAmount}
                   onChange={(e) => setNewForm({ ...newForm, totalAmount: e.target.value })}
-                  className="input" placeholder="0.00" />
+                  className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-400" placeholder="0.00" />
               </div>
               <div>
-                <label className="label">Notes</label>
+                <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1.5">Notes</label>
                 <textarea value={newForm.notes}
                   onChange={(e) => setNewForm({ ...newForm, notes: e.target.value })}
-                  className="input resize-none" rows={2} placeholder="Items needed, special instructions..." />
+                  className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-400 resize-none" rows={2} placeholder="Items needed, special instructions..." />
               </div>
             </div>
             <div className="flex gap-3 mt-5">
-              <button onClick={() => setShowNewModal(false)} className="flex-1 border border-slate-200 text-slate-600 rounded-xl py-2 text-sm font-semibold">Cancel</button>
-              <button onClick={handleCreate} className="flex-1 bg-amber-500 hover:bg-amber-600 text-black rounded-xl py-2 text-sm font-semibold">Create PO</button>
+              <button onClick={() => setShowNewModal(false)} className="flex-1 bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 rounded-xl py-2 text-sm font-semibold transition-colors">Cancel</button>
+              <button onClick={handleCreate} className="flex-1 text-slate-900 font-semibold rounded-xl py-2 text-sm hover:brightness-95 transition-colors" style={{ background: 'var(--accent)' }}>Create PO</button>
             </div>
           </div>
         </div>
@@ -254,21 +255,21 @@ export default function PurchaseOrdersPage() {
       {/* Receive Modal */}
       {showReceiveModal && receivingPO && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4 overflow-y-auto">
-          <div className="bg-white rounded-2xl shadow-xl w-full max-w-2xl p-6 my-4">
-            <h2 className="text-lg font-bold mb-1">Receive Order</h2>
+          <div className="bg-white rounded-2xl border border-slate-200 shadow-2xl w-full max-w-2xl p-6 my-4">
+            <h2 className="text-lg font-bold font-display text-slate-900 mb-1">Receive Order</h2>
             <p className="text-sm text-slate-500 mb-4">
-              From: <strong>{receivingPO.supplier?.name}</strong> — Stock will be updated automatically
+              From: <strong className="text-slate-700">{receivingPO.supplier?.name}</strong> — Stock will be updated automatically
             </p>
 
             <div className="space-y-3">
               {receiveItems.map((row, i) => (
-                <div key={i} className="bg-slate-50 rounded-xl p-3 space-y-2">
+                <div key={i} className="bg-slate-50 border border-slate-100 rounded-xl p-3 space-y-2">
                   <div className="grid grid-cols-2 gap-2">
                     <div>
-                      <label className="label">Ingredient *</label>
+                      <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1.5">Ingredient *</label>
                       <select value={row.ingredientId}
                         onChange={(e) => updateReceiveRow(i, 'ingredientId', e.target.value)}
-                        className="input text-xs">
+                        className="w-full border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-400">
                         <option value="">Select</option>
                         {ingredients.map((ing: any) => (
                           <option key={ing.id} value={ing.id}>{ing.name} ({ing.unit})</option>
@@ -276,45 +277,45 @@ export default function PurchaseOrdersPage() {
                       </select>
                     </div>
                     <div>
-                      <label className="label">Batch #</label>
+                      <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1.5">Batch #</label>
                       <input type="text" value={row.batchNumber}
                         onChange={(e) => updateReceiveRow(i, 'batchNumber', e.target.value)}
-                        className="input text-xs" placeholder="Optional" />
+                        className="w-full border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-400" placeholder="Optional" />
                     </div>
                   </div>
                   <div className="grid grid-cols-3 gap-2">
                     <div>
-                      <label className="label">Quantity *</label>
+                      <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1.5">Quantity *</label>
                       <input type="number" min="0.001" step="0.001" value={row.quantity}
                         onChange={(e) => updateReceiveRow(i, 'quantity', e.target.value)}
-                        className="input text-xs" placeholder="0.000" />
+                        className="w-full border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-400" placeholder="0.000" />
                     </div>
                     <div>
-                      <label className="label">Cost/Unit (₹) *</label>
+                      <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1.5">Cost/Unit (₹) *</label>
                       <input type="number" min="0" step="0.01" value={row.costPerUnit}
                         onChange={(e) => updateReceiveRow(i, 'costPerUnit', e.target.value)}
-                        className="input text-xs" placeholder="0.00" />
+                        className="w-full border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-400" placeholder="0.00" />
                     </div>
                     <div>
-                      <label className="label">Expiry Date</label>
+                      <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1.5">Expiry Date</label>
                       <input type="date" value={row.expiryDate}
                         onChange={(e) => updateReceiveRow(i, 'expiryDate', e.target.value)}
-                        className="input text-xs" />
+                        className="w-full border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-400" />
                     </div>
                   </div>
                   {receiveItems.length > 1 && (
                     <button onClick={() => setReceiveItems(receiveItems.filter((_, idx) => idx !== i))}
-                      className="text-xs text-red-400 hover:text-red-600">Remove row</button>
+                      className="text-xs text-red-400 hover:text-red-600 transition-colors">Remove row</button>
                   )}
                 </div>
               ))}
               <button onClick={addReceiveRow}
-                className="text-sm text-amber-600 font-semibold">+ Add Item</button>
+                className="text-sm text-amber-600 font-semibold hover:text-amber-700 transition-colors">+ Add Item</button>
             </div>
 
             <div className="flex gap-3 mt-5">
-              <button onClick={() => setShowReceiveModal(false)} className="flex-1 border border-slate-200 text-slate-600 rounded-xl py-2 text-sm font-semibold">Cancel</button>
-              <button onClick={handleReceive} className="flex-1 bg-green-500 hover:bg-green-600 text-white rounded-xl py-2 text-sm font-semibold">
+              <button onClick={() => setShowReceiveModal(false)} className="flex-1 bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 rounded-xl py-2 text-sm font-semibold transition-colors">Cancel</button>
+              <button onClick={handleReceive} className="flex-1 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl py-2 text-sm font-semibold transition-colors">
                 Confirm Receipt & Update Stock
               </button>
             </div>
