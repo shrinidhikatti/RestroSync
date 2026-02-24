@@ -29,7 +29,7 @@ export default function ForgotPasswordPage() {
 
   if (sent) {
     return (
-      <div className="min-h-screen flex items-center justify-center p-8 bg-slate-50" style={{ fontFamily: "'DM Sans', sans-serif" }}>
+      <div className="min-h-screen flex items-center justify-center p-8 bg-slate-50" style={{ fontFamily: "'Inter', sans-serif" }}>
         <div className="w-full max-w-md">
           <div className="bg-white rounded-2xl p-8 shadow-sm border border-slate-100 text-center space-y-5">
             <div className="w-16 h-16 rounded-full bg-emerald-100 flex items-center justify-center mx-auto">
@@ -38,7 +38,7 @@ export default function ForgotPasswordPage() {
               </svg>
             </div>
             <div>
-              <h2 className="text-xl font-bold text-slate-900" style={{ fontFamily: "'Syne', sans-serif" }}>
+              <h2 className="text-xl font-bold text-slate-900" style={{ fontFamily: "'Inter', sans-serif" }}>
                 Check your email
               </h2>
               <p className="text-slate-500 text-sm mt-2">
@@ -53,7 +53,7 @@ export default function ForgotPasswordPage() {
                 <p className="text-xs font-mono text-amber-800 break-all">{devToken}</p>
                 <Link
                   to={`/reset-password?token=${devToken}`}
-                  className="mt-2 inline-block text-xs font-semibold text-amber-600 hover:text-amber-700"
+                  className="mt-2 inline-block text-xs font-semibold text-red-600 hover:text-red-700"
                 >
                   → Click here to reset password
                 </Link>
@@ -63,7 +63,7 @@ export default function ForgotPasswordPage() {
             <Link
               to="/login"
               className="inline-block w-full py-3 rounded-xl font-bold text-slate-900 text-sm text-center transition-all"
-              style={{ background: '#f59e0b' }}
+              style={{ background: '#ef4444' }}
             >
               Back to Login
             </Link>
@@ -74,16 +74,16 @@ export default function ForgotPasswordPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-8 bg-slate-50" style={{ fontFamily: "'DM Sans', sans-serif" }}>
+    <div className="min-h-screen flex items-center justify-center p-8 bg-slate-50" style={{ fontFamily: "'Inter', sans-serif" }}>
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <div
             className="w-12 h-12 rounded-2xl flex items-center justify-center font-bold text-slate-900 text-lg mx-auto mb-4"
-            style={{ background: '#f59e0b', fontFamily: "'Syne', sans-serif" }}
+            style={{ background: '#ef4444', fontFamily: "'Inter', sans-serif" }}
           >
             RS
           </div>
-          <h1 className="text-2xl font-bold text-slate-900" style={{ fontFamily: "'Syne', sans-serif" }}>
+          <h1 className="text-2xl font-bold text-slate-900" style={{ fontFamily: "'Inter', sans-serif" }}>
             Forgot your password?
           </h1>
           <p className="text-slate-500 text-sm mt-2">
@@ -101,7 +101,7 @@ export default function ForgotPasswordPage() {
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 placeholder="you@restaurant.com"
-                className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 placeholder-slate-400"
+                className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-red-500 placeholder-slate-400"
               />
             </div>
 
@@ -115,7 +115,7 @@ export default function ForgotPasswordPage() {
               type="submit"
               disabled={loading}
               className="w-full py-3 rounded-xl font-bold text-slate-900 transition-all disabled:opacity-60"
-              style={{ background: '#f59e0b', fontFamily: "'Syne', sans-serif" }}
+              style={{ background: '#ef4444', fontFamily: "'Inter', sans-serif" }}
             >
               {loading ? 'Sending...' : 'Send Reset Link'}
             </button>
@@ -123,7 +123,7 @@ export default function ForgotPasswordPage() {
 
           <p className="text-center text-sm text-slate-500 mt-6">
             Remember your password?{' '}
-            <Link to="/login" className="font-semibold text-amber-600 hover:text-amber-700">
+            <Link to="/login" className="font-semibold text-red-600 hover:text-red-700">
               Sign in
             </Link>
           </p>

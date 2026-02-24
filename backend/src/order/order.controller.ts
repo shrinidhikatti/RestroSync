@@ -32,7 +32,7 @@ export class OrderController {
 
   @Post('orders')
   createOrder(@CurrentUser() user: JwtPayload, @Body() dto: CreateOrderDto) {
-    return this.orderService.createOrder(user.branchId!, user.userId, user.restaurantId!, dto);
+    return this.orderService.createOrder(user.branchId!, user.userId, user.name, user.restaurantId!, dto);
   }
 
   @Get('orders')
@@ -61,6 +61,29 @@ export class OrderController {
   @Patch('orders/:id/cancel')
   cancelOrder(@CurrentUser() user: JwtPayload, @Param('id') id: string, @Body() dto: CancelOrderDto) {
     return this.orderService.cancelOrder(id, user.branchId!, user.userId, dto);
+  }
+
+  // ─── Shift Handover ───────────────────────────────────────────────────────────
+
+  // GET /orders/handover/my-orders — active orders owned by current captain
+  @Get('orders/handover/my-orders')
+  getMyCaptainOrders(@CurrentUser() user: JwtPayload) {
+    return this.orderService.getCaptainActiveOrders(user.userId, user.branchId!);
+  }
+
+  // POST /orders/handover/reassign — bulk-reassign to another captain
+  @Post('orders/handover/reassign')
+  reassignOrders(
+    @CurrentUser() user: JwtPayload,
+    @Body() body: { toCaptainId: string; orderIds?: string[] },
+  ) {
+    return this.orderService.reassignOrders(user.userId, body.toCaptainId, user.branchId!, body.orderIds);
+  }
+
+  // GET /orders/handover/active-captains — who has active orders right now
+  @Get('orders/handover/active-captains')
+  getActiveCaptains(@CurrentUser() user: JwtPayload) {
+    return this.orderService.getActiveCaptains(user.branchId!);
   }
 
   // ─── Order Items ──────────────────────────────────────────────────────────────

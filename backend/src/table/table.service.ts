@@ -32,6 +32,8 @@ export class TableService {
             status: true,
             orderType: true,
             createdAt: true,
+            grandTotal: true,
+            captainName: true,
             _count: { select: { items: true } },
           },
           take: 1,
@@ -43,6 +45,7 @@ export class TableService {
           },
           orderBy: { reservationTime: 'asc' },
         },
+        mergedIntoTable: { select: { id: true, number: true } },
       },
     });
   }

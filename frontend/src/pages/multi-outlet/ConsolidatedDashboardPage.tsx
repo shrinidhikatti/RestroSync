@@ -72,7 +72,7 @@ export default function ConsolidatedDashboardPage() {
           {PRESETS.map((p, i) => (
             <button key={p.label} onClick={() => applyPreset(i)}
               className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors ${
-                preset === i ? 'bg-amber-500 text-white' : 'bg-white border border-slate-200 text-slate-600 hover:border-amber-300'
+                preset === i ? 'bg-red-500 text-white' : 'bg-white border border-slate-200 text-slate-600 hover:border-red-400'
               }`}>
               {p.label}
             </button>
@@ -83,7 +83,7 @@ export default function ConsolidatedDashboardPage() {
           <input type="date" className="input text-xs py-1.5 w-36" value={to}
             onChange={(e) => { setPreset(-1); setTo(e.target.value); }} />
           <button onClick={loadAll} disabled={loading}
-            className="px-4 py-1.5 bg-amber-500 hover:bg-amber-600 text-white text-xs font-semibold rounded-lg transition-colors disabled:opacity-50">
+            className="px-4 py-1.5 bg-red-500 hover:bg-red-600 text-white text-xs font-semibold rounded-lg transition-colors disabled:opacity-50">
             {loading ? 'Loading…' : 'Apply'}
           </button>
         </div>
@@ -101,12 +101,12 @@ export default function ConsolidatedDashboardPage() {
             { label: 'Tax',            value: fmt(overview.totals.tax) },
           ].map((k) => (
             <div key={k.label} className={`rounded-2xl p-5 border ${
-              k.accent ? 'bg-amber-50 border-amber-200' : 'bg-white border-slate-200'
+              k.accent ? 'bg-red-50 border-red-200' : 'bg-white border-slate-200'
             }`}>
-              <p className={`text-xs font-semibold uppercase tracking-wide mb-1 ${k.accent ? 'text-amber-600' : 'text-slate-500'}`}>
+              <p className={`text-xs font-semibold uppercase tracking-wide mb-1 ${k.accent ? 'text-red-600' : 'text-slate-500'}`}>
                 {k.label}
               </p>
-              <p className={`text-2xl font-bold font-display ${k.accent ? 'text-amber-700' : 'text-slate-800'}`}>
+              <p className={`text-2xl font-bold font-display ${k.accent ? 'text-red-700' : 'text-slate-800'}`}>
                 {k.value}
               </p>
             </div>
@@ -121,7 +121,7 @@ export default function ConsolidatedDashboardPage() {
             <h2 className="text-sm font-semibold text-slate-700">Branch Performance</h2>
             {overview.topBranch && (
               <p className="text-xs text-slate-400 mt-0.5">
-                Top branch: <span className="font-semibold text-amber-600">{overview.topBranch}</span>
+                Top branch: <span className="font-semibold text-red-600">{overview.topBranch}</span>
               </p>
             )}
           </div>

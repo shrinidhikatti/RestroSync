@@ -109,7 +109,7 @@ export default function StaffAttendancePage() {
             key={t}
             onClick={() => setTab(t)}
             className={`px-5 py-2 text-sm font-semibold capitalize transition-colors ${
-              tab === t ? 'bg-amber-500 text-white' : 'bg-white text-slate-600 hover:bg-slate-50'
+              tab === t ? 'bg-red-500 text-white' : 'bg-white text-slate-600 hover:bg-slate-50'
             }`}
           >
             {t === 'on-duty' ? `On Duty (${onDuty.length})` : t === 'records' ? 'Records' : 'Summary'}
@@ -183,7 +183,7 @@ export default function StaffAttendancePage() {
             <div className="flex justify-center py-12">
               <div className="flex gap-2">
                 {[0,1,2].map((i) => (
-                  <div key={i} className="w-2 h-2 rounded-full bg-amber-400 animate-bounce"
+                  <div key={i} className="w-2 h-2 rounded-full bg-red-500 animate-bounce"
                     style={{ animationDelay: `${i * 120}ms` }} />
                 ))}
               </div>
@@ -235,7 +235,7 @@ export default function StaffAttendancePage() {
             <div className="flex justify-center py-12">
               <div className="flex gap-2">
                 {[0,1,2].map((i) => (
-                  <div key={i} className="w-2 h-2 rounded-full bg-amber-400 animate-bounce"
+                  <div key={i} className="w-2 h-2 rounded-full bg-red-500 animate-bounce"
                     style={{ animationDelay: `${i * 120}ms` }} />
                 ))}
               </div>
@@ -282,11 +282,11 @@ export default function StaffAttendancePage() {
           <p className="text-sm text-slate-500">Page {meta.page} of {meta.pages}</p>
           <div className="flex gap-2">
             <button disabled={page <= 1} onClick={() => setPage((p) => p - 1)}
-              className="px-4 py-2 text-sm rounded-xl border border-slate-200 disabled:opacity-40 hover:border-amber-300 transition-colors">
+              className="px-4 py-2 text-sm rounded-xl border border-slate-200 disabled:opacity-40 hover:border-red-400 transition-colors">
               ← Prev
             </button>
             <button disabled={page >= meta.pages} onClick={() => setPage((p) => p + 1)}
-              className="px-4 py-2 text-sm rounded-xl border border-slate-200 disabled:opacity-40 hover:border-amber-300 transition-colors">
+              className="px-4 py-2 text-sm rounded-xl border border-slate-200 disabled:opacity-40 hover:border-red-400 transition-colors">
               Next →
             </button>
           </div>

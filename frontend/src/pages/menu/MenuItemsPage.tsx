@@ -87,7 +87,7 @@ export default function MenuItemsPage() {
         </div>
         <Link
           to="/menu/items/new"
-          className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold font-display text-slate-900 hover:brightness-95 transition-all"
+          className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold font-display text-white hover:brightness-95 transition-all"
           style={{ background: 'var(--accent)' }}
         >
           <PlusIcon className="w-4 h-4" /> Add Item
@@ -103,13 +103,13 @@ export default function MenuItemsPage() {
             placeholder="Search items..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 bg-white"
+            className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-red-500 bg-white"
           />
         </div>
         <select
           value={filterCategory}
           onChange={(e) => setFilterCategory(e.target.value)}
-          className="px-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 bg-white text-slate-700 font-display"
+          className="px-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-red-500 bg-white text-slate-700 font-display"
         >
           <option value="">All Categories</option>
           {categories.map((c) => (

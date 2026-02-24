@@ -102,7 +102,7 @@ export default function DiscountsPage() {
     setDiscounts((prev) => prev.map((x) => x.id === d.id ? { ...x, isActive: !d.isActive } : x));
   };
 
-  const inputClass = "w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 bg-white";
+  const inputClass = "w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-red-500 bg-white";
 
   const isExpired = (d: Discount) => d.endDate ? new Date(d.endDate) < new Date() : false;
 
@@ -115,7 +115,7 @@ export default function DiscountsPage() {
         </div>
         <button
           onClick={openCreate}
-          className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold font-display text-slate-900 hover:brightness-95"
+          className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold font-display text-white hover:brightness-95"
           style={{ background: 'var(--accent)' }}
         >
           <PlusIcon className="w-4 h-4" /> Create Discount
@@ -130,7 +130,7 @@ export default function DiscountsPage() {
         <div className="text-center py-20 bg-white rounded-2xl border border-slate-100 text-slate-400">
           <TagIcon className="w-12 h-12 mx-auto mb-3 opacity-30" />
           <p className="font-display text-sm">No discounts yet</p>
-          <button onClick={openCreate} className="mt-4 px-4 py-2 rounded-xl text-sm font-semibold font-display text-slate-900 hover:brightness-95" style={{ background: 'var(--accent)' }}>
+          <button onClick={openCreate} className="mt-4 px-4 py-2 rounded-xl text-sm font-semibold font-display text-white hover:brightness-95" style={{ background: 'var(--accent)' }}>
             Create your first discount
           </button>
         </div>
@@ -145,7 +145,7 @@ export default function DiscountsPage() {
                 style={{ animationDelay: `${i * 50}ms` }}
               >
                 <div
-                  className={`w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 ${d.isActive && !expired ? 'bg-amber-100 text-amber-600' : 'bg-slate-100 text-slate-400'}`}
+                  className={`w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 ${d.isActive && !expired ? 'bg-red-100 text-red-600' : 'bg-slate-100 text-slate-400'}`}
                 >
                   <TagIcon className="w-5 h-5" />
                 </div>
@@ -197,7 +197,7 @@ export default function DiscountsPage() {
         footer={
           <>
             <button onClick={() => setShowDrawer(false)} className="px-4 py-2 rounded-xl text-sm font-medium text-slate-600 bg-slate-100 hover:bg-slate-200">Cancel</button>
-            <button onClick={handleSave} disabled={saving || !form.name || !form.value} className="px-5 py-2 rounded-xl text-sm font-semibold text-slate-900 disabled:opacity-60 hover:brightness-95" style={{ background: 'var(--accent)' }}>
+            <button onClick={handleSave} disabled={saving || !form.name || !form.value} className="px-5 py-2 rounded-xl text-sm font-semibold text-white disabled:opacity-60 hover:brightness-95" style={{ background: 'var(--accent)' }}>
               {saving ? 'Saving...' : editTarget ? 'Update' : 'Create'}
             </button>
           </>

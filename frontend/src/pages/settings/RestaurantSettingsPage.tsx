@@ -70,7 +70,7 @@ export default function RestaurantSettingsPage() {
     }
   };
 
-  const inputClass = "w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 bg-white";
+  const inputClass = "w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-red-500 bg-white";
   const sectionCard = "bg-white rounded-2xl border border-slate-100 shadow-sm p-6";
 
   if (loading) return <div className="p-6"><div className="skeleton h-96 rounded-2xl" /></div>;
@@ -92,7 +92,7 @@ export default function RestaurantSettingsPage() {
             </div>
             <div>
               <p className="font-display font-semibold text-slate-800">Restaurant Logo</p>
-              <button type="button" className="text-sm text-amber-600 hover:underline font-display mt-0.5">Upload image</button>
+              <button type="button" className="text-sm text-red-600 hover:underline font-display mt-0.5">Upload image</button>
             </div>
           </div>
 
@@ -135,7 +135,7 @@ export default function RestaurantSettingsPage() {
             </div>
           </div>
           {!form.fssaiNumber && (
-            <div className="mt-3 p-3 bg-amber-50 border border-amber-100 rounded-xl text-amber-700 text-sm flex items-center gap-2">
+            <div className="mt-3 p-3 bg-amber-50 border border-amber-100 rounded-xl text-red-700 text-sm flex items-center gap-2">
               <span>⚠️</span>
               <span>FSSAI number is required for compliance. Add it to remove this warning.</span>
             </div>
@@ -157,7 +157,7 @@ export default function RestaurantSettingsPage() {
                   key={mode.value}
                   className={`text-left p-4 rounded-2xl border-2 transition-all ${
                     active
-                      ? 'border-amber-400 bg-amber-50'
+                      ? 'border-red-500 bg-red-50'
                       : 'border-slate-100 bg-slate-50 opacity-50'
                   }`}
                 >
@@ -165,11 +165,11 @@ export default function RestaurantSettingsPage() {
                     <span className="text-2xl flex-shrink-0">{mode.emoji}</span>
                     <div className="flex-1">
                       <div className="flex items-center justify-between">
-                        <p className={`font-display font-semibold ${active ? 'text-amber-700' : 'text-slate-500'}`}>
+                        <p className={`font-display font-semibold ${active ? 'text-red-700' : 'text-slate-500'}`}>
                           {mode.label}
                         </p>
                         {active && (
-                          <div className="w-5 h-5 rounded-full bg-amber-500 flex items-center justify-center flex-shrink-0">
+                          <div className="w-5 h-5 rounded-full bg-red-500 flex items-center justify-center flex-shrink-0">
                             <CheckIcon className="w-3 h-3 text-white" />
                           </div>
                         )}
@@ -189,7 +189,7 @@ export default function RestaurantSettingsPage() {
               <p className="text-xs text-slate-400 mt-0.5">
                 Operating mode is set by our team based on your subscription plan.
                 To request a change, contact us at{' '}
-                <a href="mailto:support@restrosync.com" className="text-amber-600 hover:underline">support@restrosync.com</a>
+                <a href="mailto:support@restrosync.com" className="text-red-600 hover:underline">support@restrosync.com</a>
               </p>
             </div>
           </div>
@@ -206,7 +206,7 @@ export default function RestaurantSettingsPage() {
             <button
               type="submit"
               disabled={saving}
-              className="px-6 py-2.5 rounded-xl text-sm font-semibold font-display text-slate-900 hover:brightness-95 disabled:opacity-60 transition-all"
+              className="px-6 py-2.5 rounded-xl text-sm font-semibold font-display text-white hover:brightness-95 disabled:opacity-60 transition-all"
               style={{ background: 'var(--accent)' }}
             >
               {saving ? 'Saving...' : 'Save Changes'}

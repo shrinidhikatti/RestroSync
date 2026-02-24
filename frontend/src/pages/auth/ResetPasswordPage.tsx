@@ -40,7 +40,7 @@ export default function ResetPasswordPage() {
 
   if (success) {
     return (
-      <div className="min-h-screen flex items-center justify-center p-8 bg-slate-50" style={{ fontFamily: "'DM Sans', sans-serif" }}>
+      <div className="min-h-screen flex items-center justify-center p-8 bg-slate-50" style={{ fontFamily: "'Inter', sans-serif" }}>
         <div className="w-full max-w-md">
           <div className="bg-white rounded-2xl p-8 shadow-sm border border-slate-100 text-center space-y-5">
             <div className="w-16 h-16 rounded-full bg-emerald-100 flex items-center justify-center mx-auto">
@@ -49,14 +49,14 @@ export default function ResetPasswordPage() {
               </svg>
             </div>
             <div>
-              <h2 className="text-xl font-bold text-slate-900" style={{ fontFamily: "'Syne', sans-serif" }}>
+              <h2 className="text-xl font-bold text-slate-900" style={{ fontFamily: "'Inter', sans-serif" }}>
                 Password Reset!
               </h2>
               <p className="text-slate-500 text-sm mt-2">
                 Your password has been updated. Redirecting to login...
               </p>
             </div>
-            <Link to="/login" className="inline-block w-full py-3 rounded-xl font-bold text-slate-900 text-sm text-center" style={{ background: '#f59e0b' }}>
+            <Link to="/login" className="inline-block w-full py-3 rounded-xl font-bold text-slate-900 text-sm text-center" style={{ background: '#ef4444' }}>
               Go to Login
             </Link>
           </div>
@@ -66,16 +66,16 @@ export default function ResetPasswordPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-8 bg-slate-50" style={{ fontFamily: "'DM Sans', sans-serif" }}>
+    <div className="min-h-screen flex items-center justify-center p-8 bg-slate-50" style={{ fontFamily: "'Inter', sans-serif" }}>
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <div
             className="w-12 h-12 rounded-2xl flex items-center justify-center font-bold text-slate-900 text-lg mx-auto mb-4"
-            style={{ background: '#f59e0b', fontFamily: "'Syne', sans-serif" }}
+            style={{ background: '#ef4444', fontFamily: "'Inter', sans-serif" }}
           >
             RS
           </div>
-          <h1 className="text-2xl font-bold text-slate-900" style={{ fontFamily: "'Syne', sans-serif" }}>
+          <h1 className="text-2xl font-bold text-slate-900" style={{ fontFamily: "'Inter', sans-serif" }}>
             Set new password
           </h1>
           <p className="text-slate-500 text-sm mt-2">
@@ -93,7 +93,7 @@ export default function ResetPasswordPage() {
                 onChange={(e) => setForm((f) => ({ ...f, newPassword: e.target.value }))}
                 required
                 placeholder="Min. 6 characters"
-                className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 placeholder-slate-400"
+                className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-red-500 placeholder-slate-400"
               />
             </div>
             <div>
@@ -104,7 +104,7 @@ export default function ResetPasswordPage() {
                 onChange={(e) => setForm((f) => ({ ...f, confirmPassword: e.target.value }))}
                 required
                 placeholder="••••••••"
-                className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 placeholder-slate-400"
+                className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-red-500 placeholder-slate-400"
               />
             </div>
 
@@ -118,14 +118,14 @@ export default function ResetPasswordPage() {
               type="submit"
               disabled={loading || !token}
               className="w-full py-3 rounded-xl font-bold text-slate-900 transition-all disabled:opacity-60"
-              style={{ background: '#f59e0b', fontFamily: "'Syne', sans-serif" }}
+              style={{ background: '#ef4444', fontFamily: "'Inter', sans-serif" }}
             >
               {loading ? 'Resetting...' : 'Reset Password'}
             </button>
           </form>
 
           <p className="text-center text-sm text-slate-500 mt-6">
-            <Link to="/forgot-password" className="text-amber-600 hover:text-amber-700 font-semibold">
+            <Link to="/forgot-password" className="text-red-600 hover:text-red-700 font-semibold">
               Request a new link
             </Link>
             {' '} if this one has expired.

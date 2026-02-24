@@ -144,7 +144,7 @@ export default function PurchaseOrdersPage() {
         </div>
         <button
           onClick={() => { setNewForm({ supplierId: '', totalAmount: '', notes: '' }); setShowNewModal(true); }}
-          className="font-semibold px-4 py-2 rounded-xl text-sm text-slate-900 hover:brightness-95 transition-colors"
+          className="font-semibold px-4 py-2 rounded-xl text-sm text-white hover:brightness-95 transition-colors"
           style={{ background: 'var(--accent)' }}
         >
           + New PO
@@ -153,7 +153,7 @@ export default function PurchaseOrdersPage() {
 
       {loading ? (
         <div className="flex items-center justify-center h-40">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-amber-500" />
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-red-500" />
         </div>
       ) : (
         <div className="space-y-3">
@@ -226,7 +226,7 @@ export default function PurchaseOrdersPage() {
                 <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1.5">Supplier *</label>
                 <select value={newForm.supplierId}
                   onChange={(e) => setNewForm({ ...newForm, supplierId: e.target.value })}
-                  className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-400">
+                  className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-red-500">
                   <option value="">Select supplier</option>
                   {suppliers.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}
                 </select>
@@ -235,18 +235,18 @@ export default function PurchaseOrdersPage() {
                 <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1.5">Estimated Amount (₹)</label>
                 <input type="number" min="0" value={newForm.totalAmount}
                   onChange={(e) => setNewForm({ ...newForm, totalAmount: e.target.value })}
-                  className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-400" placeholder="0.00" />
+                  className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-red-500" placeholder="0.00" />
               </div>
               <div>
                 <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1.5">Notes</label>
                 <textarea value={newForm.notes}
                   onChange={(e) => setNewForm({ ...newForm, notes: e.target.value })}
-                  className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-400 resize-none" rows={2} placeholder="Items needed, special instructions..." />
+                  className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-red-500 resize-none" rows={2} placeholder="Items needed, special instructions..." />
               </div>
             </div>
             <div className="flex gap-3 mt-5">
               <button onClick={() => setShowNewModal(false)} className="flex-1 bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 rounded-xl py-2 text-sm font-semibold transition-colors">Cancel</button>
-              <button onClick={handleCreate} className="flex-1 text-slate-900 font-semibold rounded-xl py-2 text-sm hover:brightness-95 transition-colors" style={{ background: 'var(--accent)' }}>Create PO</button>
+              <button onClick={handleCreate} className="flex-1 text-white font-semibold rounded-xl py-2 text-sm hover:brightness-95 transition-colors" style={{ background: 'var(--accent)' }}>Create PO</button>
             </div>
           </div>
         </div>
@@ -269,7 +269,7 @@ export default function PurchaseOrdersPage() {
                       <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1.5">Ingredient *</label>
                       <select value={row.ingredientId}
                         onChange={(e) => updateReceiveRow(i, 'ingredientId', e.target.value)}
-                        className="w-full border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-400">
+                        className="w-full border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-red-500">
                         <option value="">Select</option>
                         {ingredients.map((ing: any) => (
                           <option key={ing.id} value={ing.id}>{ing.name} ({ing.unit})</option>
@@ -280,7 +280,7 @@ export default function PurchaseOrdersPage() {
                       <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1.5">Batch #</label>
                       <input type="text" value={row.batchNumber}
                         onChange={(e) => updateReceiveRow(i, 'batchNumber', e.target.value)}
-                        className="w-full border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-400" placeholder="Optional" />
+                        className="w-full border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-red-500" placeholder="Optional" />
                     </div>
                   </div>
                   <div className="grid grid-cols-3 gap-2">
@@ -288,19 +288,19 @@ export default function PurchaseOrdersPage() {
                       <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1.5">Quantity *</label>
                       <input type="number" min="0.001" step="0.001" value={row.quantity}
                         onChange={(e) => updateReceiveRow(i, 'quantity', e.target.value)}
-                        className="w-full border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-400" placeholder="0.000" />
+                        className="w-full border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-red-500" placeholder="0.000" />
                     </div>
                     <div>
                       <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1.5">Cost/Unit (₹) *</label>
                       <input type="number" min="0" step="0.01" value={row.costPerUnit}
                         onChange={(e) => updateReceiveRow(i, 'costPerUnit', e.target.value)}
-                        className="w-full border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-400" placeholder="0.00" />
+                        className="w-full border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-red-500" placeholder="0.00" />
                     </div>
                     <div>
                       <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1.5">Expiry Date</label>
                       <input type="date" value={row.expiryDate}
                         onChange={(e) => updateReceiveRow(i, 'expiryDate', e.target.value)}
-                        className="w-full border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-400" />
+                        className="w-full border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-red-500" />
                     </div>
                   </div>
                   {receiveItems.length > 1 && (
@@ -310,7 +310,7 @@ export default function PurchaseOrdersPage() {
                 </div>
               ))}
               <button onClick={addReceiveRow}
-                className="text-sm text-amber-600 font-semibold hover:text-amber-700 transition-colors">+ Add Item</button>
+                className="text-sm text-red-600 font-semibold hover:text-red-700 transition-colors">+ Add Item</button>
             </div>
 
             <div className="flex gap-3 mt-5">

@@ -126,6 +126,7 @@ enum TableStatus {
   OCCUPIED
   RESERVED
   BILLING
+  MERGED
 }
 
 enum ChargeType {
@@ -217,6 +218,7 @@ model Restaurant {
   onboardingProgress  OnboardingProgress?
   comboItems          ComboItem[]
   customerCreditAccounts CustomerCreditAccount[]
+  itemComplaints      ItemComplaint[]
 
   @@map("restaurants")
 }
@@ -250,6 +252,7 @@ model Branch {
   menuOverrides       BranchMenuOverride[]
   stockTransfersFrom  StockTransfer[]      @relation("TransferFrom")
   stockTransfersTo    StockTransfer[]      @relation("TransferTo")
+  itemComplaints      ItemComplaint[]
 
   @@map("branches")
 }
@@ -510,6 +513,7 @@ model Table {
   section             String?
   status              TableStatus      @default(AVAILABLE)
   occupiedSince       DateTime?
+  mergedIntoTableId   String?
   isActive            Boolean          @default(true)
   createdAt           DateTime         @default(now())
   updatedAt           DateTime         @updatedAt
@@ -517,6 +521,8 @@ model Table {
   branch              Branch           @relation(fields: [branchId], references: [id])
   orders              Order[]
   reservations        Reservation[]
+  mergedIntoTable     Table?           @relation("TableMerge", fields: [mergedIntoTableId], references: [id])
+  mergedTables        Table[]          @relation("TableMerge")
 
   @@unique([branchId, number])
   @@map("tables")
@@ -566,6 +572,8 @@ model Order {
   taxTotal              Decimal          @default(0) @db.Decimal(10, 2)
   grandTotal            Decimal          @default(0) @db.Decimal(10, 2)
   notes                 String?
+  captainId             String?
+  captainName           String?
   createdBy             String
   cancelledBy           String?
   cancelReason          String?
@@ -579,6 +587,7 @@ model Order {
   kots                  Kot[]
   bills                 Bill[]
   orderDiscounts        OrderDiscount[]
+  itemComplaints        ItemComplaint[]
 
   @@index([branchId, status])
   @@index([branchId, businessDate])
@@ -615,8 +624,46 @@ model OrderItem {
   order               Order            @relation(fields: [orderId], references: [id])
   kot                 Kot?             @relation(fields: [kotId], references: [id])
   refundItems         RefundItem[]
+  complaints          ItemComplaint[]
 
   @@map("order_items")
+}
+
+// ── Customer Complaints & Dish Quality Tracking ───────────────────────────────
+
+enum ComplaintReason {
+  QUALITY        // Rubbery, overcooked, undercooked, etc.
+  WRONG_ITEM     // Different dish than ordered
+  FOREIGN_OBJECT // Hair, insect, or other foreign object
+  COLD           // Dish served cold / not hot enough
+  QUANTITY       // Portion size too small
+  OTHER
+}
+
+model ItemComplaint {
+  id              String          @id @default(uuid())
+  restaurantId    String
+  branchId        String
+  orderId         String
+  orderItemId     String
+  menuItemId      String?
+  menuItemName    String          // denormalised snapshot
+  reason          ComplaintReason
+  notes           String?
+  reportedBy      String          // staff userId
+  resolvedAt      DateTime?
+  resolution      String?         // e.g. "Remade and served", "Removed from bill"
+  createdAt       DateTime        @default(now())
+
+  restaurant      Restaurant      @relation(fields: [restaurantId], references: [id])
+  branch          Branch          @relation(fields: [branchId], references: [id])
+  order           Order           @relation(fields: [orderId], references: [id])
+  orderItem       OrderItem       @relation(fields: [orderItemId], references: [id])
+
+  @@index([restaurantId, createdAt])
+  @@index([branchId, createdAt])
+  @@index([menuItemId, createdAt])
+  @@map("item_complaints")
 }
 
 model Kot {

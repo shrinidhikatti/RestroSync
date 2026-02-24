@@ -76,18 +76,22 @@ export class AdvancedPosService {
     }
 
     return this.prisma.$transaction(async (tx) => {
-      // Free the current table
+      // Free the current table + any tables merged into it
       if (order.tableId) {
         await tx.table.update({
           where: { id: order.tableId },
-          data:  { status: 'AVAILABLE' },
+          data:  { status: 'AVAILABLE', occupiedSince: null },
+        });
+        await tx.table.updateMany({
+          where: { mergedIntoTableId: order.tableId },
+          data:  { status: 'AVAILABLE', occupiedSince: null, mergedIntoTableId: null },
         });
       }
 
       // Occupy the new table
       await tx.table.update({
         where: { id: dto.toTableId },
-        data:  { status: 'OCCUPIED' },
+        data:  { status: 'OCCUPIED', occupiedSince: new Date() },
       });
 
       // Move the order
@@ -129,11 +133,11 @@ export class AdvancedPosService {
           data:  { orderId: primary.id },
         });
 
-        // Free source table
+        // Mark source table as MERGED (not AVAILABLE — it's physically occupied)
         if (src.tableId) {
           await tx.table.update({
             where: { id: src.tableId },
-            data:  { status: 'AVAILABLE' },
+            data:  { status: 'MERGED', mergedIntoTableId: primary.tableId },
           });
         }
 

@@ -93,7 +93,7 @@ export default function CategoriesPage() {
         </div>
         <button
           onClick={() => setShowAdd(true)}
-          className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold font-display text-slate-900 hover:brightness-95 transition-all"
+          className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold font-display text-white hover:brightness-95 transition-all"
           style={{ background: 'var(--accent)' }}
         >
           <PlusIcon className="w-4 h-4" /> Add Category
@@ -175,7 +175,7 @@ export default function CategoriesPage() {
             <button
               onClick={handleSave}
               disabled={saving}
-              className="px-4 py-2 rounded-xl text-sm font-semibold text-slate-900 disabled:opacity-60 hover:brightness-95 transition-colors"
+              className="px-4 py-2 rounded-xl text-sm font-semibold text-white disabled:opacity-60 hover:brightness-95 transition-colors"
               style={{ background: 'var(--accent)' }}
             >
               {saving ? 'Saving...' : editTarget ? 'Update' : 'Create'}
@@ -191,7 +191,7 @@ export default function CategoriesPage() {
               value={form.name}
               onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
               placeholder="e.g. Starters, Main Course"
-              className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-transparent"
+              className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
               autoFocus
             />
           </div>

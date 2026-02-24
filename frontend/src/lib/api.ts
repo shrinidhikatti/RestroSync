@@ -118,8 +118,9 @@ export const branchApi = {
 
 // ─── Users (Staff) ────────────────────────────────────────────────────────────
 export const staffApi = {
-  // Using auth register for staff creation
-  create: (data: any) => api.post('/auth/register-device', data),
+  getAll: () => api.get('/restaurants/me/staff'),
+  create: (data: any) => api.post('/restaurants/me/staff', data),
+  remove: (userId: string) => api.delete(`/restaurants/me/staff/${userId}`),
 };
 
 // ─── Orders ───────────────────────────────────────────────────────────────────
@@ -348,4 +349,70 @@ export const multiOutletApi = {
     api.post('/multi-outlet/stock-transfers', data),
   updateTransfer:  (id: string, status: 'COMPLETED' | 'CANCELLED') =>
     api.patch(`/multi-outlet/stock-transfers/${id}/status`, { status }),
+};
+
+// ─── Complaints API ───────────────────────────────────────────────────────────
+
+export const complaintsApi = {
+  file: (orderId: string, data: { orderItemId: string; reason: string; notes?: string }) =>
+    api.post(`/orders/${orderId}/complaints`, data),
+
+  list: (params?: { from?: string; to?: string; page?: number; limit?: number }) =>
+    api.get('/complaints', { params }),
+
+  analytics: (params?: { from?: string; to?: string }) =>
+    api.get('/complaints/analytics', { params }),
+
+  resolve: (id: string, resolution: string) =>
+    api.patch(`/complaints/${id}/resolve`, { resolution }),
+};
+
+// ─── Advanced POS API ─────────────────────────────────────────────────────────
+
+export const advancedPosApi = {
+  transferTable: (data: { orderId: string; toTableId: string }) =>
+    api.post('/integrations/pos/transfer-table', data),
+
+  mergeOrders: (data: { orderIds: string[] }) =>
+    api.post('/integrations/pos/merge-orders', data),
+
+  splitBill: (data: { orderId: string; splitType: 'EQUAL' | 'BY_ITEM'; splitCount?: number; itemGroups?: { itemIds: string[] }[] }) =>
+    api.post('/integrations/pos/split-bill', data),
+};
+
+// ─── Shift Handover API ───────────────────────────────────────────────────────
+
+export const handoverApi = {
+  myOrders:       () => api.get('/orders/handover/my-orders'),
+  activeCaptains: () => api.get('/orders/handover/active-captains'),
+  reassign:       (toCaptainId: string, orderIds?: string[]) =>
+    api.post('/orders/handover/reassign', { toCaptainId, orderIds }),
+};
+
+// ─── Day Close API ────────────────────────────────────────────────────────────
+
+export const dayCloseApi = {
+  getStatus:    () => api.get('/day-close/status'),
+  getUnbilled:  () => api.get('/day-close/unbilled'),
+  initiate:     () => api.post('/day-close/initiate'),
+  carryForward: () => api.post('/day-close/carry-forward'),
+  complete:     (data: { cashInDrawer: number; notes?: string }) =>
+    api.post('/day-close/complete', data),
+};
+
+// ─── Receipt Settings API ─────────────────────────────────────────────────────
+
+export const receiptApi = {
+  get:    () => api.get('/receipt-settings'),
+  update: (data: any) => api.put('/receipt-settings', data),
+};
+
+// ─── Combo Items API ──────────────────────────────────────────────────────────
+
+export const comboApi = {
+  list:   () => api.get('/combo-items'),
+  create: (data: { name: string; price: number; description?: string; entries: { menuItemId: string; quantity: number }[] }) =>
+    api.post('/combo-items', data),
+  update: (id: string, data: any) => api.patch(`/combo-items/${id}`, data),
+  remove: (id: string) => api.delete(`/combo-items/${id}`),
 };

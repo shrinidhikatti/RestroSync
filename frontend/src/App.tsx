@@ -20,6 +20,7 @@ const DashboardPage      = lazy(() => import('./pages/dashboard/DashboardPage'))
 const CategoriesPage     = lazy(() => import('./pages/menu/CategoriesPage'));
 const MenuItemsPage      = lazy(() => import('./pages/menu/MenuItemsPage'));
 const MenuItemFormPage   = lazy(() => import('./pages/menu/MenuItemFormPage'));
+const CombosPage         = lazy(() => import('./pages/menu/CombosPage'));
 const TablesPage         = lazy(() => import('./pages/tables/TablesPage'));
 const ReservationsPage   = lazy(() => import('./pages/reservations/ReservationsPage'));
 const StaffPage          = lazy(() => import('./pages/staff/StaffPage'));
@@ -55,6 +56,7 @@ const StaffAttendancePage = lazy(() => import('./pages/crm/StaffAttendancePage')
 const ReportsPage        = lazy(() => import('./pages/reports/ReportsPage'));
 const AuditLogPage       = lazy(() => import('./pages/reports/AuditLogPage'));
 const FraudReportsPage   = lazy(() => import('./pages/reports/FraudReportsPage'));
+const ComplaintsPage     = lazy(() => import('./pages/reports/ComplaintsPage'));
 
 // Phase 11
 const SystemMonitorPage  = lazy(() => import('./pages/dashboard/SystemMonitorPage'));
@@ -64,6 +66,9 @@ const IntegrationsPage   = lazy(() => import('./pages/settings/IntegrationsPage'
 const DevicesPage        = lazy(() => import('./pages/devices/DevicesPage'));
 const OnlineOrdersPage   = lazy(() => import('./pages/orders/OnlineOrdersPage'));
 const PnLPage            = lazy(() => import('./pages/reports/PnLPage'));
+
+// Operations
+const DayClosePage       = lazy(() => import('./pages/operations/DayClosePage'));
 
 // Inventory
 const IngredientsPage    = lazy(() => import('./pages/inventory/IngredientsPage'));
@@ -79,7 +84,7 @@ function PageLoader() {
         {[0, 1, 2].map((i) => (
           <div
             key={i}
-            className="w-2 h-2 rounded-full bg-amber-400 animate-bounce"
+            className="w-2 h-2 rounded-full bg-red-500 animate-bounce"
             style={{ animationDelay: `${i * 120}ms` }}
           />
         ))}
@@ -125,11 +130,13 @@ function App() {
             <Route path="/menu/items"        element={<MenuItemsPage />} />
             <Route path="/menu/items/new"    element={<MenuItemFormPage />} />
             <Route path="/menu/items/:id"    element={<MenuItemFormPage />} />
+            <Route path="/menu/combos"       element={<CombosPage />} />
 
             {/* Operations */}
             <Route path="/orders"       element={<OrdersPage />} />
             <Route path="/tables"       element={<TablesPage />} />
             <Route path="/reservations" element={<ReservationsPage />} />
+            <Route path="/day-close"    element={<DayClosePage />} />
 
             {/* People */}
             <Route path="/staff" element={<StaffPage />} />
@@ -147,9 +154,10 @@ function App() {
             <Route path="/crm/attendance"         element={<StaffAttendancePage />} />
 
             {/* Reports */}
-            <Route path="/reports/sales"    element={<ReportsPage />} />
-            <Route path="/reports/audit"    element={<AuditLogPage />} />
-            <Route path="/reports/fraud"    element={<FraudReportsPage />} />
+            <Route path="/reports/sales"       element={<ReportsPage />} />
+            <Route path="/reports/audit"       element={<AuditLogPage />} />
+            <Route path="/reports/fraud"       element={<FraudReportsPage />} />
+            <Route path="/reports/complaints"  element={<ComplaintsPage />} />
 
             {/* Inventory */}
             <Route path="/inventory/ingredients"     element={<IngredientsPage />} />

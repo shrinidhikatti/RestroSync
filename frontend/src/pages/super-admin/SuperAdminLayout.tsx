@@ -21,14 +21,14 @@ export default function SuperAdminLayout() {
   const user = userRaw ? JSON.parse(userRaw) : { name: 'Super Admin' };
 
   return (
-    <div className="flex h-screen bg-slate-950" style={{ fontFamily: "'DM Sans', sans-serif" }}>
+    <div className="flex h-screen bg-slate-950" style={{ fontFamily: "'Inter', sans-serif" }}>
       {/* Sidebar */}
       <aside className="w-60 flex flex-col h-full bg-slate-900 border-r border-slate-800 flex-shrink-0">
         {/* Brand */}
         <div className="flex items-center gap-3 px-5 h-16 border-b border-slate-800 flex-shrink-0">
-          <div className="w-8 h-8 rounded-lg bg-violet-600 flex items-center justify-center font-bold text-white text-xs flex-shrink-0" style={{ fontFamily: "'Syne', sans-serif" }}>SA</div>
+          <div className="w-8 h-8 rounded-lg bg-violet-600 flex items-center justify-center font-bold text-white text-xs flex-shrink-0" style={{ fontFamily: "'Inter', sans-serif" }}>SA</div>
           <div>
-            <p className="text-white text-sm font-bold leading-tight" style={{ fontFamily: "'Syne', sans-serif" }}>RestroSync</p>
+            <p className="text-white text-sm font-bold leading-tight" style={{ fontFamily: "'Inter', sans-serif" }}>RestroSync</p>
             <p className="text-violet-400 text-xs">Super Admin</p>
           </div>
         </div>

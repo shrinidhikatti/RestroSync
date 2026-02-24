@@ -61,7 +61,7 @@ export default function PaymentSettingsPage() {
       <div className="flex items-center justify-center h-full py-20">
         <div className="flex gap-2">
           {[0, 1, 2].map((i) => (
-            <div key={i} className="w-2 h-2 rounded-full bg-amber-400 animate-bounce" style={{ animationDelay: `${i * 120}ms` }} />
+            <div key={i} className="w-2 h-2 rounded-full bg-red-500 animate-bounce" style={{ animationDelay: `${i * 120}ms` }} />
           ))}
         </div>
       </div>
@@ -71,7 +71,7 @@ export default function PaymentSettingsPage() {
   return (
     <div className="p-6 max-w-2xl mx-auto space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-slate-900" style={{ fontFamily: "'Syne', sans-serif" }}>
+        <h1 className="text-2xl font-bold text-slate-900" style={{ fontFamily: "'Inter', sans-serif" }}>
           Payment Methods
         </h1>
         <p className="text-slate-500 text-sm mt-1">
@@ -92,7 +92,7 @@ export default function PaymentSettingsPage() {
             <div className="flex-shrink-0">
               {saving === m.key ? (
                 <div className="w-8 h-5 flex items-center justify-center">
-                  <div className="w-4 h-4 border-2 border-amber-400 border-t-transparent rounded-full animate-spin" />
+                  <div className="w-4 h-4 border-2 border-red-500 border-t-transparent rounded-full animate-spin" />
                 </div>
               ) : (
                 <Toggle checked={enabled[m.key] ?? false} onChange={() => toggle(m.key)} />

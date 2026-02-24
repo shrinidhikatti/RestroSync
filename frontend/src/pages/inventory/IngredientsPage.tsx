@@ -105,7 +105,7 @@ export default function IngredientsPage() {
         </div>
         <button
           onClick={openNew}
-          className="bg-amber-500 hover:bg-amber-600 text-black font-semibold px-4 py-2 rounded-xl text-sm"
+          className="bg-red-500 hover:bg-red-600 text-white font-semibold px-4 py-2 rounded-xl text-sm"
         >
           + Add Ingredient
         </button>
@@ -117,13 +117,13 @@ export default function IngredientsPage() {
         placeholder="Search ingredients..."
         value={search}
         onChange={(e) => setSearch(e.target.value)}
-        className="mb-4 border border-slate-200 rounded-xl px-4 py-2 text-sm w-full max-w-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
+        className="mb-4 border border-slate-200 rounded-xl px-4 py-2 text-sm w-full max-w-sm focus:outline-none focus:ring-2 focus:ring-red-500"
       />
 
       {/* Table */}
       {loading ? (
         <div className="flex items-center justify-center h-40">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-amber-500" />
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-red-500" />
         </div>
       ) : (
         <div className="bg-white rounded-2xl border border-slate-100 overflow-hidden">
@@ -209,7 +209,7 @@ export default function IngredientsPage() {
                   type="text"
                   value={form.name}
                   onChange={(e) => setForm({ ...form, name: e.target.value })}
-                  className="w-full border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
+                  className="w-full border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-500"
                   placeholder="e.g. Tomato, Chicken Breast"
                 />
               </div>
@@ -222,7 +222,7 @@ export default function IngredientsPage() {
                   <select
                     value={form.unit}
                     onChange={(e) => setForm({ ...form, unit: e.target.value })}
-                    className="w-full border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
+                    className="w-full border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-500"
                   >
                     {UNITS.map((u) => <option key={u} value={u}>{u}</option>)}
                   </select>
@@ -237,7 +237,7 @@ export default function IngredientsPage() {
                     max="100"
                     value={form.yieldPercent}
                     onChange={(e) => setForm({ ...form, yieldPercent: e.target.value })}
-                    className="w-full border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
+                    className="w-full border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-500"
                   />
                 </div>
               </div>
@@ -252,7 +252,7 @@ export default function IngredientsPage() {
                   step="0.001"
                   value={form.minStockLevel}
                   onChange={(e) => setForm({ ...form, minStockLevel: e.target.value })}
-                  className="w-full border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
+                  className="w-full border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-500"
                   placeholder="Optional — e.g. 2.5"
                 />
               </div>
@@ -267,7 +267,7 @@ export default function IngredientsPage() {
               </button>
               <button
                 onClick={handleSave}
-                className="flex-1 bg-amber-500 hover:bg-amber-600 text-black rounded-xl py-2 text-sm font-semibold"
+                className="flex-1 bg-red-500 hover:bg-red-600 text-white rounded-xl py-2 text-sm font-semibold"
               >
                 {editing ? 'Save Changes' : 'Create'}
               </button>

@@ -168,7 +168,7 @@ export default function SystemMonitorPage() {
           <div className="grid grid-cols-2 gap-4">
             <div>
               <p className="text-xs text-slate-400 font-display uppercase tracking-wide">Minimum Required</p>
-              <p className="text-xl font-bold text-amber-600 font-display mt-1">{appVersion.minAppVersion}</p>
+              <p className="text-xl font-bold text-red-600 font-display mt-1">{appVersion.minAppVersion}</p>
               <p className="text-xs text-slate-400 mt-0.5">Devices below this will be force-updated</p>
             </div>
             <div>

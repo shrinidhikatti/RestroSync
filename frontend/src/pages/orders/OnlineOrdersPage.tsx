@@ -82,7 +82,7 @@ export default function OnlineOrdersPage() {
               onClick={() => setPlatform(p)}
               className={`px-4 py-2 rounded-xl text-sm font-semibold font-display transition-colors border ${
                 platform === p
-                  ? 'bg-amber-400 text-slate-900 border-amber-400'
+                  ? 'bg-red-500 text-white border-red-500'
                   : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'
               }`}
             >
@@ -101,7 +101,7 @@ export default function OnlineOrdersPage() {
       {/* Stats */}
       <div className="grid grid-cols-3 gap-4 mb-5 anim-fade-up delay-50">
         {[
-          { label: 'Pending',  count: pending.length,  bg: 'bg-amber-50',   num: 'text-amber-600',   border: 'border-amber-100' },
+          { label: 'Pending',  count: pending.length,  bg: 'bg-amber-50',   num: 'text-red-600',   border: 'border-amber-100' },
           { label: 'Accepted', count: accepted.length, bg: 'bg-emerald-50', num: 'text-emerald-600', border: 'border-emerald-100' },
           { label: 'Rejected', count: rejected.length, bg: 'bg-rose-50',    num: 'text-rose-600',    border: 'border-rose-100' },
         ].map((s) => (
@@ -120,7 +120,7 @@ export default function OnlineOrdersPage() {
             <p className="text-sm font-semibold text-amber-800 font-display">
               {pending.length} order{pending.length > 1 ? 's' : ''} waiting for confirmation
             </p>
-            <p className="text-xs text-amber-600 mt-0.5">Accept or reject each order within the SLA window.</p>
+            <p className="text-xs text-red-600 mt-0.5">Accept or reject each order within the SLA window.</p>
           </div>
         </div>
       )}
@@ -134,7 +134,7 @@ export default function OnlineOrdersPage() {
             placeholder="Search by order ID or customer name..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="pl-9 pr-4 py-2.5 rounded-xl border border-slate-200 bg-white text-sm w-72 focus:outline-none focus:ring-2 focus:ring-amber-400"
+            className="pl-9 pr-4 py-2.5 rounded-xl border border-slate-200 bg-white text-sm w-72 focus:outline-none focus:ring-2 focus:ring-red-500"
           />
         </div>
       )}

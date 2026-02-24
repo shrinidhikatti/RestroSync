@@ -54,7 +54,7 @@ function StepMode({ onNext }: { onNext: (mode: string) => Promise<void> }) {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-bold text-slate-900" style={{ fontFamily: "'Syne', sans-serif" }}>
+        <h2 className="text-2xl font-bold text-slate-900" style={{ fontFamily: "'Inter', sans-serif" }}>
           How do you run your restaurant?
         </h2>
         <p className="text-slate-500 text-sm mt-1">This sets the default billing and order flow. You can change it later in Settings.</p>
@@ -66,21 +66,21 @@ function StepMode({ onNext }: { onNext: (mode: string) => Promise<void> }) {
             onClick={() => setSelected(m.key)}
             className={`w-full text-left p-5 rounded-2xl border-2 transition-all ${
               selected === m.key
-                ? 'border-amber-400 bg-amber-50'
+                ? 'border-red-500 bg-red-50'
                 : 'border-slate-200 hover:border-slate-300 bg-white'
             }`}
           >
             <div className="flex items-start gap-4">
               <span className="text-3xl">{m.icon}</span>
               <div className="flex-1">
-                <p className={`font-bold text-base ${selected === m.key ? 'text-amber-700' : 'text-slate-900'}`}
-                   style={{ fontFamily: "'Syne', sans-serif" }}>
+                <p className={`font-bold text-base ${selected === m.key ? 'text-red-700' : 'text-slate-900'}`}
+                   style={{ fontFamily: "'Inter', sans-serif" }}>
                   {m.label}
                 </p>
                 <p className="text-sm text-slate-500 mt-0.5">{m.description}</p>
               </div>
               <div className={`w-5 h-5 rounded-full border-2 flex-shrink-0 mt-0.5 flex items-center justify-center ${
-                selected === m.key ? 'border-amber-400 bg-amber-400' : 'border-slate-300'
+                selected === m.key ? 'border-red-500 bg-red-500' : 'border-slate-300'
               }`}>
                 {selected === m.key && (
                   <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24">
@@ -96,7 +96,7 @@ function StepMode({ onNext }: { onNext: (mode: string) => Promise<void> }) {
         onClick={handleNext}
         disabled={!selected || saving}
         className="w-full py-3.5 rounded-xl font-bold text-slate-900 transition-all disabled:opacity-40"
-        style={{ background: '#f59e0b', fontFamily: "'Syne', sans-serif" }}
+        style={{ background: '#ef4444', fontFamily: "'Inter', sans-serif" }}
       >
         {saving ? 'Saving...' : 'Continue →'}
       </button>
@@ -128,7 +128,7 @@ function StepTemplate({ onNext, onSkip }: { onNext: (templateId: string) => Prom
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-bold text-slate-900" style={{ fontFamily: "'Syne', sans-serif" }}>
+        <h2 className="text-2xl font-bold text-slate-900" style={{ fontFamily: "'Inter', sans-serif" }}>
           Start with a menu template
         </h2>
         <p className="text-slate-500 text-sm mt-1">We'll pre-fill categories and popular items — you can edit everything after.</p>
@@ -138,7 +138,7 @@ function StepTemplate({ onNext, onSkip }: { onNext: (templateId: string) => Prom
         <div className="flex justify-center py-10">
           <div className="flex gap-2">
             {[0, 1, 2].map((i) => (
-              <div key={i} className="w-2 h-2 rounded-full bg-amber-400 animate-bounce" style={{ animationDelay: `${i * 120}ms` }} />
+              <div key={i} className="w-2 h-2 rounded-full bg-red-500 animate-bounce" style={{ animationDelay: `${i * 120}ms` }} />
             ))}
           </div>
         </div>
@@ -149,12 +149,12 @@ function StepTemplate({ onNext, onSkip }: { onNext: (templateId: string) => Prom
               key={t.id}
               onClick={() => setSelected(t.id)}
               className={`p-4 rounded-2xl border-2 text-left transition-all ${
-                selected === t.id ? 'border-amber-400 bg-amber-50' : 'border-slate-200 hover:border-slate-300 bg-white'
+                selected === t.id ? 'border-red-500 bg-red-50' : 'border-slate-200 hover:border-slate-300 bg-white'
               }`}
             >
               <span className="text-2xl">{CUISINE_ICONS[t.cuisine] ?? '🍴'}</span>
-              <p className={`font-semibold text-sm mt-2 ${selected === t.id ? 'text-amber-700' : 'text-slate-800'}`}
-                 style={{ fontFamily: "'Syne', sans-serif" }}>
+              <p className={`font-semibold text-sm mt-2 ${selected === t.id ? 'text-red-700' : 'text-slate-800'}`}
+                 style={{ fontFamily: "'Inter', sans-serif" }}>
                 {t.name}
               </p>
               <p className="text-xs text-slate-500 mt-0.5">{t.cuisine}</p>
@@ -174,7 +174,7 @@ function StepTemplate({ onNext, onSkip }: { onNext: (templateId: string) => Prom
           onClick={handleImport}
           disabled={!selected || importing}
           className="flex-1 py-3 rounded-xl font-bold text-slate-900 transition-all disabled:opacity-40"
-          style={{ background: '#f59e0b', fontFamily: "'Syne', sans-serif" }}
+          style={{ background: '#ef4444', fontFamily: "'Inter', sans-serif" }}
         >
           {importing ? 'Importing...' : 'Import & Continue →'}
         </button>
@@ -197,7 +197,7 @@ function StepLegal({ onNext }: { onNext: (data: { fssai: string; gstin: string; 
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-bold text-slate-900" style={{ fontFamily: "'Syne', sans-serif" }}>
+        <h2 className="text-2xl font-bold text-slate-900" style={{ fontFamily: "'Inter', sans-serif" }}>
           Legal & Compliance
         </h2>
         <p className="text-slate-500 text-sm mt-1">Required for GST invoices and FSSAI compliance. You can update these later in Settings.</p>
@@ -211,7 +211,7 @@ function StepLegal({ onNext }: { onNext: (data: { fssai: string; gstin: string; 
             onChange={(e) => setFssai(e.target.value)}
             placeholder="e.g. 10019022004345"
             maxLength={14}
-            className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 placeholder-slate-400"
+            className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-red-500 placeholder-slate-400"
           />
           <p className="text-xs text-slate-400 mt-1">14-digit number on your FSSAI certificate</p>
         </div>
@@ -223,7 +223,7 @@ function StepLegal({ onNext }: { onNext: (data: { fssai: string; gstin: string; 
             onChange={(e) => setGstin(e.target.value.toUpperCase())}
             placeholder="e.g. 29ABCDE1234F1Z5"
             maxLength={15}
-            className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 placeholder-slate-400 font-mono"
+            className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-red-500 placeholder-slate-400 font-mono"
           />
           <p className="text-xs text-slate-400 mt-1">Leave blank if you're not GST-registered</p>
         </div>
@@ -234,11 +234,11 @@ function StepLegal({ onNext }: { onNext: (data: { fssai: string; gstin: string; 
             type="checkbox"
             checked={consent}
             onChange={(e) => setConsent(e.target.checked)}
-            className="mt-0.5 accent-amber-400 w-4 h-4 flex-shrink-0"
+            className="mt-0.5 accent-red-500 w-4 h-4 flex-shrink-0"
           />
           <label htmlFor="consent" className="text-sm text-slate-600 cursor-pointer">
             I agree to RestroSync's{' '}
-            <a href="/privacy" target="_blank" className="text-amber-600 font-semibold hover:underline">Privacy Policy</a>
+            <a href="/privacy" target="_blank" className="text-red-600 font-semibold hover:underline">Privacy Policy</a>
             {' '}and confirm that customer data will be handled in accordance with DPDPA 2023.
           </label>
         </div>
@@ -248,7 +248,7 @@ function StepLegal({ onNext }: { onNext: (data: { fssai: string; gstin: string; 
         onClick={handleNext}
         disabled={saving || !consent}
         className="w-full py-3.5 rounded-xl font-bold text-slate-900 transition-all disabled:opacity-40"
-        style={{ background: '#f59e0b', fontFamily: "'Syne', sans-serif" }}
+        style={{ background: '#ef4444', fontFamily: "'Inter', sans-serif" }}
       >
         {saving ? 'Saving...' : 'Complete Setup →'}
       </button>
@@ -282,7 +282,7 @@ function StepDone({ progress, onGoToDashboard }: { progress: Progress | null; on
             <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
         </div>
-        <h2 className="text-2xl font-bold text-slate-900" style={{ fontFamily: "'Syne', sans-serif" }}>
+        <h2 className="text-2xl font-bold text-slate-900" style={{ fontFamily: "'Inter', sans-serif" }}>
           You're almost ready!
         </h2>
         <p className="text-slate-500 text-sm mt-1">{doneCount}/{checks.length} setup tasks complete</p>
@@ -311,7 +311,7 @@ function StepDone({ progress, onGoToDashboard }: { progress: Progress | null; on
         <button
           onClick={onGoToDashboard}
           className="w-full py-3.5 rounded-xl font-bold text-slate-900 transition-all"
-          style={{ background: '#f59e0b', fontFamily: "'Syne', sans-serif" }}
+          style={{ background: '#ef4444', fontFamily: "'Inter', sans-serif" }}
         >
           Go to Dashboard →
         </button>
@@ -371,25 +371,25 @@ export default function OnboardingPage() {
   };
 
   return (
-    <div className="min-h-screen flex" style={{ fontFamily: "'DM Sans', sans-serif" }}>
+    <div className="min-h-screen flex" style={{ fontFamily: "'Inter', sans-serif" }}>
       {/* Left decorative panel */}
       <div
         className="hidden lg:flex flex-col justify-between w-[40%] p-12 relative overflow-hidden"
         style={{ background: '#0f172a' }}
       >
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute -top-24 -right-24 w-96 h-96 rounded-full opacity-5" style={{ background: '#f59e0b' }} />
-          <div className="absolute bottom-12 -left-16 w-72 h-72 rounded-full opacity-5" style={{ background: '#f59e0b' }} />
+          <div className="absolute -top-24 -right-24 w-96 h-96 rounded-full opacity-5" style={{ background: '#ef4444' }} />
+          <div className="absolute bottom-12 -left-16 w-72 h-72 rounded-full opacity-5" style={{ background: '#ef4444' }} />
         </div>
 
         <div className="relative z-10">
           <div
             className="w-12 h-12 rounded-2xl flex items-center justify-center font-bold text-slate-900 text-xl mb-8"
-            style={{ background: '#f59e0b' }}
+            style={{ background: '#ef4444' }}
           >
             RS
           </div>
-          <h1 className="font-bold text-white text-3xl leading-tight mb-4" style={{ fontFamily: "'Syne', sans-serif" }}>
+          <h1 className="font-bold text-white text-3xl leading-tight mb-4" style={{ fontFamily: "'Inter', sans-serif" }}>
             Let's set up your restaurant.
           </h1>
           <p className="text-slate-400 text-base leading-relaxed">
@@ -405,7 +405,7 @@ export default function OnboardingPage() {
                 i < step ? 'bg-emerald-500 text-white' :
                 i === step ? 'text-slate-900' : 'bg-slate-800 text-slate-500'
               }`}
-              style={i === step ? { background: '#f59e0b' } : {}}>
+              style={i === step ? { background: '#ef4444' } : {}}>
                 {i < step ? (
                   <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
                     <polyline points="20 6 9 17 4 12" />
@@ -428,7 +428,7 @@ export default function OnboardingPage() {
             {STEPS.map((_, i) => (
               <div
                 key={i}
-                className={`h-1 flex-1 rounded-full transition-all ${i <= step ? 'bg-amber-400' : 'bg-slate-200'}`}
+                className={`h-1 flex-1 rounded-full transition-all ${i <= step ? 'bg-red-500' : 'bg-slate-200'}`}
               />
             ))}
           </div>

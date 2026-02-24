@@ -38,7 +38,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex" style={{ fontFamily: "'DM Sans', sans-serif" }}>
+    <div className="min-h-screen flex" style={{ fontFamily: "'Inter', sans-serif" }}>
       {/* Left panel */}
       <div
         className="hidden lg:flex flex-col justify-between w-[42%] p-12 relative overflow-hidden"
@@ -48,7 +48,7 @@ export default function LoginPage() {
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <div className="absolute -top-24 -right-24 w-96 h-96 rounded-full opacity-5" style={{ background: 'var(--accent)' }} />
           <div className="absolute bottom-12 -left-16 w-72 h-72 rounded-full opacity-5" style={{ background: 'var(--accent)' }} />
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 rounded-full opacity-[0.03] border-2 border-amber-400" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 rounded-full opacity-[0.03] border-2 border-red-500" />
           {/* Grid pattern */}
           <svg className="absolute inset-0 w-full h-full opacity-[0.04]" xmlns="http://www.w3.org/2000/svg">
             <defs>
@@ -63,7 +63,7 @@ export default function LoginPage() {
         {/* Brand */}
         <div className="relative z-10">
           <div
-            className="w-12 h-12 rounded-2xl flex items-center justify-center font-display font-bold text-slate-900 text-xl mb-8"
+            className="w-12 h-12 rounded-2xl flex items-center justify-center font-display font-bold text-white text-xl mb-8"
             style={{ background: 'var(--accent)' }}
           >
             RS
@@ -81,7 +81,7 @@ export default function LoginPage() {
           {['Multi-branch operations', 'Real-time kitchen display', 'Smart discount engine', 'GST-ready billing'].map((f) => (
             <div key={f} className="flex items-center gap-3">
               <div className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: 'var(--accent)' }}>
-                <svg className="w-3 h-3 text-slate-900" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
                   <polyline points="20 6 9 17 4 12" />
                 </svg>
               </div>
@@ -97,7 +97,7 @@ export default function LoginPage() {
           {/* Mobile brand */}
           <div className="lg:hidden flex items-center gap-3 mb-8">
             <div
-              className="w-10 h-10 rounded-xl flex items-center justify-center font-display font-bold text-slate-900 text-sm"
+              className="w-10 h-10 rounded-xl flex items-center justify-center font-display font-bold text-white text-sm"
               style={{ background: 'var(--accent)' }}
             >
               RS
@@ -118,14 +118,14 @@ export default function LoginPage() {
                   onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
                   required
                   placeholder="you@restaurant.com"
-                  className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-transparent transition-shadow placeholder-slate-400"
+                  className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-shadow placeholder-slate-400"
                 />
               </div>
 
               <div>
                 <div className="flex items-center justify-between mb-1.5">
                   <label className="text-sm font-medium text-slate-700 font-display">Password</label>
-                  <Link to="/forgot-password" className="text-xs text-amber-600 hover:text-amber-700 font-medium">
+                  <Link to="/forgot-password" className="text-xs text-red-600 hover:text-red-700 font-medium">
                     Forgot password?
                   </Link>
                 </div>
@@ -135,7 +135,7 @@ export default function LoginPage() {
                   onChange={(e) => setForm((f) => ({ ...f, password: e.target.value }))}
                   required
                   placeholder="••••••••"
-                  className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-transparent transition-shadow placeholder-slate-400"
+                  className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-shadow placeholder-slate-400"
                 />
               </div>
 
@@ -157,7 +157,7 @@ export default function LoginPage() {
 
             <p className="text-center text-sm text-slate-500 mt-6">
               New restaurant?{' '}
-              <Link to="/register" className="font-semibold text-amber-600 hover:text-amber-700">
+              <Link to="/register" className="font-semibold text-red-600 hover:text-red-700">
                 Create account
               </Link>
             </p>

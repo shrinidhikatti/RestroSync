@@ -101,8 +101,8 @@ export default function FraudReportsPage() {
               onClick={() => applyPreset(i)}
               className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors ${
                 preset === i
-                  ? 'bg-amber-500 text-white'
-                  : 'bg-white border border-slate-200 text-slate-600 hover:border-amber-300'
+                  ? 'bg-red-500 text-white'
+                  : 'bg-white border border-slate-200 text-slate-600 hover:border-red-400'
               }`}
             >
               {p.label}
@@ -116,7 +116,7 @@ export default function FraudReportsPage() {
           <button
             onClick={loadAll}
             disabled={loading}
-            className="px-4 py-1.5 bg-amber-500 hover:bg-amber-600 text-white text-xs font-semibold rounded-lg transition-colors disabled:opacity-50"
+            className="px-4 py-1.5 bg-red-500 hover:bg-red-600 text-white text-xs font-semibold rounded-lg transition-colors disabled:opacity-50"
           >
             {loading ? 'Loading…' : 'Apply'}
           </button>
@@ -155,7 +155,7 @@ export default function FraudReportsPage() {
             onClick={() => setActiveTab(tab)}
             className={`px-5 py-2 text-sm font-semibold capitalize transition-colors ${
               activeTab === tab
-                ? 'bg-amber-500 text-white'
+                ? 'bg-red-500 text-white'
                 : 'bg-white text-slate-600 hover:bg-slate-50'
             }`}
           >
@@ -321,13 +321,13 @@ export default function FraudReportsPage() {
                           </div>
                         </td>
                         <td className="px-4 py-3 text-right text-slate-700 font-semibold">{b.discountCount}</td>
-                        <td className="px-4 py-3 text-right font-bold text-amber-600">{fmt(b.totalAmount)}</td>
+                        <td className="px-4 py-3 text-right font-bold text-red-600">{fmt(b.totalAmount)}</td>
                         <td className="px-4 py-3 text-right text-slate-600">{b.affectedOrders}</td>
                         <td className="px-4 py-3 text-right">
                           <div className="flex items-center justify-end gap-2">
                             <div className="w-16 bg-slate-200 rounded-full h-1.5">
                               <div
-                                className="bg-amber-400 h-1.5 rounded-full"
+                                className="bg-red-500 h-1.5 rounded-full"
                                 style={{ width: `${Math.min(b.pctOfOrders, 100)}%` }}
                               />
                             </div>

@@ -162,7 +162,7 @@ export default function BranchMenuOverridePage() {
           <div className="w-3 h-3 rounded-full bg-rose-400" /> Hidden at this branch
         </div>
         <div className="flex items-center gap-1.5">
-          <div className="w-3 h-3 rounded-full bg-amber-400" /> Has price override
+          <div className="w-3 h-3 rounded-full bg-red-500" /> Has price override
         </div>
       </div>
 
@@ -171,7 +171,7 @@ export default function BranchMenuOverridePage() {
         <div className="flex justify-center py-16">
           <div className="flex gap-2">
             {[0,1,2].map((i) => (
-              <div key={i} className="w-2 h-2 rounded-full bg-amber-400 animate-bounce"
+              <div key={i} className="w-2 h-2 rounded-full bg-red-500 animate-bounce"
                 style={{ animationDelay: `${i * 120}ms` }} />
             ))}
           </div>
@@ -201,7 +201,7 @@ export default function BranchMenuOverridePage() {
                       <td className="px-4 py-2.5">
                         <div className="flex items-center gap-2">
                           {item.priceOverride && (
-                            <div className="w-2 h-2 rounded-full bg-amber-400 flex-shrink-0" />
+                            <div className="w-2 h-2 rounded-full bg-red-500 flex-shrink-0" />
                           )}
                           <span className="text-slate-700 font-medium">{item.name}</span>
                           {saving === item.id && (
@@ -277,7 +277,7 @@ export default function BranchMenuOverridePage() {
                         ? [...pushBranches, b.id]
                         : pushBranches.filter((id) => id !== b.id));
                     }}
-                    className="w-4 h-4 accent-amber-500"
+                    className="w-4 h-4 accent-red-500"
                   />
                   <span className="text-sm font-medium text-slate-700">{b.name}</span>
                 </label>

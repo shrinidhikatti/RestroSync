@@ -149,7 +149,7 @@ export default function StockPage() {
           </button>
           <button
             onClick={() => { setStockInForm({ ingredientId: '', quantity: '', costPerUnit: '', batchNumber: '', purchaseDate: new Date().toISOString().split('T')[0], expiryDate: '' }); setShowStockInModal(true); }}
-            className="font-semibold px-4 py-2 rounded-xl text-sm text-slate-900 hover:brightness-95 transition-colors"
+            className="font-semibold px-4 py-2 rounded-xl text-sm text-white hover:brightness-95 transition-colors"
             style={{ background: 'var(--accent)' }}
           >
             + Stock In
@@ -165,7 +165,7 @@ export default function StockPage() {
             onClick={() => setTab(t.key)}
             className={`px-4 py-2 text-sm font-semibold border-b-2 -mb-px transition-colors ${
               tab === t.key
-                ? 'border-amber-500 text-amber-600'
+                ? 'border-red-500 text-red-700'
                 : 'border-transparent text-slate-500 hover:text-slate-700'
             }`}
           >
@@ -181,7 +181,7 @@ export default function StockPage() {
 
       {loading ? (
         <div className="flex items-center justify-center h-40">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-amber-500" />
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-red-500" />
         </div>
       ) : (
         <>
@@ -288,7 +288,7 @@ export default function StockPage() {
                             <td className="px-4 py-3 font-medium text-slate-800">{b.ingredient?.name ?? '—'}</td>
                             <td className="px-4 py-3 text-slate-500">{b.batchNumber ?? 'No batch #'}</td>
                             <td className="px-4 py-3">
-                              <span className={`font-semibold ${isExpired ? 'text-red-600' : 'text-amber-600'}`}>
+                              <span className={`font-semibold ${isExpired ? 'text-red-600' : 'text-red-600'}`}>
                                 {new Date(b.expiryDate).toLocaleDateString()}
                                 <span className="ml-2 text-xs">
                                   ({isExpired ? 'EXPIRED' : `${daysLeft}d left`})
@@ -366,7 +366,7 @@ export default function StockPage() {
                 <select
                   value={stockInForm.ingredientId}
                   onChange={(e) => setStockInForm({ ...stockInForm, ingredientId: e.target.value })}
-                  className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-400"
+                  className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-red-500"
                 >
                   <option value="">Select ingredient</option>
                   {ingredients.map((i) => (
@@ -379,13 +379,13 @@ export default function StockPage() {
                   <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1.5">Quantity *</label>
                   <input type="number" min="0.001" step="0.001" value={stockInForm.quantity}
                     onChange={(e) => setStockInForm({ ...stockInForm, quantity: e.target.value })}
-                    className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-400" placeholder="0.000" />
+                    className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-red-500" placeholder="0.000" />
                 </div>
                 <div>
                   <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1.5">Cost / Unit (₹) *</label>
                   <input type="number" min="0" step="0.01" value={stockInForm.costPerUnit}
                     onChange={(e) => setStockInForm({ ...stockInForm, costPerUnit: e.target.value })}
-                    className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-400" placeholder="0.00" />
+                    className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-red-500" placeholder="0.00" />
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-3">
@@ -393,25 +393,25 @@ export default function StockPage() {
                   <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1.5">Purchase Date *</label>
                   <input type="date" value={stockInForm.purchaseDate}
                     onChange={(e) => setStockInForm({ ...stockInForm, purchaseDate: e.target.value })}
-                    className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-400" />
+                    className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-red-500" />
                 </div>
                 <div>
                   <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1.5">Expiry Date</label>
                   <input type="date" value={stockInForm.expiryDate}
                     onChange={(e) => setStockInForm({ ...stockInForm, expiryDate: e.target.value })}
-                    className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-400" />
+                    className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-red-500" />
                 </div>
               </div>
               <div>
                 <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1.5">Batch Number</label>
                 <input type="text" value={stockInForm.batchNumber}
                   onChange={(e) => setStockInForm({ ...stockInForm, batchNumber: e.target.value })}
-                  className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-400" placeholder="Optional" />
+                  className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-red-500" placeholder="Optional" />
               </div>
             </div>
             <div className="flex gap-3 mt-5">
               <button onClick={() => setShowStockInModal(false)} className="flex-1 bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 rounded-xl py-2 text-sm font-semibold transition-colors">Cancel</button>
-              <button onClick={handleStockIn} className="flex-1 text-slate-900 font-semibold rounded-xl py-2 text-sm hover:brightness-95 transition-colors" style={{ background: 'var(--accent)' }}>Add Stock</button>
+              <button onClick={handleStockIn} className="flex-1 text-white font-semibold rounded-xl py-2 text-sm hover:brightness-95 transition-colors" style={{ background: 'var(--accent)' }}>Add Stock</button>
             </div>
           </div>
         </div>
@@ -428,7 +428,7 @@ export default function StockPage() {
                 <select
                   value={stockOutForm.ingredientId}
                   onChange={(e) => setStockOutForm({ ...stockOutForm, ingredientId: e.target.value })}
-                  className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-400"
+                  className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-red-500"
                 >
                   <option value="">Select ingredient</option>
                   {ingredients.map((i) => (
@@ -441,14 +441,14 @@ export default function StockPage() {
                   <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1.5">Quantity *</label>
                   <input type="number" min="0.001" step="0.001" value={stockOutForm.quantity}
                     onChange={(e) => setStockOutForm({ ...stockOutForm, quantity: e.target.value })}
-                    className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-400" placeholder="0.000" />
+                    className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-red-500" placeholder="0.000" />
                 </div>
                 <div>
                   <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1.5">Type</label>
                   <select
                     value={stockOutForm.type}
                     onChange={(e) => setStockOutForm({ ...stockOutForm, type: e.target.value })}
-                    className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-400"
+                    className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-red-500"
                   >
                     <option value="WASTAGE">Wastage</option>
                     <option value="ADJUSTMENT">Adjustment</option>
@@ -459,7 +459,7 @@ export default function StockPage() {
                 <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1.5">Reason</label>
                 <input type="text" value={stockOutForm.reason}
                   onChange={(e) => setStockOutForm({ ...stockOutForm, reason: e.target.value })}
-                  className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-400" placeholder="e.g. Spoiled, Staff meal" />
+                  className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-red-500" placeholder="e.g. Spoiled, Staff meal" />
               </div>
             </div>
             <div className="flex gap-3 mt-5">

@@ -1,15 +1,15 @@
-@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 @import "tailwindcss";
 
 :root {
   --sidebar-bg: #0f172a;
   --sidebar-hover: #1e293b;
-  --sidebar-active: #f59e0b;
+  --sidebar-active: #ef4444;
   --sidebar-width: 260px;
   --sidebar-collapsed-width: 68px;
-  --accent: #f59e0b;
-  --accent-dark: #d97706;
-  --content-bg: #f1f5f9;
+  --accent: #ef4444;
+  --accent-dark: #dc2626;
+  --content-bg: #f8fafc;
   --card-bg: #ffffff;
   --border: #e2e8f0;
   --text-primary: #0f172a;
@@ -20,14 +20,14 @@
 *, *::before, *::after { box-sizing: border-box; }
 
 body {
-  font-family: 'DM Sans', sans-serif;
+  font-family: 'Inter', sans-serif;
   background: var(--content-bg);
   color: var(--text-primary);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-.font-display { font-family: 'Syne', sans-serif; }
+.font-display { font-family: 'Inter', sans-serif; }
 
 /* Sidebar transitions */
 .sidebar-transition {
@@ -126,8 +126,8 @@ body {
   transition: border-color 0.15s, box-shadow 0.15s;
 }
 .input:focus {
-  border-color: #f59e0b;
-  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.15);
+  border-color: #ef4444;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
 }
 .label {
   display: block;

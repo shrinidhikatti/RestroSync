@@ -121,7 +121,7 @@ export default function MenuItemFormPage() {
     setAddons((a) => a.filter((i) => i.id !== addonId));
   };
 
-  const inputClass = "w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-transparent bg-white";
+  const inputClass = "w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent bg-white";
 
   if (loading) return (
     <div className="p-6 max-w-3xl mx-auto space-y-4">
@@ -230,8 +230,8 @@ export default function MenuItemFormPage() {
             ))}
           </div>
           <div className="flex gap-2">
-            <input type="text" value={newVariant.name} onChange={(e) => setNewVariant((v) => ({ ...v, name: e.target.value }))} placeholder="Variant name (e.g. Half)" className="flex-1 px-3 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400" />
-            <input type="number" value={newVariant.price} onChange={(e) => setNewVariant((v) => ({ ...v, price: e.target.value }))} placeholder="Price" className="w-28 px-3 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400" />
+            <input type="text" value={newVariant.name} onChange={(e) => setNewVariant((v) => ({ ...v, name: e.target.value }))} placeholder="Variant name (e.g. Half)" className="flex-1 px-3 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-red-500" />
+            <input type="number" value={newVariant.price} onChange={(e) => setNewVariant((v) => ({ ...v, price: e.target.value }))} placeholder="Price" className="w-28 px-3 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-red-500" />
             <button type="button" onClick={addVariant} className="p-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 transition-colors">
               <PlusIcon className="w-4 h-4" />
             </button>
@@ -253,8 +253,8 @@ export default function MenuItemFormPage() {
             ))}
           </div>
           <div className="flex gap-2">
-            <input type="text" value={newAddon.name} onChange={(e) => setNewAddon((a) => ({ ...a, name: e.target.value }))} placeholder="Add-on name (e.g. Extra Cheese)" className="flex-1 px-3 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400" />
-            <input type="number" value={newAddon.price} onChange={(e) => setNewAddon((a) => ({ ...a, price: e.target.value }))} placeholder="Price" className="w-28 px-3 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400" />
+            <input type="text" value={newAddon.name} onChange={(e) => setNewAddon((a) => ({ ...a, name: e.target.value }))} placeholder="Add-on name (e.g. Extra Cheese)" className="flex-1 px-3 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-red-500" />
+            <input type="number" value={newAddon.price} onChange={(e) => setNewAddon((a) => ({ ...a, price: e.target.value }))} placeholder="Price" className="w-28 px-3 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-red-500" />
             <button type="button" onClick={addAddon} className="p-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 transition-colors">
               <PlusIcon className="w-4 h-4" />
             </button>
@@ -268,7 +268,7 @@ export default function MenuItemFormPage() {
           <button type="button" onClick={() => navigate('/menu/items')} className="px-5 py-2.5 rounded-xl text-sm font-semibold font-display text-slate-600 bg-white border border-slate-200 hover:bg-slate-50 transition-colors">
             Cancel
           </button>
-          <button type="submit" disabled={saving} className="px-6 py-2.5 rounded-xl text-sm font-semibold font-display text-slate-900 hover:brightness-95 disabled:opacity-60 transition-all" style={{ background: 'var(--accent)' }}>
+          <button type="submit" disabled={saving} className="px-6 py-2.5 rounded-xl text-sm font-semibold font-display text-white hover:brightness-95 disabled:opacity-60 transition-all" style={{ background: 'var(--accent)' }}>
             {saving ? 'Saving...' : isEdit ? 'Update Item' : 'Create Item'}
           </button>
         </div>

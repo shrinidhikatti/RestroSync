@@ -39,7 +39,7 @@ export default function AddRestaurantPage() {
               <svg className="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
             </div>
             <div>
-              <h2 className="font-bold text-white text-lg" style={{ fontFamily: "'Syne', sans-serif" }}>Restaurant Created!</h2>
+              <h2 className="font-bold text-white text-lg" style={{ fontFamily: "'Inter', sans-serif" }}>Restaurant Created!</h2>
               <p className="text-emerald-400 text-sm">{restaurant.name} is now on RestroSync</p>
             </div>
           </div>
@@ -64,7 +64,7 @@ export default function AddRestaurantPage() {
                 <p className="text-amber-400 font-mono mt-0.5">{owner.tempPassword}</p>
               </div>
             </div>
-            <div className="text-xs text-slate-500 bg-amber-500/5 border border-amber-500/20 rounded-lg p-2.5 mt-2">
+            <div className="text-xs text-slate-500 bg-red-500/5 border border-amber-500/20 rounded-lg p-2.5 mt-2">
               ⚠️ Share these credentials with the owner. They must change password on first login.
             </div>
           </div>
@@ -100,7 +100,7 @@ export default function AddRestaurantPage() {
           <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" /></svg>
         </Link>
         <div>
-          <h1 className="text-xl font-bold text-white" style={{ fontFamily: "'Syne', sans-serif" }}>Add Restaurant</h1>
+          <h1 className="text-xl font-bold text-white" style={{ fontFamily: "'Inter', sans-serif" }}>Add Restaurant</h1>
           <p className="text-slate-400 text-sm">A temp password will be auto-generated for the owner</p>
         </div>
       </div>

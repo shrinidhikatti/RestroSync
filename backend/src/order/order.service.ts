@@ -44,7 +44,7 @@ export class OrderService {
 
   // ─── Create order ────────────────────────────────────────────────────────────
 
-  async createOrder(branchId: string, userId: string, restaurantId: string, dto: CreateOrderDto) {
+  async createOrder(branchId: string, userId: string, userName: string, restaurantId: string, dto: CreateOrderDto) {
     // Validate table for DINE_IN
     if (dto.type === 'DINE_IN' && dto.tableId) {
       const table = await this.prisma.table.findFirst({
@@ -81,6 +81,8 @@ export class OrderService {
           complimentaryReason: dto.complimentaryReason ?? null,
           complimentaryNote: dto.complimentaryNote ?? null,
           notes: dto.notes ?? null,
+          captainId: userId,
+          captainName: userName,
           createdBy: userId,
           businessDate,
         },
@@ -232,6 +234,11 @@ export class OrderService {
         });
         if (otherOrders === 0) {
           await tx.table.update({ where: { id: order.tableId }, data: { status: 'AVAILABLE', occupiedSince: null } });
+          // Release any tables merged into this table
+          await tx.table.updateMany({
+            where: { mergedIntoTableId: order.tableId },
+            data: { status: 'AVAILABLE', occupiedSince: null, mergedIntoTableId: null },
+          });
         }
       }
     });
@@ -399,5 +406,69 @@ export class OrderService {
       where: { id: orderId },
       data: { subtotal, grandTotal: subtotal }, // Tax/discount applied at bill generation
     });
+  }
+
+  // ─── Get active orders for a captain (for shift handover) ────────────────────
+
+  async getCaptainActiveOrders(captainId: string, branchId: string) {
+    return this.prisma.order.findMany({
+      where: {
+        captainId,
+        branchId,
+        status: { notIn: ['COMPLETED', 'CANCELLED'] },
+      },
+      include: {
+        table: { select: { number: true, section: true } },
+        items: { where: { status: { not: 'VOIDED' } }, select: { id: true, itemName: true, quantity: true, status: true } },
+      },
+      orderBy: { createdAt: 'asc' },
+    });
+  }
+
+  // ─── Reassign orders to another captain ──────────────────────────────────────
+
+  async reassignOrders(
+    fromCaptainId: string,
+    toCaptainId: string,
+    branchId: string,
+    orderIds?: string[], // if empty → reassign all active orders
+  ) {
+    // Look up the new captain's name
+    const newCaptain = await this.prisma.user.findFirst({
+      where: { id: toCaptainId, branchId, isActive: true },
+      select: { id: true, name: true, role: true },
+    });
+    if (!newCaptain) throw new NotFoundException('Target captain not found or not active');
+
+    const where: any = {
+      branchId,
+      captainId: fromCaptainId,
+      status: { notIn: ['COMPLETED', 'CANCELLED'] },
+    };
+    if (orderIds && orderIds.length > 0) {
+      where.id = { in: orderIds };
+    }
+
+    const result = await this.prisma.order.updateMany({
+      where,
+      data: { captainId: toCaptainId, captainName: newCaptain.name },
+    });
+
+    return {
+      message: `${result.count} order${result.count !== 1 ? 's' : ''} transferred to ${newCaptain.name}`,
+      count: result.count,
+      newCaptain: { id: newCaptain.id, name: newCaptain.name },
+    };
+  }
+
+  // ─── List all captains with active orders (for reassignment picker) ───────────
+
+  async getActiveCaptains(branchId: string) {
+    const orders = await this.prisma.order.findMany({
+      where: { branchId, status: { notIn: ['COMPLETED', 'CANCELLED'] }, captainId: { not: null } },
+      select: { captainId: true, captainName: true },
+      distinct: ['captainId'],
+    });
+    return orders.map((o) => ({ id: o.captainId, name: o.captainName }));
   }
 }

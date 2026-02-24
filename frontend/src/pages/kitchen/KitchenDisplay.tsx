@@ -24,6 +24,7 @@ interface KotCard {
   roundNumber: number;
   kitchenStation: string | null;
   createdAt: string;
+  captainName: string | null;
   order: {
     id: string;
     orderType: string;
@@ -192,6 +193,13 @@ function KotCardView({
           </span>
           {kot.order.table?.section && (
             <span className="text-xs text-slate-400">{kot.order.table.section}</span>
+          )}
+          {/* Captain name — key for shift handover clarity */}
+          {kot.captainName && (
+            <span className="text-xs px-2 py-0.5 rounded-full font-display"
+              style={{ background: 'rgba(99,102,241,0.25)', color: '#a5b4fc' }}>
+              👤 {kot.captainName}
+            </span>
           )}
           {/* Order type */}
           <span className="text-xs px-2 py-0.5 rounded-full bg-slate-700 text-slate-300 font-display">
@@ -484,7 +492,7 @@ export default function KitchenDisplay() {
           <div className="flex items-center gap-2">
             <div
               className="w-8 h-8 rounded-xl flex items-center justify-center font-bold text-slate-900 text-sm font-display"
-              style={{ background: '#f59e0b' }}
+              style={{ background: '#ef4444' }}
             >
               RS
             </div>

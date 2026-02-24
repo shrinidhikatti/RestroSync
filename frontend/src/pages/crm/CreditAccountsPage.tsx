@@ -96,7 +96,7 @@ export default function CreditAccountsPage() {
             key={t}
             onClick={() => setTab(t)}
             className={`px-5 py-2 text-sm font-semibold capitalize transition-colors ${
-              tab === t ? 'bg-amber-500 text-white' : 'bg-white text-slate-600 hover:bg-slate-50'
+              tab === t ? 'bg-red-500 text-white' : 'bg-white text-slate-600 hover:bg-slate-50'
             }`}
           >
             {t === 'list' ? 'All Accounts' : 'Aging Report'}
@@ -111,7 +111,7 @@ export default function CreditAccountsPage() {
             <div className="flex justify-center py-12">
               <div className="flex gap-2">
                 {[0,1,2].map((i) => (
-                  <div key={i} className="w-2 h-2 rounded-full bg-amber-400 animate-bounce"
+                  <div key={i} className="w-2 h-2 rounded-full bg-red-500 animate-bounce"
                     style={{ animationDelay: `${i * 120}ms` }} />
                 ))}
               </div>

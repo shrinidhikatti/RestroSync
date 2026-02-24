@@ -210,7 +210,7 @@ export default function AuditLogPage() {
           <div className="flex justify-center py-16">
             <div className="flex gap-2">
               {[0,1,2].map((i) => (
-                <div key={i} className="w-2 h-2 rounded-full bg-amber-400 animate-bounce"
+                <div key={i} className="w-2 h-2 rounded-full bg-red-500 animate-bounce"
                   style={{ animationDelay: `${i * 120}ms` }} />
               ))}
             </div>
@@ -278,14 +278,14 @@ export default function AuditLogPage() {
             <button
               disabled={page <= 1}
               onClick={() => setPage((p) => p - 1)}
-              className="px-4 py-2 text-sm rounded-xl border border-slate-200 hover:border-amber-300 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+              className="px-4 py-2 text-sm rounded-xl border border-slate-200 hover:border-red-400 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
             >
               ← Prev
             </button>
             <button
               disabled={page >= meta.pages}
               onClick={() => setPage((p) => p + 1)}
-              className="px-4 py-2 text-sm rounded-xl border border-slate-200 hover:border-amber-300 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+              className="px-4 py-2 text-sm rounded-xl border border-slate-200 hover:border-red-400 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
             >
               Next →
             </button>

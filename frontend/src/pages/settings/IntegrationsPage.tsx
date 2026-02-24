@@ -42,7 +42,7 @@ function Field({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
-        className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-400 bg-white transition-colors"
+        className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-red-500 bg-white transition-colors"
       />
     </div>
   );
@@ -60,7 +60,7 @@ function Toggle({ label, checked, onChange, description }: {
       <button
         onClick={() => onChange(!checked)}
         className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 focus:outline-none ${
-          checked ? 'bg-amber-400' : 'bg-slate-200'
+          checked ? 'bg-red-500' : 'bg-slate-200'
         }`}
       >
         <span
@@ -108,7 +108,7 @@ export default function IntegrationsPage() {
   if (loading) return (
     <div className="flex items-center justify-center h-64">
       <div className="flex gap-2">
-        {[0,1,2].map((i) => <div key={i} className="w-2 h-2 rounded-full bg-amber-400 animate-bounce" style={{ animationDelay: `${i * 120}ms` }} />)}
+        {[0,1,2].map((i) => <div key={i} className="w-2 h-2 rounded-full bg-red-500 animate-bounce" style={{ animationDelay: `${i * 120}ms` }} />)}
       </div>
     </div>
   );
@@ -132,7 +132,7 @@ export default function IntegrationsPage() {
         </div>
         <div className="mt-2 p-3 bg-slate-50 border border-slate-200 rounded-xl">
           <p className="text-xs text-slate-500 mb-1">Webhook URL to configure in Razorpay Dashboard:</p>
-          <code className="text-xs text-amber-600 break-all font-mono">{webhookBase}/razorpay/webhook/YOUR_RESTAURANT_ID</code>
+          <code className="text-xs text-red-600 break-all font-mono">{webhookBase}/razorpay/webhook/YOUR_RESTAURANT_ID</code>
         </div>
       </Section>
 
@@ -155,7 +155,7 @@ export default function IntegrationsPage() {
             <select
               value={cfg.smsProvider ?? 'MSG91'}
               onChange={(e) => set('smsProvider')(e.target.value)}
-              className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-400 bg-white"
+              className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-red-500 bg-white"
             >
               <option value="MSG91">MSG91</option>
               <option value="TWILIO">Twilio</option>
@@ -187,7 +187,7 @@ export default function IntegrationsPage() {
         )}
         <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl">
           <p className="text-xs text-slate-500 mb-1">Zomato webhook URL:</p>
-          <code className="text-xs text-amber-600 break-all font-mono">{webhookBase}/aggregator/webhook/zomato/YOUR_RESTAURANT_ID</code>
+          <code className="text-xs text-red-600 break-all font-mono">{webhookBase}/aggregator/webhook/zomato/YOUR_RESTAURANT_ID</code>
         </div>
       </Section>
 
@@ -204,7 +204,7 @@ export default function IntegrationsPage() {
         )}
         <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl">
           <p className="text-xs text-slate-500 mb-1">Swiggy webhook URL:</p>
-          <code className="text-xs text-amber-600 break-all font-mono">{webhookBase}/aggregator/webhook/swiggy/YOUR_RESTAURANT_ID</code>
+          <code className="text-xs text-red-600 break-all font-mono">{webhookBase}/aggregator/webhook/swiggy/YOUR_RESTAURANT_ID</code>
         </div>
       </Section>
 
@@ -213,7 +213,7 @@ export default function IntegrationsPage() {
         <button
           onClick={save}
           disabled={saving}
-          className="px-6 py-2.5 rounded-xl text-sm font-semibold font-display text-slate-900 hover:brightness-95 disabled:opacity-50 transition-colors"
+          className="px-6 py-2.5 rounded-xl text-sm font-semibold font-display text-white hover:brightness-95 disabled:opacity-50 transition-colors"
           style={{ background: 'var(--accent)' }}
         >
           {saving ? 'Saving…' : saved ? '✓ Saved!' : 'Save Settings'}

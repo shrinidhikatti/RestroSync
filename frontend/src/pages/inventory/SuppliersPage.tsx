@@ -89,7 +89,7 @@ export default function SuppliersPage() {
         </div>
         <button
           onClick={openNew}
-          className="bg-amber-500 hover:bg-amber-600 text-black font-semibold px-4 py-2 rounded-xl text-sm"
+          className="bg-red-500 hover:bg-red-600 text-black font-semibold px-4 py-2 rounded-xl text-sm"
         >
           + Add Supplier
         </button>
@@ -97,7 +97,7 @@ export default function SuppliersPage() {
 
       {loading ? (
         <div className="flex items-center justify-center h-40">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-amber-500" />
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-red-500" />
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -169,7 +169,7 @@ export default function SuppliersPage() {
             </div>
             <div className="flex gap-3 mt-5">
               <button onClick={() => setShowModal(false)} className="flex-1 border border-slate-200 text-slate-600 rounded-xl py-2 text-sm font-semibold">Cancel</button>
-              <button onClick={handleSave} className="flex-1 bg-amber-500 hover:bg-amber-600 text-black rounded-xl py-2 text-sm font-semibold">
+              <button onClick={handleSave} className="flex-1 bg-red-500 hover:bg-red-600 text-black rounded-xl py-2 text-sm font-semibold">
                 {editing ? 'Save Changes' : 'Create'}
               </button>
             </div>

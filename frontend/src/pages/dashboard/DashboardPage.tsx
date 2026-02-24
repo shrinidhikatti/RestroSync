@@ -42,7 +42,7 @@ const statCards = [
     key: 'activeTables',
     label: 'Active Tables',
     icon: GridIcon,
-    color: 'bg-amber-50 text-amber-600',
+    color: 'bg-amber-50 text-red-600',
     trend: '-2',
     up: false,
   },
@@ -149,7 +149,7 @@ export default function DashboardPage() {
           >
             View Tables
           </Link>
-          <button className="px-4 py-2.5 rounded-xl text-sm font-semibold font-display text-slate-900 transition-all hover:brightness-95 shadow-sm" style={{ background: 'var(--accent)' }}>
+          <button className="px-4 py-2.5 rounded-xl text-sm font-semibold font-display text-white transition-all hover:brightness-95 shadow-sm" style={{ background: 'var(--accent)' }}>
             + New Order
           </button>
         </div>
@@ -159,16 +159,16 @@ export default function DashboardPage() {
       {isDemoMode && (
         <div className="mb-6 flex items-center justify-between gap-3 rounded-xl border border-amber-300 bg-amber-50 px-4 py-3">
           <div className="flex items-center gap-2">
-            <span className="text-amber-600 text-lg">⚠️</span>
+            <span className="text-red-600 text-lg">⚠️</span>
             <div>
               <p className="font-semibold text-amber-800 text-sm">DEMO MODE — Data is not real</p>
-              <p className="text-amber-600 text-xs">This account contains sample data for exploration. Wipe it before going live.</p>
+              <p className="text-red-600 text-xs">This account contains sample data for exploration. Wipe it before going live.</p>
             </div>
           </div>
           <button
             onClick={handleWipeDemo}
             disabled={wipingDemo}
-            className="shrink-0 rounded-lg border border-amber-400 bg-white px-3 py-1.5 text-xs font-semibold text-amber-700 hover:bg-amber-100 transition-colors disabled:opacity-50"
+            className="shrink-0 rounded-lg border border-red-500 bg-white px-3 py-1.5 text-xs font-semibold text-amber-700 hover:bg-amber-100 transition-colors disabled:opacity-50"
           >
             {wipingDemo ? 'Wiping…' : 'Wipe Demo Data'}
           </button>
@@ -229,7 +229,7 @@ export default function DashboardPage() {
           <h2 className="font-display font-semibold text-slate-800 text-base mb-4">Quick Actions</h2>
           <div className="space-y-3">
             {[
-              { label: 'New Order', icon: PlusIcon, color: 'bg-amber-500 text-slate-900', path: '#' },
+              { label: 'New Order', icon: PlusIcon, color: 'bg-red-500 text-white', path: '#' },
               { label: 'View Tables', icon: GridIcon, color: 'bg-slate-800 text-white', path: '/tables' },
               { label: 'Reservations', icon: ReceiptIcon, color: 'bg-blue-500 text-white', path: '/reservations' },
               { label: 'Menu Items', icon: RefreshIcon, color: 'bg-emerald-500 text-white', path: '/menu/items' },

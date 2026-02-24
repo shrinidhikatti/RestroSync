@@ -66,7 +66,7 @@ export default function DevicesPage() {
   const active   = devices.filter((d) => d.isActive);
   const inactive = devices.filter((d) => !d.isActive);
 
-  const inputClass = 'w-full px-3 py-2.5 rounded-xl border border-slate-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-amber-400';
+  const inputClass = 'w-full px-3 py-2.5 rounded-xl border border-slate-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-red-500';
 
   return (
     <div className="p-6 max-w-5xl mx-auto">
@@ -82,7 +82,7 @@ export default function DevicesPage() {
           </button>
           <button
             onClick={() => setShowModal(true)}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold font-display text-slate-900 hover:brightness-95"
+            className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold font-display text-white hover:brightness-95"
             style={{ background: 'var(--accent)' }}
           >
             <PlusIcon className="w-4 h-4" /> Register Device
@@ -148,7 +148,7 @@ export default function DevicesPage() {
                   <td className="px-5 py-3.5 text-right">
                     <div className="flex items-center justify-end gap-3">
                       {d.isActive && (
-                        <button onClick={() => revoke(d.id)} className="text-xs text-amber-600 hover:text-amber-700 font-medium transition-colors">
+                        <button onClick={() => revoke(d.id)} className="text-xs text-red-600 hover:text-red-700 font-medium transition-colors">
                           Revoke
                         </button>
                       )}

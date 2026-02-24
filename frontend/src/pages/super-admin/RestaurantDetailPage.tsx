@@ -16,7 +16,7 @@ function Stat({ label, value, sub }: { label: string; value: any; sub?: string }
   return (
     <div className="bg-slate-800/50 border border-slate-700 rounded-2xl p-4">
       <p className="text-xs text-slate-400">{label}</p>
-      <p className="text-xl font-bold text-white mt-1" style={{ fontFamily: "'Syne', sans-serif" }}>{value ?? '—'}</p>
+      <p className="text-xl font-bold text-white mt-1" style={{ fontFamily: "'Inter', sans-serif" }}>{value ?? '—'}</p>
       {sub && <p className="text-xs text-slate-500 mt-0.5">{sub}</p>}
     </div>
   );
@@ -107,11 +107,11 @@ export default function RestaurantDetailPage() {
         </Link>
         <div className="flex-1">
           <div className="flex items-center gap-3 flex-wrap">
-            <div className="w-10 h-10 rounded-xl bg-violet-700 flex items-center justify-center font-bold text-white text-lg flex-shrink-0" style={{ fontFamily: "'Syne', sans-serif" }}>
+            <div className="w-10 h-10 rounded-xl bg-violet-700 flex items-center justify-center font-bold text-white text-lg flex-shrink-0" style={{ fontFamily: "'Inter', sans-serif" }}>
               {r.name?.charAt(0)}
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-white" style={{ fontFamily: "'Syne', sans-serif" }}>{r.name}</h1>
+              <h1 className="text-2xl font-bold text-white" style={{ fontFamily: "'Inter', sans-serif" }}>{r.name}</h1>
               <div className="flex items-center gap-2 mt-1 flex-wrap">
                 <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${r.status === 'ACTIVE' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-rose-500/10 text-rose-400'}`}>
                   {r.status}
@@ -158,7 +158,7 @@ export default function RestaurantDetailPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Restaurant Info */}
         <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-4">
-          <h2 className="text-sm font-semibold text-white" style={{ fontFamily: "'Syne', sans-serif" }}>Restaurant Info</h2>
+          <h2 className="text-sm font-semibold text-white" style={{ fontFamily: "'Inter', sans-serif" }}>Restaurant Info</h2>
           {[
             { label: 'Email', value: r.email },
             { label: 'Phone', value: r.phone },
@@ -180,7 +180,7 @@ export default function RestaurantDetailPage() {
         {/* Plan & Compliance */}
         <div className="space-y-4">
           <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-3">
-            <h2 className="text-sm font-semibold text-white" style={{ fontFamily: "'Syne', sans-serif" }}>Plan & Compliance</h2>
+            <h2 className="text-sm font-semibold text-white" style={{ fontFamily: "'Inter', sans-serif" }}>Plan & Compliance</h2>
             {[
               { label: 'Plan', value: r.plan?.name ?? 'No Plan' },
               { label: 'Plan Expires', value: r.planExpiresAt ? new Date(r.planExpiresAt).toLocaleDateString('en-IN') : 'N/A' },
@@ -209,7 +209,7 @@ export default function RestaurantDetailPage() {
 
           {/* FSSAI warning */}
           {!r.fssaiNumber && (
-            <div className="bg-amber-500/10 border border-amber-500/30 rounded-2xl p-4 flex gap-3">
+            <div className="bg-red-500/10 border border-amber-500/30 rounded-2xl p-4 flex gap-3">
               <span className="text-lg">⚠️</span>
               <div>
                 <p className="text-sm font-semibold text-amber-400">FSSAI Not Set</p>
@@ -224,7 +224,7 @@ export default function RestaurantDetailPage() {
       <div className="bg-slate-900 border border-violet-500/20 rounded-2xl p-5 space-y-5">
         <div className="flex items-center gap-2">
           <span className="text-lg">🛠️</span>
-          <h2 className="text-sm font-semibold text-white" style={{ fontFamily: "'Syne', sans-serif" }}>Super Admin Controls</h2>
+          <h2 className="text-sm font-semibold text-white" style={{ fontFamily: "'Inter', sans-serif" }}>Super Admin Controls</h2>
           <span className="ml-auto px-2 py-0.5 rounded-full text-xs font-medium bg-violet-500/10 text-violet-400 border border-violet-500/20">Admin Only</span>
         </div>
 

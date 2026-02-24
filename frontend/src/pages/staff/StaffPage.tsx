@@ -86,7 +86,7 @@ export default function StaffPage() {
     s.role.toLowerCase().includes(search.toLowerCase())
   );
 
-  const inputClass = "w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 bg-white";
+  const inputClass = "w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-red-500 bg-white";
 
   return (
     <div className="p-6 max-w-5xl mx-auto">
@@ -98,7 +98,7 @@ export default function StaffPage() {
         </div>
         <button
           onClick={() => setShowModal(true)}
-          className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold font-display text-slate-900 hover:brightness-95"
+          className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold font-display text-white hover:brightness-95"
           style={{ background: 'var(--accent)' }}
         >
           <PlusIcon className="w-4 h-4" /> Add Staff
@@ -113,7 +113,7 @@ export default function StaffPage() {
           placeholder="Search staff..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 bg-white"
+          className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-red-500 bg-white"
         />
       </div>
 
@@ -200,7 +200,7 @@ export default function StaffPage() {
         footer={
           <>
             <button onClick={() => setShowModal(false)} className="px-4 py-2 rounded-xl text-sm font-medium text-slate-600 bg-slate-100 hover:bg-slate-200">Cancel</button>
-            <button onClick={handleCreate} disabled={saving || !form.name || !form.password} className="px-4 py-2 rounded-xl text-sm font-semibold text-slate-900 disabled:opacity-60 hover:brightness-95" style={{ background: 'var(--accent)' }}>
+            <button onClick={handleCreate} disabled={saving || !form.name || !form.password} className="px-4 py-2 rounded-xl text-sm font-semibold text-white disabled:opacity-60 hover:brightness-95" style={{ background: 'var(--accent)' }}>
               {saving ? 'Creating...' : 'Create Staff'}
             </button>
           </>

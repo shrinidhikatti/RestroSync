@@ -62,7 +62,7 @@ export default function RegisterPage() {
     }
   };
 
-  const inputClass = "w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-transparent transition-shadow placeholder-slate-400";
+  const inputClass = "w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-shadow placeholder-slate-400";
 
   return (
     <div className="min-h-screen bg-slate-50 flex items-center justify-center p-6">
@@ -70,7 +70,7 @@ export default function RegisterPage() {
         {/* Brand */}
         <div className="flex items-center gap-3 mb-8 justify-center">
           <div
-            className="w-10 h-10 rounded-xl flex items-center justify-center font-display font-bold text-slate-900 text-sm"
+            className="w-10 h-10 rounded-xl flex items-center justify-center font-display font-bold text-white text-sm"
             style={{ background: 'var(--accent)' }}
           >
             RS
@@ -161,11 +161,11 @@ export default function RegisterPage() {
                 type="checkbox"
                 checked={form.dpdpaConsentGiven}
                 onChange={(e) => set('dpdpaConsentGiven', e.target.checked)}
-                className="mt-0.5 rounded border-slate-300 text-amber-500 focus:ring-amber-400"
+                className="mt-0.5 rounded border-slate-300 text-red-500 focus:ring-red-500"
               />
               <span className="text-sm text-slate-500 leading-snug">
                 I agree to the{' '}
-                <a href="#" className="text-amber-600 hover:underline">Privacy Policy</a>
+                <a href="#" className="text-red-600 hover:underline">Privacy Policy</a>
                 {' '}and consent to data processing as per DPDPA 2023.
               </span>
             </label>
@@ -188,7 +188,7 @@ export default function RegisterPage() {
 
           <p className="text-center text-sm text-slate-500 mt-6">
             Already have an account?{' '}
-            <Link to="/login" className="font-semibold text-amber-600 hover:text-amber-700">
+            <Link to="/login" className="font-semibold text-red-600 hover:text-red-700">
               Sign in
             </Link>
           </p>

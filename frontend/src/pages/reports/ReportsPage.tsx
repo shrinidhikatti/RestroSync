@@ -37,7 +37,7 @@ function KpiCard({ label, value, sub, accent = false }: {
       ? 'bg-amber-50 border-amber-200'
       : 'bg-white border-slate-200'}`}>
       <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1">{label}</p>
-      <p className={`text-2xl font-bold font-display ${accent ? 'text-amber-600' : 'text-slate-800'}`}>{value}</p>
+      <p className={`text-2xl font-bold font-display ${accent ? 'text-red-600' : 'text-slate-800'}`}>{value}</p>
       {sub && <p className="text-xs text-slate-400 mt-0.5">{sub}</p>}
     </div>
   );
@@ -128,8 +128,8 @@ export default function ReportsPage() {
               onClick={() => applyPreset(i)}
               className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors ${
                 activePreset === i
-                  ? 'bg-amber-500 text-white'
-                  : 'bg-white border border-slate-200 text-slate-600 hover:border-amber-300'
+                  ? 'bg-red-500 text-white'
+                  : 'bg-white border border-slate-200 text-slate-600 hover:border-red-400'
               }`}
             >
               {p.label}
@@ -151,7 +151,7 @@ export default function ReportsPage() {
           <button
             onClick={loadAll}
             disabled={loading}
-            className="px-4 py-1.5 bg-amber-500 hover:bg-amber-600 text-white text-xs font-semibold rounded-lg transition-colors disabled:opacity-50"
+            className="px-4 py-1.5 bg-red-500 hover:bg-red-600 text-white text-xs font-semibold rounded-lg transition-colors disabled:opacity-50"
           >
             {loading ? 'Loading…' : 'Apply'}
           </button>

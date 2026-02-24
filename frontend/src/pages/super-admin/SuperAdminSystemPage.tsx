@@ -55,7 +55,7 @@ export default function SuperAdminSystemPage() {
     <div className="p-6 max-w-4xl mx-auto space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-white" style={{ fontFamily: "'Syne', sans-serif" }}>System Monitor</h1>
+          <h1 className="text-2xl font-bold text-white" style={{ fontFamily: "'Inter', sans-serif" }}>System Monitor</h1>
           <p className="text-sm text-slate-400 mt-1">Platform health — auto-refreshes every 30s</p>
         </div>
         <span className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold border ${
@@ -99,7 +99,7 @@ export default function SuperAdminSystemPage() {
           ].map((item) => (
             <div key={item.label} className="bg-slate-900 border border-slate-800 rounded-2xl p-4">
               <p className="text-xs text-slate-400">{item.label}</p>
-              <p className="text-lg font-bold text-white mt-1" style={{ fontFamily: "'Syne', sans-serif" }}>{item.value}</p>
+              <p className="text-lg font-bold text-white mt-1" style={{ fontFamily: "'Inter', sans-serif" }}>{item.value}</p>
             </div>
           ))}
         </div>
@@ -108,23 +108,23 @@ export default function SuperAdminSystemPage() {
       {/* App version */}
       {appVersion && (
         <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5">
-          <h2 className="text-sm font-semibold text-white mb-4" style={{ fontFamily: "'Syne', sans-serif" }}>Flutter App Versions</h2>
+          <h2 className="text-sm font-semibold text-white mb-4" style={{ fontFamily: "'Inter', sans-serif" }}>Flutter App Versions</h2>
           <div className="grid grid-cols-2 gap-6">
             <div>
               <p className="text-xs text-slate-400">Minimum Required</p>
-              <p className="text-2xl font-bold text-amber-400 mt-1" style={{ fontFamily: "'Syne', sans-serif" }}>{appVersion.minAppVersion}</p>
+              <p className="text-2xl font-bold text-amber-400 mt-1" style={{ fontFamily: "'Inter', sans-serif" }}>{appVersion.minAppVersion}</p>
               <p className="text-xs text-slate-500 mt-0.5">Devices below this are force-updated</p>
             </div>
             <div>
               <p className="text-xs text-slate-400">Latest Release</p>
-              <p className="text-2xl font-bold text-emerald-400 mt-1" style={{ fontFamily: "'Syne', sans-serif" }}>{appVersion.latestAppVersion}</p>
+              <p className="text-2xl font-bold text-emerald-400 mt-1" style={{ fontFamily: "'Inter', sans-serif" }}>{appVersion.latestAppVersion}</p>
               {appVersion.updateUrl && <p className="text-xs text-amber-400 mt-0.5 truncate">{appVersion.updateUrl}</p>}
             </div>
           </div>
         </div>
       )}
 
-      <div className="bg-amber-500/10 border border-amber-500/30 rounded-2xl p-4 flex gap-3">
+      <div className="bg-red-500/10 border border-amber-500/30 rounded-2xl p-4 flex gap-3">
         <span className="text-xl">⏱</span>
         <div>
           <p className="text-sm font-semibold text-amber-400">Clock Drift Protection</p>

@@ -5,7 +5,7 @@ type FoodType = 'VEG' | 'NON_VEG' | 'EGG' | string;
 const config: Record<string, { dot: string; label: string; border: string }> = {
   VEG:     { dot: 'bg-emerald-500', label: 'Veg',     border: 'border-emerald-500' },
   NON_VEG: { dot: 'bg-rose-500',    label: 'Non-Veg', border: 'border-rose-500' },
-  EGG:     { dot: 'bg-amber-400',   label: 'Egg',     border: 'border-amber-400' },
+  EGG:     { dot: 'bg-red-500',   label: 'Egg',     border: 'border-red-500' },
 };
 
 interface FoodTypeDotProps {

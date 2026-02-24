@@ -66,6 +66,7 @@ export class AuthService {
 
     const tokens = await this.generateTokens({
       userId: user.id,
+      name: user.name,
       restaurantId: user.restaurantId,
       branchId: user.branchId,
       role: user.role,
@@ -146,6 +147,7 @@ export class AuthService {
 
     const tokens = await this.generateTokens({
       userId: matchedUser.id,
+      name: matchedUser.name,
       restaurantId: matchedUser.restaurantId,
       branchId: matchedUser.branchId || device.branchId,
       role: matchedUser.role,
@@ -222,6 +224,7 @@ export class AuthService {
 
     const tokens = await this.generateTokens({
       userId: result.owner.id,
+      name: result.owner.name,
       restaurantId: result.restaurant.id,
       branchId: null,
       role: 'OWNER',
@@ -247,7 +250,7 @@ export class AuthService {
   async refreshToken(dto: RefreshTokenDto) {
     const stored = await this.prisma.refreshToken.findUnique({
       where: { token: dto.refreshToken },
-      include: { user: { select: { id: true, role: true, restaurantId: true, branchId: true, isActive: true } } },
+      include: { user: { select: { id: true, name: true, role: true, restaurantId: true, branchId: true, isActive: true } } },
     });
 
     if (!stored || stored.expiresAt < new Date()) {
@@ -272,6 +275,7 @@ export class AuthService {
 
     const tokens = await this.generateTokens({
       userId: stored.user.id,
+      name: stored.user.name,
       restaurantId: stored.user.restaurantId,
       branchId: stored.user.branchId,
       role: stored.user.role,

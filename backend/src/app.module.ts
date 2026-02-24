@@ -28,6 +28,8 @@ import { JobsModule }         from './jobs/jobs.module';
 import { DayCloseModule }     from './day-close/day-close.module';
 import { NumberRangesModule } from './number-ranges/number-ranges.module';
 import { DemoModule }         from './demo/demo.module';
+import { ComplaintsModule }   from './complaints/complaints.module';
+import { ReceiptSettingsModule } from './receipt-settings/receipt-settings.module';
 
 @Module({
   imports: [
@@ -61,6 +63,8 @@ import { DemoModule }         from './demo/demo.module';
     DayCloseModule,
     NumberRangesModule,
     DemoModule,
+    ComplaintsModule,
+    ReceiptSettingsModule,
   ],
   providers: [
     { provide: APP_GUARD, useClass: ThrottlerGuard },

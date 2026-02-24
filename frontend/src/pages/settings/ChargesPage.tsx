@@ -87,7 +87,7 @@ export default function ChargesPage() {
       <div className="flex items-center justify-center h-full py-20">
         <div className="flex gap-2">
           {[0, 1, 2].map((i) => (
-            <div key={i} className="w-2 h-2 rounded-full bg-amber-400 animate-bounce" style={{ animationDelay: `${i * 120}ms` }} />
+            <div key={i} className="w-2 h-2 rounded-full bg-red-500 animate-bounce" style={{ animationDelay: `${i * 120}ms` }} />
           ))}
         </div>
       </div>
@@ -98,7 +98,7 @@ export default function ChargesPage() {
     <div className="p-6 max-w-2xl mx-auto space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900" style={{ fontFamily: "'Syne', sans-serif" }}>
+          <h1 className="text-2xl font-bold text-slate-900" style={{ fontFamily: "'Inter', sans-serif" }}>
             Service Charges
           </h1>
           <p className="text-slate-500 text-sm mt-1">
@@ -108,7 +108,7 @@ export default function ChargesPage() {
         <button
           onClick={openCreate}
           className="flex items-center gap-2 px-4 py-2 rounded-xl text-slate-900 font-semibold text-sm"
-          style={{ background: '#f59e0b' }}
+          style={{ background: '#ef4444' }}
         >
           <PlusIcon className="w-4 h-4" />
           Add Charge
@@ -118,7 +118,7 @@ export default function ChargesPage() {
       {charges.length === 0 ? (
         <div className="bg-white rounded-2xl border border-slate-200 p-12 text-center">
           <p className="text-slate-400 text-sm">No service charges configured yet.</p>
-          <button onClick={openCreate} className="mt-4 text-amber-600 font-semibold text-sm hover:text-amber-700">
+          <button onClick={openCreate} className="mt-4 text-red-600 font-semibold text-sm hover:text-red-700">
             + Add your first charge
           </button>
         </div>
@@ -169,7 +169,7 @@ export default function ChargesPage() {
               value={form.name}
               onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
               placeholder="e.g. Service Charge"
-              className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
+              className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-red-500"
             />
           </div>
 
@@ -179,7 +179,7 @@ export default function ChargesPage() {
               <select
                 value={form.type}
                 onChange={(e) => setForm((f) => ({ ...f, type: e.target.value as 'PERCENTAGE' | 'FIXED' }))}
-                className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
+                className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-red-500"
               >
                 <option value="PERCENTAGE">Percentage (%)</option>
                 <option value="FIXED">Fixed (₹)</option>
@@ -195,7 +195,7 @@ export default function ChargesPage() {
                 onChange={(e) => setForm((f) => ({ ...f, value: e.target.value }))}
                 min="0"
                 step="0.5"
-                className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
+                className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-red-500"
               />
             </div>
           </div>
@@ -209,7 +209,7 @@ export default function ChargesPage() {
                   onClick={() => setForm((f) => ({ ...f, applicableTo: opt.key }))}
                   className={`flex-1 py-2 rounded-xl border-2 text-sm font-medium transition-all ${
                     form.applicableTo === opt.key
-                      ? 'border-amber-400 bg-amber-50 text-amber-700'
+                      ? 'border-red-500 bg-red-50 text-red-700'
                       : 'border-slate-200 text-slate-600'
                   }`}
                 >
@@ -223,7 +223,7 @@ export default function ChargesPage() {
             onClick={handleSave}
             disabled={saving || !form.name.trim()}
             className="w-full py-3 rounded-xl font-bold text-slate-900 disabled:opacity-50"
-            style={{ background: '#f59e0b' }}
+            style={{ background: '#ef4444' }}
           >
             {saving ? 'Saving...' : editCharge ? 'Update Charge' : 'Add Charge'}
           </button>

@@ -9,6 +9,7 @@ import {
   PackageIcon, TruckIcon,
   BarChartIcon, ShieldIcon, FileTextIcon, TrendingUpIcon, GridIcon as BranchIcon,
   LinkIcon, MonitorIcon, DollarIcon, ShoppingBagIcon, SettingsIcon as SystemIcon,
+  AlertIcon,
 } from '../ui/Icons';
 
 interface NavItem {
@@ -26,12 +27,14 @@ const navItems: NavItem[] = [
     children: [
       { label: 'Categories', path: '/menu/categories', icon: FolderIcon },
       { label: 'Items',      path: '/menu/items',      icon: MenuIcon },
+      { label: 'Combos',     path: '/menu/combos',     icon: TagIcon  },
     ],
   },
   { label: 'Orders',       path: '/orders',       icon: ClockIcon },
   { label: 'Kitchen (KDS)', path: '/kitchen',     icon: EyeIcon },
   { label: 'Tables',       path: '/tables',       icon: GridIcon },
   { label: 'Reservations', path: '/reservations', icon: CalendarIcon },
+  { label: 'Day Close',    path: '/day-close',    icon: DollarIcon },
   { label: 'Staff',        path: '/staff',        icon: UsersIcon },
   {
     label: 'Multi-Outlet',
@@ -56,9 +59,10 @@ const navItems: NavItem[] = [
     label: 'Reports',
     icon: BarChartIcon,
     children: [
-      { label: 'Sales & Analytics', path: '/reports/sales', icon: BarChartIcon },
-      { label: 'Audit Log',         path: '/reports/audit', icon: FileTextIcon  },
-      { label: 'Fraud & Risk',      path: '/reports/fraud', icon: ShieldIcon    },
+      { label: 'Sales & Analytics', path: '/reports/sales',       icon: BarChartIcon },
+      { label: 'Audit Log',         path: '/reports/audit',       icon: FileTextIcon },
+      { label: 'Fraud & Risk',      path: '/reports/fraud',       icon: ShieldIcon   },
+      { label: 'Dish Complaints',   path: '/reports/complaints',  icon: AlertIcon    },
     ],
   },
   {
@@ -117,7 +121,7 @@ function NavSection({
         className={({ isActive }) =>
           `relative flex items-center gap-3 px-3 py-2.5 rounded-xl mx-2 transition-all duration-150 group
           ${isActive
-            ? 'bg-amber-500 text-slate-900 shadow-sm'
+            ? 'bg-red-500 text-white shadow-sm'
             : 'text-slate-400 hover:text-white hover:bg-slate-700/50'
           }`
         }
@@ -144,7 +148,7 @@ function NavSection({
       <button
         onClick={() => !collapsed && setOpen((v) => !v)}
         className={`relative flex items-center gap-3 px-3 py-2.5 rounded-xl mx-2 w-[calc(100%-16px)] transition-all duration-150
-          ${isChildActive && !open ? 'text-amber-400' : 'text-slate-400'}
+          ${isChildActive && !open ? 'text-red-400' : 'text-slate-400'}
           hover:text-white hover:bg-slate-700/50`}
         title={collapsed ? item.label : undefined}
       >
@@ -171,7 +175,7 @@ function NavSection({
               className={({ isActive }) =>
                 `flex items-center gap-2.5 px-3 py-2 rounded-lg mx-1 text-sm transition-all duration-150
                 ${isActive
-                  ? 'text-amber-400 bg-amber-500/10 font-medium'
+                  ? 'text-red-400 bg-red-500/10 font-medium'
                   : 'text-slate-500 hover:text-slate-300 hover:bg-slate-700/30'
                 }`
               }
@@ -205,8 +209,7 @@ export function Sidebar() {
       {/* Brand */}
       <div className="flex items-center gap-3 px-4 h-16 flex-shrink-0 border-b border-slate-800">
         <div
-          className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 font-display font-bold text-slate-900 text-sm"
-          style={{ background: 'var(--accent)' }}
+          className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 font-display font-bold text-white text-sm bg-red-500"
         >
           RS
         </div>

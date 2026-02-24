@@ -33,7 +33,7 @@ export default function SuperAdminLoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex" style={{ fontFamily: "'DM Sans', sans-serif" }}>
+    <div className="min-h-screen flex" style={{ fontFamily: "'Inter', sans-serif" }}>
       {/* Left panel */}
       <div className="hidden lg:flex flex-col justify-between w-[42%] p-12 relative overflow-hidden" style={{ background: '#0f172a' }}>
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -52,7 +52,7 @@ export default function SuperAdminLoginPage() {
           <div className="w-12 h-12 rounded-2xl flex items-center justify-center font-bold text-white text-xl mb-8 bg-violet-600">
             SA
           </div>
-          <h1 className="font-bold text-white text-4xl leading-tight mb-4" style={{ fontFamily: "'Syne', sans-serif" }}>
+          <h1 className="font-bold text-white text-4xl leading-tight mb-4" style={{ fontFamily: "'Inter', sans-serif" }}>
             RestroSync<br />Super Admin
           </h1>
           <p className="text-slate-400 text-base leading-relaxed max-w-xs">
@@ -78,7 +78,7 @@ export default function SuperAdminLoginPage() {
         <div className="w-full max-w-md">
           <div className="lg:hidden flex items-center gap-3 mb-8">
             <div className="w-10 h-10 rounded-xl flex items-center justify-center font-bold text-white text-sm bg-violet-600">SA</div>
-            <span className="font-bold text-slate-900 text-xl" style={{ fontFamily: "'Syne', sans-serif" }}>Super Admin</span>
+            <span className="font-bold text-slate-900 text-xl" style={{ fontFamily: "'Inter', sans-serif" }}>Super Admin</span>
           </div>
 
           <div className="bg-white rounded-2xl p-8 shadow-sm border border-slate-100">
@@ -89,7 +89,7 @@ export default function SuperAdminLoginPage() {
                 </svg>
               </div>
               <div>
-                <h2 className="font-bold text-slate-900 text-xl" style={{ fontFamily: "'Syne', sans-serif" }}>Platform Access</h2>
+                <h2 className="font-bold text-slate-900 text-xl" style={{ fontFamily: "'Inter', sans-serif" }}>Platform Access</h2>
                 <p className="text-slate-500 text-xs">Super Admin credentials only</p>
               </div>
             </div>
@@ -131,7 +131,7 @@ export default function SuperAdminLoginPage() {
           </div>
           <p className="text-center text-xs text-slate-400 mt-4">
             Restaurant owner?{' '}
-            <a href="/login" className="text-amber-600 hover:underline">Go to restaurant login</a>
+            <a href="/login" className="text-red-600 hover:underline">Go to restaurant login</a>
           </p>
         </div>
       </div>

@@ -4,7 +4,7 @@ import { saApi } from './useSuperAdmin';
 
 const MODE_COLORS: Record<string, string> = {
   COUNTER: 'bg-blue-500/10 text-blue-400',
-  TABLE_SIMPLE: 'bg-amber-500/10 text-amber-400',
+  TABLE_SIMPLE: 'bg-red-500/10 text-amber-400',
   FULL_SERVICE: 'bg-emerald-500/10 text-emerald-400',
 };
 
@@ -59,7 +59,7 @@ export default function RestaurantsListPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-white" style={{ fontFamily: "'Syne', sans-serif" }}>Restaurants</h1>
+          <h1 className="text-2xl font-bold text-white" style={{ fontFamily: "'Inter', sans-serif" }}>Restaurants</h1>
           <p className="text-slate-400 text-sm mt-1">{total} total restaurants on the platform</p>
         </div>
         <Link

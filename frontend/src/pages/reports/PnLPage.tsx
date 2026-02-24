@@ -108,7 +108,7 @@ export default function PnLPage() {
                 key={p.label}
                 onClick={() => setPreset(i)}
                 className={`px-4 py-2 text-sm font-medium font-display transition-colors ${
-                  preset === i ? 'bg-amber-400 text-slate-900' : 'text-slate-500 hover:text-slate-800 hover:bg-slate-50'
+                  preset === i ? 'bg-red-500 text-white' : 'text-slate-500 hover:text-slate-800 hover:bg-slate-50'
                 }`}
               >
                 {p.label}
@@ -143,7 +143,7 @@ export default function PnLPage() {
             <KpiCard label="Refunds"       value={fmt(rev.totalRefunds)} color="text-rose-600" sub={`${data.refundCount} refunds`} />
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <KpiCard label="Discounts"       value={fmt(rev.discounts)} color="text-amber-600" />
+            <KpiCard label="Discounts"       value={fmt(rev.discounts)} color="text-red-600" />
             <KpiCard label="Service Charges" value={fmt(rev.charges)} />
             <KpiCard label="Tips"            value={fmt(rev.tips)} color="text-purple-600" />
             <KpiCard label="Bills"           value={data.billCount.toString()} sub="paid bills" />

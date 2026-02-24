@@ -155,7 +155,7 @@ export default function RecipesPage() {
         </div>
         <button
           onClick={openNew}
-          className="bg-amber-500 hover:bg-amber-600 text-black font-semibold px-4 py-2 rounded-xl text-sm"
+          className="bg-red-500 hover:bg-red-600 text-white font-semibold px-4 py-2 rounded-xl text-sm"
         >
           + New Recipe
         </button>
@@ -163,7 +163,7 @@ export default function RecipesPage() {
 
       {loading ? (
         <div className="flex items-center justify-center h-40">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-amber-500" />
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-red-500" />
         </div>
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
@@ -175,8 +175,8 @@ export default function RecipesPage() {
               <div
                 key={r.id}
                 onClick={() => setSelected(r)}
-                className={`bg-white rounded-xl border p-4 cursor-pointer hover:border-amber-400 transition-colors ${
-                  selected?.id === r.id ? 'border-amber-400 bg-amber-50' : 'border-slate-100'
+                className={`bg-white rounded-xl border p-4 cursor-pointer hover:border-red-500 transition-colors ${
+                  selected?.id === r.id ? 'border-red-500 bg-red-50' : 'border-slate-100'
                 }`}
               >
                 <div className="flex items-start justify-between">
@@ -300,7 +300,7 @@ export default function RecipesPage() {
               <div className="flex items-center justify-between mb-3">
                 <span className="text-sm font-semibold text-slate-700">Ingredients</span>
                 <button onClick={addIngRow}
-                  className="text-xs text-amber-600 font-semibold">+ Add Row</button>
+                  className="text-xs text-red-600 font-semibold">+ Add Row</button>
               </div>
               <div className="space-y-2">
                 {formIngredients.map((row, i) => (
@@ -334,7 +334,7 @@ export default function RecipesPage() {
 
             <div className="flex gap-3">
               <button onClick={() => setShowModal(false)} className="flex-1 border border-slate-200 text-slate-600 rounded-xl py-2 text-sm font-semibold">Cancel</button>
-              <button onClick={handleSave} className="flex-1 bg-amber-500 hover:bg-amber-600 text-black rounded-xl py-2 text-sm font-semibold">
+              <button onClick={handleSave} className="flex-1 bg-red-500 hover:bg-red-600 text-white rounded-xl py-2 text-sm font-semibold">
                 {editing ? 'Save Changes' : 'Create Recipe'}
               </button>
             </div>

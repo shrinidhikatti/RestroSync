@@ -45,7 +45,7 @@ export default function LoyaltySettingsPage() {
     <div className="flex justify-center py-20">
       <div className="flex gap-2">
         {[0,1,2].map((i) => (
-          <div key={i} className="w-2 h-2 rounded-full bg-amber-400 animate-bounce"
+          <div key={i} className="w-2 h-2 rounded-full bg-red-500 animate-bounce"
             style={{ animationDelay: `${i * 120}ms` }} />
         ))}
       </div>
@@ -97,13 +97,13 @@ export default function LoyaltySettingsPage() {
           <p className="text-xs font-semibold text-amber-700 uppercase tracking-wide mb-3">Preview (for ₹1,000 order)</p>
           <div className="flex gap-8 text-sm">
             <div>
-              <p className="text-amber-600">Points Earned</p>
+              <p className="text-red-600">Points Earned</p>
               <p className="text-xl font-bold text-amber-800 font-display">
                 {Math.floor((1000 / 100) * earnRate)} pts
               </p>
             </div>
             <div>
-              <p className="text-amber-600">100 pts = Discount</p>
+              <p className="text-red-600">100 pts = Discount</p>
               <p className="text-xl font-bold text-amber-800 font-display">
                 ₹{(100 * redeemVal).toFixed(2)}
               </p>
@@ -114,7 +114,7 @@ export default function LoyaltySettingsPage() {
         <button
           onClick={handleSave}
           disabled={saving}
-          className="px-6 py-2.5 bg-amber-500 hover:bg-amber-600 text-white text-sm font-semibold rounded-xl transition-colors disabled:opacity-50"
+          className="px-6 py-2.5 bg-red-500 hover:bg-red-600 text-white text-sm font-semibold rounded-xl transition-colors disabled:opacity-50"
         >
           {saved ? '✓ Saved!' : saving ? 'Saving…' : 'Save Settings'}
         </button>
@@ -144,7 +144,7 @@ export default function LoyaltySettingsPage() {
                   <p className="text-xs font-semibold text-slate-600">
                     {e.event === 'BIRTHDAY' ? 'Birthday' : 'Anniversary'}
                   </p>
-                  <p className="text-sm font-bold text-amber-600">{fmtDate(e.date)}</p>
+                  <p className="text-sm font-bold text-red-600">{fmtDate(e.date)}</p>
                 </div>
               </div>
             ))}

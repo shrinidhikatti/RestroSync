@@ -108,7 +108,7 @@ export default function ReservationsPage() {
         </div>
         <button
           onClick={() => { set('reservationDate', selectedDate); setShowModal(true); }}
-          className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold font-display text-slate-900 hover:brightness-95"
+          className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold font-display text-white hover:brightness-95"
           style={{ background: 'var(--accent)' }}
         >
           <PlusIcon className="w-4 h-4" /> New Reservation
@@ -122,7 +122,7 @@ export default function ReservationsPage() {
         </button>
         <div className="flex-1 text-center">
           <p className="font-display font-semibold text-slate-800">{formattedDate}</p>
-          <button onClick={() => setSelectedDate(new Date().toISOString().split('T')[0])} className="text-xs text-amber-600 hover:underline">Today</button>
+          <button onClick={() => setSelectedDate(new Date().toISOString().split('T')[0])} className="text-xs text-red-600 hover:underline">Today</button>
         </div>
         <button onClick={() => changeDate(1)} className="p-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 transition-colors text-slate-600">
           <ChevronRightIcon className="w-4 h-4" />
@@ -140,7 +140,7 @@ export default function ReservationsPage() {
           <p className="font-display text-slate-500 text-sm">No reservations for this date</p>
           <button
             onClick={() => setShowModal(true)}
-            className="mt-4 px-4 py-2 rounded-xl text-sm font-semibold font-display text-slate-900 hover:brightness-95"
+            className="mt-4 px-4 py-2 rounded-xl text-sm font-semibold font-display text-white hover:brightness-95"
             style={{ background: 'var(--accent)' }}
           >
             Add one
@@ -212,7 +212,7 @@ export default function ReservationsPage() {
         footer={
           <>
             <button onClick={() => setShowModal(false)} className="px-4 py-2 rounded-xl text-sm font-medium text-slate-600 bg-slate-100 hover:bg-slate-200">Cancel</button>
-            <button onClick={handleCreate} disabled={saving || !form.customerName || !form.tableId} className="px-5 py-2 rounded-xl text-sm font-semibold text-slate-900 disabled:opacity-60 hover:brightness-95" style={{ background: 'var(--accent)' }}>
+            <button onClick={handleCreate} disabled={saving || !form.customerName || !form.tableId} className="px-5 py-2 rounded-xl text-sm font-semibold text-white disabled:opacity-60 hover:brightness-95" style={{ background: 'var(--accent)' }}>
               {saving ? 'Saving...' : 'Create Reservation'}
             </button>
           </>
@@ -233,21 +233,21 @@ export default function ReservationsPage() {
                 value={form[f.key as keyof typeof form] as string}
                 onChange={(e) => set(f.key, e.target.value)}
                 placeholder={f.placeholder}
-                className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
+                className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-red-500"
               />
             </div>
           ))}
 
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-1.5 font-display">Time *</label>
-            <select value={form.reservationTime} onChange={(e) => set('reservationTime', e.target.value)} className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400">
+            <select value={form.reservationTime} onChange={(e) => set('reservationTime', e.target.value)} className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-red-500">
               {TIME_SLOTS.map((t) => <option key={t} value={t}>{t}</option>)}
             </select>
           </div>
 
           <div className="col-span-2">
             <label className="block text-sm font-medium text-slate-700 mb-1.5 font-display">Table *</label>
-            <select value={form.tableId} onChange={(e) => set('tableId', e.target.value)} className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400">
+            <select value={form.tableId} onChange={(e) => set('tableId', e.target.value)} className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-red-500">
               <option value="">Select a table</option>
               {tables.filter((t) => t.status === 'AVAILABLE' || t.status === 'RESERVED').map((t) => (
                 <option key={t.id} value={t.id}>Table {t.number} ({t.capacity} seats) {t.section ? `· ${t.section}` : ''}</option>

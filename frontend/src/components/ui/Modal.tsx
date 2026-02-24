@@ -96,7 +96,7 @@ export function ConfirmModal({
             className={`px-4 py-2 rounded-xl text-sm font-semibold text-white transition-colors disabled:opacity-60 ${
               danger
                 ? 'bg-rose-500 hover:bg-rose-600'
-                : 'bg-amber-500 hover:bg-amber-600'
+                : 'bg-red-500 hover:bg-red-600'
             }`}
           >
             {loading ? 'Processing...' : confirmLabel}

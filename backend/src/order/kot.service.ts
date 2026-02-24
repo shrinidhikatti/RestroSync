@@ -38,6 +38,7 @@ export class KotService {
         },
         table: { select: { number: true, section: true } },
       },
+      // include captainName for KOT display
     });
     if (!order) throw new NotFoundException('Order not found');
 
@@ -109,6 +110,7 @@ export class KotService {
         orderType: order.orderType,
         tableNumber: order.table?.number ?? null,
         tableSection: order.table?.section ?? null,
+        captainName: order.captainName ?? null,
         items: items.map((i) => ({
           name: i.itemName,
           variantName: i.variantName,

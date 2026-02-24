@@ -68,11 +68,16 @@ export class PaymentService {
           data: { status: 'COMPLETED' },
         });
 
-        // Free the table
+        // Free the primary table + any tables merged into it
         if (bill.order.tableId) {
           await tx.table.update({
             where: { id: bill.order.tableId },
             data: { status: 'AVAILABLE', occupiedSince: null },
+          });
+          // Release all tables that were merged into this primary table
+          await tx.table.updateMany({
+            where: { mergedIntoTableId: bill.order.tableId },
+            data: { status: 'AVAILABLE', occupiedSince: null, mergedIntoTableId: null },
           });
         }
       }

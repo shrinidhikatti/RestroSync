@@ -63,7 +63,7 @@ export default function SecuritySettingsPage() {
   return (
     <div className="p-6 max-w-2xl mx-auto space-y-8">
       <div>
-        <h1 className="text-2xl font-bold text-slate-900" style={{ fontFamily: "'Syne', sans-serif" }}>
+        <h1 className="text-2xl font-bold text-slate-900" style={{ fontFamily: "'Inter', sans-serif" }}>
           Security
         </h1>
         <p className="text-slate-500 text-sm mt-1">Manage your password and POS PIN.</p>
@@ -73,7 +73,7 @@ export default function SecuritySettingsPage() {
       <div className="bg-white rounded-2xl border border-slate-200 p-5 flex items-center gap-4">
         <div
           className="w-12 h-12 rounded-xl flex items-center justify-center text-slate-900 font-bold text-lg flex-shrink-0"
-          style={{ background: '#f59e0b' }}
+          style={{ background: '#ef4444' }}
         >
           {user?.name?.charAt(0).toUpperCase() ?? 'U'}
         </div>
@@ -86,7 +86,7 @@ export default function SecuritySettingsPage() {
 
       {/* Change Password */}
       <div className="bg-white rounded-2xl border border-slate-200 p-6 space-y-5">
-        <h2 className="font-bold text-slate-900 text-base" style={{ fontFamily: "'Syne', sans-serif" }}>
+        <h2 className="font-bold text-slate-900 text-base" style={{ fontFamily: "'Inter', sans-serif" }}>
           Change Password
         </h2>
         <form onSubmit={handleChangePassword} className="space-y-4">
@@ -98,7 +98,7 @@ export default function SecuritySettingsPage() {
               onChange={(e) => setForm((f) => ({ ...f, currentPassword: e.target.value }))}
               required
               placeholder="••••••••"
-              className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
+              className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-red-500"
             />
           </div>
           <div>
@@ -109,7 +109,7 @@ export default function SecuritySettingsPage() {
               onChange={(e) => setForm((f) => ({ ...f, newPassword: e.target.value }))}
               required
               placeholder="Min. 8 characters"
-              className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
+              className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-red-500"
             />
           </div>
           <div>
@@ -120,7 +120,7 @@ export default function SecuritySettingsPage() {
               onChange={(e) => setForm((f) => ({ ...f, confirmPassword: e.target.value }))}
               required
               placeholder="••••••••"
-              className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
+              className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-red-500"
             />
           </div>
 
@@ -138,7 +138,7 @@ export default function SecuritySettingsPage() {
             type="submit"
             disabled={loading}
             className="w-full py-3 rounded-xl font-bold text-slate-900 disabled:opacity-50 transition-all"
-            style={{ background: '#f59e0b' }}
+            style={{ background: '#ef4444' }}
           >
             {loading ? 'Updating...' : 'Update Password'}
           </button>
@@ -148,7 +148,7 @@ export default function SecuritySettingsPage() {
       {/* POS PIN */}
       <div className="bg-white rounded-2xl border border-slate-200 p-6 space-y-5">
         <div>
-          <h2 className="font-bold text-slate-900 text-base" style={{ fontFamily: "'Syne', sans-serif" }}>
+          <h2 className="font-bold text-slate-900 text-base" style={{ fontFamily: "'Inter', sans-serif" }}>
             POS Device PIN
           </h2>
           <p className="text-sm text-slate-500 mt-1">
@@ -167,7 +167,7 @@ export default function SecuritySettingsPage() {
                 required
                 placeholder="••••"
                 maxLength={4}
-                className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 text-center tracking-[0.5em] font-bold"
+                className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-red-500 text-center tracking-[0.5em] font-bold"
               />
             </div>
             <div>
@@ -180,7 +180,7 @@ export default function SecuritySettingsPage() {
                 required
                 placeholder="••••"
                 maxLength={4}
-                className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 text-center tracking-[0.5em] font-bold"
+                className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-red-500 text-center tracking-[0.5em] font-bold"
               />
             </div>
           </div>
@@ -199,7 +199,7 @@ export default function SecuritySettingsPage() {
             type="submit"
             disabled={pinLoading}
             className="w-full py-3 rounded-xl font-bold text-slate-900 disabled:opacity-50 transition-all"
-            style={{ background: '#f59e0b' }}
+            style={{ background: '#ef4444' }}
           >
             {pinLoading ? 'Saving...' : 'Set PIN'}
           </button>

@@ -74,7 +74,7 @@ export default function CounterTokenDisplay() {
       className="min-h-screen flex flex-col items-center justify-center select-none"
       style={{
         background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%)',
-        fontFamily: "'Syne', sans-serif",
+        fontFamily: "'Inter', sans-serif",
       }}
     >
       {/* Header bar */}
@@ -82,7 +82,7 @@ export default function CounterTokenDisplay() {
         <div className="flex items-center gap-3">
           <div
             className="w-10 h-10 rounded-xl flex items-center justify-center font-bold text-slate-900 text-sm"
-            style={{ background: '#f59e0b' }}
+            style={{ background: '#ef4444' }}
           >
             RS
           </div>

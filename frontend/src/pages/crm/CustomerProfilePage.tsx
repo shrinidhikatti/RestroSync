@@ -95,7 +95,7 @@ export default function CustomerProfilePage() {
       <div className="flex justify-center py-20">
         <div className="flex gap-2">
           {[0,1,2].map((i) => (
-            <div key={i} className="w-2 h-2 rounded-full bg-amber-400 animate-bounce"
+            <div key={i} className="w-2 h-2 rounded-full bg-red-500 animate-bounce"
               style={{ animationDelay: `${i * 120}ms` }} />
           ))}
         </div>
@@ -117,7 +117,7 @@ export default function CustomerProfilePage() {
           ← Back to Customers
         </button>
         <div className="flex items-start gap-4">
-          <div className="w-14 h-14 rounded-2xl bg-amber-100 flex items-center justify-center text-2xl font-bold text-amber-600 font-display flex-shrink-0">
+          <div className="w-14 h-14 rounded-2xl bg-amber-100 flex items-center justify-center text-2xl font-bold text-red-600 font-display flex-shrink-0">
             {(customer.name?.[0] ?? customer.phone[0]).toUpperCase()}
           </div>
           <div>
@@ -158,7 +158,7 @@ export default function CustomerProfilePage() {
             onClick={() => setActiveTab(tab)}
             className={`px-5 py-2 text-sm font-semibold capitalize transition-colors ${
               activeTab === tab
-                ? 'bg-amber-500 text-white'
+                ? 'bg-red-500 text-white'
                 : 'bg-white text-slate-600 hover:bg-slate-50'
             }`}
           >
@@ -209,7 +209,7 @@ export default function CustomerProfilePage() {
             </div>
             <button
               onClick={() => setShowAdjust(true)}
-              className="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white text-sm font-semibold rounded-xl transition-colors"
+              className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white text-sm font-semibold rounded-xl transition-colors"
             >
               Adjust
             </button>
@@ -359,7 +359,7 @@ export default function CustomerProfilePage() {
               <button onClick={() => setShowAdjust(false)}
                 className="flex-1 py-2 rounded-xl border border-slate-200 text-sm text-slate-600">Cancel</button>
               <button onClick={handleAdjust} disabled={!adjustPoints || !adjustDesc || adjusting}
-                className="flex-1 py-2 bg-amber-500 hover:bg-amber-600 text-white text-sm font-semibold rounded-xl transition-colors disabled:opacity-50">
+                className="flex-1 py-2 bg-red-500 hover:bg-red-600 text-white text-sm font-semibold rounded-xl transition-colors disabled:opacity-50">
                 {adjusting ? 'Saving…' : 'Adjust'}
               </button>
             </div>

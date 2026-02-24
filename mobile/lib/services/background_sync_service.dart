@@ -3,7 +3,6 @@
 /// - ForegroundTask: persistent notification during financial data sync
 /// - Battery optimization whitelist prompt on first launch (Xiaomi/Oppo/Vivo)
 
-import 'dart:isolate';
 import 'package:flutter/material.dart';
 import 'package:flutter_foreground_task/flutter_foreground_task.dart';
 import 'package:workmanager/workmanager.dart';
@@ -65,16 +64,16 @@ Future<void> _runBackgroundSync() async {
 
 class _SyncTaskHandler extends TaskHandler {
   @override
-  Future<void> onStart(DateTime timestamp, SendPort? sendPort) async {
+  Future<void> onStart(DateTime timestamp, TaskStarter starter) async {
     await _runBackgroundSync();
     await FlutterForegroundTask.stopService();
   }
 
   @override
-  Future<void> onRepeatEvent(DateTime timestamp, SendPort? sendPort) async {}
+  void onRepeatEvent(DateTime timestamp) {}
 
   @override
-  Future<void> onDestroy(DateTime timestamp, SendPort? sendPort) async {}
+  Future<void> onDestroy(DateTime timestamp) async {}
 }
 
 // ─── Public API ───────────────────────────────────────────────────────────────
@@ -108,7 +107,7 @@ class BackgroundSyncService {
         showNotification: true,
         playSound: false,
       ),
-      foregroundTaskOptions: const ForegroundTaskOptions(
+      foregroundTaskOptions: ForegroundTaskOptions(
         eventAction: ForegroundTaskEventAction.nothing(),
         autoRunOnBoot: false,
         allowWifiLock: true,

@@ -522,7 +522,7 @@ class _VariantSheetState extends State<_VariantSheet> {
                           Text(v.name,
                               style: TextStyle(
                                 fontSize: 13, fontWeight: FontWeight.w600,
-                                color: selected ? Colors.black : AppColors.textPrimary,
+                                color: selected ? Colors.white : AppColors.textPrimary,
                               )),
                           Text(fmt.format(v.price),
                               style: TextStyle(

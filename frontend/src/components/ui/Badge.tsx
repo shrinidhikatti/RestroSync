@@ -16,6 +16,7 @@ const tableStatusStyles: Record<string, string> = {
   OCCUPIED:  'bg-rose-100 text-rose-700 border border-rose-200',
   RESERVED:  'bg-amber-100 text-amber-700 border border-amber-200',
   BILLING:   'bg-blue-100 text-blue-700 border border-blue-200',
+  MERGED:    'bg-slate-100 text-slate-500 border border-slate-200',
 };
 
 const reservationStatusStyles: Record<string, string> = {

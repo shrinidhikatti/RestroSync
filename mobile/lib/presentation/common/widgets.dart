@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../../core/theme.dart';
 import '../../core/constants.dart';
 
-// ─── Amber primary button ──────────────────────────────────────────────────────
+// ─── Primary button (red, white text) ─────────────────────────────────────────
 
 class PrimaryButton extends StatelessWidget {
   final String label;
@@ -26,7 +26,7 @@ class PrimaryButton extends StatelessWidget {
       child: ElevatedButton.icon(
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.primary,
-          foregroundColor: Colors.black,
+          foregroundColor: Colors.white,
           disabledBackgroundColor: AppColors.primary.withOpacity(0.5),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(AppConstants.buttonRadius),

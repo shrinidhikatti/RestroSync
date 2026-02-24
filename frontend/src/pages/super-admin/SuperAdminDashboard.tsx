@@ -42,7 +42,7 @@ export default function SuperAdminDashboard() {
     { label: 'Total Restaurants', value: stats.totalRestaurants, icon: '🏪', color: 'bg-violet-500/10 border-violet-500/20 text-violet-400' },
     { label: 'Active', value: stats.activeRestaurants, icon: '✅', color: 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400' },
     { label: 'Suspended', value: stats.suspendedRestaurants, icon: '🚫', color: 'bg-rose-500/10 border-rose-500/20 text-rose-400' },
-    { label: 'Total Branches', value: stats.totalBranches, icon: '🏬', color: 'bg-amber-500/10 border-amber-500/20 text-amber-400' },
+    { label: 'Total Branches', value: stats.totalBranches, icon: '🏬', color: 'bg-red-500/10 border-amber-500/20 text-amber-400' },
     { label: "Today's Orders", value: stats.todayOrders, icon: '📋', color: 'bg-blue-500/10 border-blue-500/20 text-blue-400' },
     { label: 'Total Orders', value: stats.totalOrders?.toLocaleString(), icon: '🧾', color: 'bg-slate-700 border-slate-600 text-slate-300' },
   ] : [];
@@ -60,7 +60,7 @@ export default function SuperAdminDashboard() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-white" style={{ fontFamily: "'Syne', sans-serif" }}>Platform Dashboard</h1>
+          <h1 className="text-2xl font-bold text-white" style={{ fontFamily: "'Inter', sans-serif" }}>Platform Dashboard</h1>
           <p className="text-slate-400 text-sm mt-1">RestroSync — all restaurants, live stats</p>
         </div>
         <Link

@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { orderApi, billApi, tableApi, categoryApi, menuApi } from '../../lib/api';
+import { orderApi, billApi, tableApi, categoryApi, menuApi, complaintsApi } from '../../lib/api';
 import { Modal } from '../../components/ui/Modal';
 import {
   PlusIcon, SearchIcon, RefreshIcon, ClockIcon, CheckIcon, TableIcon, MinusIcon,
+  AlertIcon,
 } from '../../components/ui/Icons';
 
 interface Order {
@@ -97,7 +98,7 @@ export default function OrdersPage() {
           </button>
           <button
             onClick={() => setShowNewModal(true)}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold font-display text-slate-900 hover:brightness-95"
+            className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold font-display text-white hover:brightness-95"
             style={{ background: 'var(--accent)' }}
           >
             <PlusIcon className="w-4 h-4" /> New Order
@@ -114,7 +115,7 @@ export default function OrdersPage() {
             placeholder="Search table, token, customer..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="pl-9 pr-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 bg-white w-64"
+            className="pl-9 pr-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-red-500 bg-white w-64"
           />
         </div>
         <div className="flex gap-2 flex-wrap">
@@ -124,7 +125,7 @@ export default function OrdersPage() {
               onClick={() => setStatusFilter(s)}
               className={`px-3 py-1.5 rounded-lg text-xs font-semibold font-display transition-colors ${
                 statusFilter === s
-                  ? 'bg-amber-400 text-slate-900'
+                  ? 'bg-red-500 text-white'
                   : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'
               }`}
             >
@@ -232,7 +233,7 @@ function OrderCard({
         <div>
           <div className="flex items-center gap-2 mb-1">
             {order.tokenNumber && (
-              <span className="font-display font-bold text-amber-600 text-lg">#{order.tokenNumber}</span>
+              <span className="font-display font-bold text-red-600 text-lg">#{order.tokenNumber}</span>
             )}
             {order.table && (
               <span className="font-display font-semibold text-slate-800">
@@ -333,7 +334,7 @@ function NewOrderModal({
     }
   };
 
-  const inputClass = 'w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 bg-white';
+  const inputClass = 'w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-red-500 bg-white';
 
   return (
     <Modal
@@ -346,7 +347,7 @@ function NewOrderModal({
           <button
             onClick={handleCreate}
             disabled={saving}
-            className="px-5 py-2 rounded-xl text-sm font-semibold text-slate-900 disabled:opacity-60 hover:brightness-95"
+            className="px-5 py-2 rounded-xl text-sm font-semibold text-white disabled:opacity-60 hover:brightness-95"
             style={{ background: 'var(--accent)' }}
           >
             {saving ? 'Creating...' : 'Create Order'}
@@ -370,7 +371,7 @@ function NewOrderModal({
                 onClick={() => set('type', t.value)}
                 className={`p-3 rounded-xl text-sm font-semibold font-display border-2 transition-all text-left ${
                   form.type === t.value
-                    ? 'border-amber-400 bg-amber-50 text-amber-700'
+                    ? 'border-red-500 bg-amber-50 text-amber-700'
                     : 'border-slate-200 hover:border-slate-300 text-slate-700'
                 }`}
               >
@@ -411,7 +412,7 @@ function NewOrderModal({
               <p className="text-xs text-slate-400 mt-1.5">No tables available. Create tables in the Tables section.</p>
             )}
             {!loadingTables && tables.filter((t) => t.status === 'AVAILABLE').length === 0 && tables.length > 0 && (
-              <p className="text-xs text-amber-600 mt-1.5">All tables are currently occupied.</p>
+              <p className="text-xs text-red-600 mt-1.5">All tables are currently occupied.</p>
             )}
           </div>
         )}
@@ -452,6 +453,39 @@ function OrderDetailModal({ orderId, onClose }: { orderId: string; onClose: () =
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState('');
   const [paymentAmounts, setPaymentAmounts] = useState<Record<string, string>>({});
+
+  // ── Complaint state ────────────────────────────────────────────────────────
+  const [complaintItem, setComplaintItem] = useState<{ id: string; name: string } | null>(null);
+  const [complaintReason, setComplaintReason] = useState('QUALITY');
+  const [complaintNotes, setComplaintNotes] = useState('');
+  const [filingComplaint, setFilingComplaint] = useState(false);
+
+  const COMPLAINT_REASONS = [
+    { value: 'QUALITY',        label: 'Poor Quality (rubbery, overcooked…)' },
+    { value: 'WRONG_ITEM',     label: 'Wrong Item Served' },
+    { value: 'COLD',           label: 'Served Cold' },
+    { value: 'QUANTITY',       label: 'Portion Too Small' },
+    { value: 'FOREIGN_OBJECT', label: 'Foreign Object Found' },
+    { value: 'OTHER',          label: 'Other' },
+  ];
+
+  const handleFileComplaint = async () => {
+    if (!complaintItem) return;
+    setFilingComplaint(true);
+    try {
+      await complaintsApi.file(orderId, {
+        orderItemId: complaintItem.id,
+        reason:      complaintReason,
+        notes:       complaintNotes || undefined,
+      });
+      setComplaintItem(null);
+      setComplaintNotes('');
+      setComplaintReason('QUALITY');
+      await fetchOrder(); // refresh — item now VOIDED, total updated
+    } catch { } finally {
+      setFilingComplaint(false);
+    }
+  };
 
   // ── Item Picker state ──────────────────────────────────────────────────────
   const [showPicker, setShowPicker] = useState(false);
@@ -596,7 +630,7 @@ function OrderDetailModal({ orderId, onClose }: { orderId: string; onClose: () =
                 order.items.map((item: any) => (
                   <div key={item.id} className="flex items-center justify-between px-4 py-3">
                     <div>
-                      <p className="text-sm font-medium text-slate-800">
+                      <p className={`text-sm font-medium ${item.status === 'VOIDED' ? 'line-through text-slate-400' : 'text-slate-800'}`}>
                         {item.itemName}
                         {item.variantName && <span className="text-slate-400 ml-1">({item.variantName})</span>}
                         {' '}<span className="text-slate-400">×{item.quantity}</span>
@@ -617,6 +651,16 @@ function OrderDetailModal({ orderId, onClose }: { orderId: string; onClose: () =
                         {item.status === 'VOIDED' ? 'Voided' : item.kotId ? item.status : 'Pending'}
                       </span>
                     </div>
+                    {/* Complaint button — only for served/ready items not yet voided */}
+                    {item.status !== 'VOIDED' && item.kotId && !['COMPLETED', 'CANCELLED', 'BILLED'].includes(order.status) && (
+                      <button
+                        onClick={() => { setComplaintItem({ id: item.id, name: item.itemName }); setComplaintReason('QUALITY'); setComplaintNotes(''); }}
+                        title="Customer complaint — remove from bill"
+                        className="ml-3 p-1.5 rounded-lg text-rose-400 hover:bg-rose-50 hover:text-rose-600 transition-colors flex-shrink-0"
+                      >
+                        <AlertIcon className="w-3.5 h-3.5" />
+                      </button>
+                    )}
                   </div>
                 ))
               )}
@@ -629,7 +673,7 @@ function OrderDetailModal({ orderId, onClose }: { orderId: string; onClose: () =
               {!showPicker ? (
                 <button
                   onClick={openPicker}
-                  className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl border-2 border-dashed border-slate-300 text-sm font-semibold font-display text-slate-500 hover:border-amber-400 hover:text-amber-600 transition-colors"
+                  className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl border-2 border-dashed border-slate-300 text-sm font-semibold font-display text-slate-500 hover:border-red-500 hover:text-red-600 transition-colors"
                 >
                   <PlusIcon className="w-4 h-4" /> Add Items
                 </button>
@@ -652,7 +696,7 @@ function OrderDetailModal({ orderId, onClose }: { orderId: string; onClose: () =
                       <button
                         onClick={() => switchCategory('')}
                         className={`flex-shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold font-display transition-colors ${
-                          selectedCat === '' ? 'bg-amber-400 text-slate-900' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                          selectedCat === '' ? 'bg-red-500 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
                         }`}
                       >
                         All
@@ -662,7 +706,7 @@ function OrderDetailModal({ orderId, onClose }: { orderId: string; onClose: () =
                           key={cat.id}
                           onClick={() => switchCategory(cat.id)}
                           className={`flex-shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold font-display transition-colors ${
-                            selectedCat === cat.id ? 'bg-amber-400 text-slate-900' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                            selectedCat === cat.id ? 'bg-red-500 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
                           }`}
                         >
                           {cat.name}
@@ -702,7 +746,7 @@ function OrderDetailModal({ orderId, onClose }: { orderId: string; onClose: () =
                                     <span className="w-6 text-center text-sm font-semibold font-display text-slate-800">{qty}</span>
                                     <button
                                       onClick={() => adjustCart(item.id, 1)}
-                                      className="w-7 h-7 rounded-lg bg-amber-400 hover:bg-amber-500 flex items-center justify-center text-slate-900"
+                                      className="w-7 h-7 rounded-lg bg-red-500 hover:bg-red-600 flex items-center justify-center text-white"
                                     >
                                       <PlusIcon className="w-3 h-3" />
                                     </button>
@@ -710,7 +754,7 @@ function OrderDetailModal({ orderId, onClose }: { orderId: string; onClose: () =
                                 ) : (
                                   <button
                                     onClick={() => adjustCart(item.id, 1)}
-                                    className="w-7 h-7 rounded-lg bg-slate-100 hover:bg-amber-400 hover:text-slate-900 flex items-center justify-center text-slate-500 transition-colors"
+                                    className="w-7 h-7 rounded-lg bg-slate-100 hover:bg-red-500 hover:text-white flex items-center justify-center text-slate-500 transition-colors"
                                   >
                                     <PlusIcon className="w-3 h-3" />
                                   </button>
@@ -728,7 +772,7 @@ function OrderDetailModal({ orderId, onClose }: { orderId: string; onClose: () =
                       <button
                         onClick={handleAddItems}
                         disabled={addingItems}
-                        className="w-full py-2.5 rounded-xl text-sm font-semibold font-display text-slate-900 hover:brightness-95 disabled:opacity-60 transition-all"
+                        className="w-full py-2.5 rounded-xl text-sm font-semibold font-display text-white hover:brightness-95 disabled:opacity-60 transition-all"
                         style={{ background: 'var(--accent)' }}
                       >
                         {addingItems ? 'Adding...' : `Add ${cartCount} item${cartCount > 1 ? 's' : ''} to Order`}
@@ -747,7 +791,7 @@ function OrderDetailModal({ orderId, onClose }: { orderId: string; onClose: () =
               <div className="flex flex-wrap gap-2">
                 {order.kots.map((kot: any) => (
                   <div key={kot.id} className="flex items-center gap-2 px-3 py-1.5 bg-amber-50 border border-amber-100 rounded-lg text-xs">
-                    <CheckIcon className="w-3 h-3 text-amber-600" />
+                    <CheckIcon className="w-3 h-3 text-red-600" />
                     <span className="font-mono text-amber-700">{kot.kotNumber}</span>
                     {kot.kitchenStation && <span className="text-amber-500">· {kot.kitchenStation}</span>}
                   </div>
@@ -785,7 +829,7 @@ function OrderDetailModal({ orderId, onClose }: { orderId: string; onClose: () =
                 <button
                   onClick={handleGenerateBill}
                   disabled={actionLoading === 'bill'}
-                  className="flex-1 py-2.5 rounded-xl text-sm font-semibold font-display text-slate-900 hover:brightness-95 disabled:opacity-60"
+                  className="flex-1 py-2.5 rounded-xl text-sm font-semibold font-display text-white hover:brightness-95 disabled:opacity-60"
                   style={{ background: 'var(--accent)' }}
                 >
                   {actionLoading === 'bill' ? 'Generating...' : 'Generate Bill'}
@@ -813,5 +857,68 @@ function OrderDetailModal({ orderId, onClose }: { orderId: string; onClose: () =
         <p className="text-slate-400 text-sm text-center py-10">Order not found</p>
       )}
     </Modal>
+
+    {/* ── Complaint Modal ──────────────────────────────────────────────────── */}
+    {complaintItem && (
+      <Modal
+        open={!!complaintItem}
+        onClose={() => setComplaintItem(null)}
+        title="File Customer Complaint"
+        size="sm"
+        footer={
+          <>
+            <button
+              onClick={() => setComplaintItem(null)}
+              className="px-4 py-2 rounded-xl text-sm font-medium text-slate-600 bg-slate-100 hover:bg-slate-200"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleFileComplaint}
+              disabled={filingComplaint}
+              className="px-4 py-2 rounded-xl text-sm font-semibold text-white bg-rose-600 hover:bg-rose-700 disabled:opacity-60"
+            >
+              {filingComplaint ? 'Filing…' : 'Remove from Bill & Log'}
+            </button>
+          </>
+        }
+      >
+        <div className="space-y-4">
+          <div className="flex items-start gap-3 p-3 bg-rose-50 rounded-xl border border-rose-100">
+            <AlertIcon className="w-4 h-4 text-rose-500 mt-0.5 flex-shrink-0" />
+            <div>
+              <p className="text-sm font-semibold text-rose-800 font-display">{complaintItem.name}</p>
+              <p className="text-xs text-rose-600 mt-0.5">
+                This item will be removed from the bill and logged for quality review.
+              </p>
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-1.5 font-display">Reason for Complaint</label>
+            <select
+              value={complaintReason}
+              onChange={(e) => setComplaintReason(e.target.value)}
+              className="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-sm font-display bg-white focus:outline-none focus:border-red-500"
+            >
+              {COMPLAINT_REASONS.map((r) => (
+                <option key={r.value} value={r.value}>{r.label}</option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-1.5 font-display">Additional Notes <span className="text-slate-400 font-normal">(optional)</span></label>
+            <textarea
+              value={complaintNotes}
+              onChange={(e) => setComplaintNotes(e.target.value)}
+              placeholder="e.g. Kabab was rubbery and hard, customer sent it back after first bite"
+              rows={3}
+              className="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-sm font-display resize-none focus:outline-none focus:border-red-500"
+            />
+          </div>
+        </div>
+      </Modal>
+    )}
   );
 }
