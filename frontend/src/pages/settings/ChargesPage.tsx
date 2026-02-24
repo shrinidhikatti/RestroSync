@@ -158,7 +158,7 @@ export default function ChargesPage() {
       )}
 
       <Modal
-        isOpen={showModal}
+        open={showModal}
         onClose={() => setShowModal(false)}
         title={editCharge ? 'Edit Charge' : 'Add Service Charge'}
       >

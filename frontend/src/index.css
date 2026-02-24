@@ -19,6 +19,30 @@
 
 *, *::before, *::after { box-sizing: border-box; }
 
+/* ── Mobile touch improvements ── */
+button, a, [role="button"] {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+/* Minimum touch target size */
+.touch-target {
+  min-width: 44px;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Bottom sheet slide-up animation */
+@keyframes slideUp {
+  from { transform: translateY(100%); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+.anim-slide-up {
+  animation: slideUp 0.25s cubic-bezier(0.32, 0.72, 0, 1);
+}
+
 body {
   font-family: 'Inter', sans-serif;
   background: var(--content-bg);
@@ -148,3 +172,87 @@ body {
   background: var(--accent);
   border-radius: 0 3px 3px 0;
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+   THERMAL RECEIPT PRINT STYLES
+   80mm paper = ~302px at 96dpi
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* Hide the printable receipt on screen — only the preview modal shows */
+.receipt-print-wrapper { display: none; }
+
+@media print {
+  /* Hide everything on the page */
+  body > * { display: none !important; }
+
+  /* Show only the printable receipt */
+  .receipt-print-wrapper {
+    display: block !important;
+    position: fixed;
+    top: 0; left: 0;
+    width: 80mm;
+    padding: 4mm;
+  }
+
+  /* Hide the screen overlay */
+  .no-print { display: none !important; }
+
+  @page {
+    size: 80mm auto;
+    margin: 0;
+  }
+}
+
+/* ── Receipt content styles (used in both preview and print) ── */
+.receipt-content {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 12px;
+  line-height: 1.5;
+  color: #000;
+  background: #fff;
+  width: 100%;
+}
+
+.receipt-center  { text-align: center; }
+.receipt-bold    { font-weight: 700; }
+.receipt-sm      { font-size: 11px; }
+.receipt-xs      { font-size: 10px; }
+.receipt-lg      { font-size: 14px; }
+.receipt-xl      { font-size: 15px; }
+
+.receipt-divider {
+  border: none;
+  border-top: 1px dashed #000;
+  margin: 4px 0;
+}
+
+.receipt-thin-divider {
+  border: none;
+  border-top: 1px solid #ccc;
+  margin: 2px 0;
+}
+
+.receipt-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}
+.receipt-row > span:first-child { flex: 1; }
+.receipt-row > span:last-child  { text-align: right; white-space: nowrap; }
+
+.receipt-items-header {
+  display: grid;
+  grid-template-columns: 1fr 32px 72px;
+  gap: 4px;
+}
+.receipt-items-header > span:last-child { text-align: right; }
+
+.receipt-item {
+  display: grid;
+  grid-template-columns: 1fr 32px 72px;
+  gap: 4px;
+  padding: 1px 0;
+}
+.receipt-item-name  { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.receipt-item-qty   { text-align: center; }
+.receipt-item-price { text-align: right; }

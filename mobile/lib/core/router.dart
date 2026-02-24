@@ -19,11 +19,11 @@ import '../presentation/biller/sync_screen.dart';
 import '../presentation/biller/printer_setup_screen.dart';
 import 'constants.dart';
 
-// ─── Router provider ───────────────────────────────────────────────────────────
+// ─── Router factory ────────────────────────────────────────────────────────────
 
-final routerProvider = Provider<GoRouter>((ref) {
+GoRouter buildRouter({String initialLocation = '/biller/login'}) {
   return GoRouter(
-    initialLocation: '/biller/login',
+    initialLocation: initialLocation,
     redirect: (context, state) async {
       const storage = FlutterSecureStorage();
       final token = await storage.read(key: AppConstants.keyAccessToken);
@@ -138,4 +138,14 @@ final routerProvider = Provider<GoRouter>((ref) {
       body: Center(child: Text('Page not found: ${state.uri}')),
     ),
   );
-});
+}
+
+// ─── Router providers ──────────────────────────────────────────────────────────
+
+final routerProvider = Provider<GoRouter>(
+  (ref) => buildRouter(initialLocation: '/biller/login'),
+);
+
+final captainRouterProvider = Provider<GoRouter>(
+  (ref) => buildRouter(initialLocation: '/login'),
+);

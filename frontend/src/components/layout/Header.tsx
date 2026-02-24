@@ -25,7 +25,7 @@ const breadcrumbMap: Record<string, string> = {
 const CAPTAIN_ROLES = ['CAPTAIN', 'WAITER', 'CASHIER'];
 
 export function Header() {
-  const { toggleSidebar } = useUIStore();
+  const { toggleSidebar, toggleMobileSidebar } = useUIStore();
   const { user } = useAuthStore();
   const location = useLocation();
   const [showHandover, setShowHandover] = useState(false);
@@ -46,16 +46,24 @@ export function Header() {
 
   return (
     <header className="h-16 bg-white border-b border-slate-100 flex items-center px-4 gap-4 flex-shrink-0 z-10">
-      {/* Hamburger */}
+      {/* Hamburger — desktop collapses sidebar, mobile opens drawer */}
       <button
-        onClick={toggleSidebar}
+        onClick={() => {
+          if (window.innerWidth < 768) toggleMobileSidebar();
+          else toggleSidebar();
+        }}
         className="p-2 rounded-xl text-slate-500 hover:text-slate-700 hover:bg-slate-100 transition-colors"
       >
         <BarsIcon className="w-5 h-5" />
       </button>
 
-      {/* Breadcrumb */}
-      <nav className="flex items-center gap-1 text-sm flex-1 min-w-0">
+      {/* Mobile: show current page title */}
+      <span className="md:hidden font-semibold text-slate-800 font-display text-base flex-1 truncate">
+        {breadcrumbMap[segments[segments.length - 1] ?? ''] ?? (segments[segments.length - 1] ?? 'Dashboard')}
+      </span>
+
+      {/* Breadcrumb — hidden on mobile to save space */}
+      <nav className="hidden md:flex items-center gap-1 text-sm flex-1 min-w-0">
         {crumbs.map((crumb, i) => (
           <React.Fragment key={crumb.path}>
             {i > 0 && <ChevronRightIcon className="w-3.5 h-3.5 text-slate-300 flex-shrink-0" />}
@@ -87,7 +95,7 @@ export function Header() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
                 d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
             </svg>
-            End Shift
+            <span className="hidden sm:inline">End Shift</span>
           </button>
         )}
 

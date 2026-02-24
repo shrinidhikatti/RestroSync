@@ -3,6 +3,7 @@ import * as bcrypt from 'bcrypt';
 import { v4 as uuidv4 } from 'uuid';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateRestaurantDto, ListRestaurantsQueryDto } from './dto/super-admin.dto';
+import { MODULE_DEFAULTS } from '../common/modules.constants';
 import { Prisma } from '@prisma/client';
 
 @Injectable()
@@ -117,6 +118,12 @@ export class SuperAdminService {
     const tempPassword = uuidv4().slice(0, 12);
     const hashedPassword = await bcrypt.hash(tempPassword, 10);
 
+    const mode = dto.operatingMode ?? 'FULL_SERVICE';
+    const enabledModules =
+      dto.enabledModules?.length
+        ? dto.enabledModules
+        : MODULE_DEFAULTS[mode] ?? MODULE_DEFAULTS['FULL_SERVICE'];
+
     const result = await this.prisma.$transaction(async (tx) => {
       const restaurant = await tx.restaurant.create({
         data: {
@@ -126,6 +133,9 @@ export class SuperAdminService {
           city: dto.city,
           address: dto.address,
           planId: dto.planId,
+          operatingMode: mode as any,
+          enabledModules,
+          activeModules: enabledModules,
         },
       });
 
@@ -208,6 +218,28 @@ export class SuperAdminService {
       where: { id: restaurantId },
       data: { operatingMode: mode as any },
       select: { id: true, name: true, operatingMode: true },
+    });
+  }
+
+  async updateEnabledModules(restaurantId: string, modules: string[]) {
+    const restaurant = await this.prisma.restaurant.findUnique({ where: { id: restaurantId } });
+    if (!restaurant) throw new NotFoundException('Restaurant not found');
+
+    // activeModules = keep whatever owner had active, but only within new granted set
+    // Also add any newly granted modules (auto-activate them)
+    const prevActive = restaurant.activeModules.length > 0
+      ? restaurant.activeModules
+      : restaurant.enabledModules;
+    const newlyGranted = modules.filter((m) => !restaurant.enabledModules.includes(m));
+    const activeModules = [
+      ...prevActive.filter((m) => modules.includes(m)), // keep still-granted
+      ...newlyGranted,                                   // auto-add new grants
+    ];
+
+    return this.prisma.restaurant.update({
+      where: { id: restaurantId },
+      data: { enabledModules: modules, activeModules },
+      select: { id: true, name: true, enabledModules: true, activeModules: true, operatingMode: true },
     });
   }
 

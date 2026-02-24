@@ -186,6 +186,8 @@ model Restaurant {
   fssaiNumber         String?
   logoUrl             String?
   operatingMode       OperatingMode?
+  enabledModules      String[]         @default([])
+  activeModules       String[]         @default([])
   status              RestaurantStatus @default(ACTIVE)
   timezone            String           @default("Asia/Kolkata")
   businessDayCutoff   String           @default("05:00")

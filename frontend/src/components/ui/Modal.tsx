@@ -30,28 +30,39 @@ export function Modal({ open, onClose, title, children, size = 'md', footer }: M
 
   return createPortal(
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 anim-fade"
+      className="fixed inset-0 z-50 flex items-end md:items-center justify-center md:p-4 anim-fade"
       style={{ backgroundColor: 'rgba(15, 23, 42, 0.6)' }}
       onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
     >
-      <div className={`bg-white rounded-2xl shadow-2xl w-full ${sizeClass} anim-scale-in overflow-hidden`}>
+      {/* Mobile: full-width bottom sheet | Desktop: centered dialog */}
+      <div className={`
+        bg-white shadow-2xl w-full overflow-hidden
+        rounded-t-2xl md:rounded-2xl
+        anim-slide-up md:anim-scale-in
+        max-h-[92vh] md:max-h-[85vh]
+        md:${sizeClass}
+      `}>
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100">
-          <h2 className="font-display font-semibold text-slate-900 text-lg">{title}</h2>
+        <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100">
+          {/* Mobile drag handle */}
+          <div className="absolute top-2 left-1/2 -translate-x-1/2 w-10 h-1 bg-slate-200 rounded-full md:hidden" />
+          <h2 className="font-display font-semibold text-slate-900 text-base md:text-lg">{title}</h2>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors"
+            className="p-2 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors touch-target"
           >
             <XIcon className="w-4 h-4" />
           </button>
         </div>
 
         {/* Body */}
-        <div className="px-6 py-5 overflow-y-auto max-h-[70vh]">{children}</div>
+        <div className="px-5 py-4 overflow-y-auto max-h-[70vh]">{children}</div>
 
         {/* Footer */}
         {footer && (
-          <div className="px-6 py-4 bg-slate-50 border-t border-slate-100 flex justify-end gap-3">
+          <div className="px-5 py-4 bg-slate-50 border-t border-slate-100 flex justify-end gap-3"
+            style={{ paddingBottom: 'max(16px, env(safe-area-inset-bottom))' }}
+          >
             {footer}
           </div>
         )}

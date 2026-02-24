@@ -45,7 +45,7 @@ export default function RecipesPage() {
       const [r, i, m] = await Promise.all([
         recipeApi.list(),
         ingredientApi.list(),
-        menuApi.list({}),
+        menuApi.getAll(),
       ]);
       setRecipes(r.data);
       setIngredients(i.data);

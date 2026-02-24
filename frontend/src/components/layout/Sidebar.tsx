@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { useUIStore } from '../../stores/ui.store';
 import { useAuthStore } from '../../stores/auth.store';
+import { useEffect } from 'react';
+
 import {
   DashboardIcon, MenuIcon, FolderIcon, GridIcon, CalendarIcon,
   UsersIcon, SettingsIcon, TagIcon, TaxIcon, ReceiptIcon,
@@ -16,7 +18,14 @@ interface NavItem {
   label: string;
   path?: string;
   icon: React.FC<{ className?: string }>;
-  children?: { label: string; path: string; icon: React.FC<{ className?: string }> }[];
+  /** If set, this item is hidden unless this module key is in enabledModules */
+  requiresModule?: string;
+  children?: {
+    label: string;
+    path: string;
+    icon: React.FC<{ className?: string }>;
+    requiresModule?: string;
+  }[];
 }
 
 const navItems: NavItem[] = [
@@ -30,74 +39,79 @@ const navItems: NavItem[] = [
       { label: 'Combos',     path: '/menu/combos',     icon: TagIcon  },
     ],
   },
-  { label: 'Orders',       path: '/orders',       icon: ClockIcon },
-  { label: 'Kitchen (KDS)', path: '/kitchen',     icon: EyeIcon },
-  { label: 'Tables',       path: '/tables',       icon: GridIcon },
-  { label: 'Reservations', path: '/reservations', icon: CalendarIcon },
-  { label: 'Day Close',    path: '/day-close',    icon: DollarIcon },
-  { label: 'Staff',        path: '/staff',        icon: UsersIcon },
+  { label: 'Orders',        path: '/orders',       icon: ClockIcon },
+  { label: 'Kitchen (KDS)', path: '/kitchen',      icon: EyeIcon,        requiresModule: 'KDS' },
+  { label: 'Tables',        path: '/tables',       icon: GridIcon,       requiresModule: 'TABLES' },
+  { label: 'Reservations',  path: '/reservations', icon: CalendarIcon,   requiresModule: 'RESERVATIONS' },
+  { label: 'Day Close',     path: '/day-close',    icon: DollarIcon,     requiresModule: 'DAY_CLOSE' },
+  { label: 'Staff',         path: '/staff',        icon: UsersIcon },
   {
     label: 'Multi-Outlet',
     icon: BranchIcon,
+    requiresModule: 'MULTI_OUTLET',
     children: [
-      { label: 'All Branches',   path: '/multi-outlet/overview',   icon: BarChartIcon   },
-      { label: 'Menu Overrides', path: '/multi-outlet/menu',       icon: MenuIcon       },
-      { label: 'Stock Transfers',path: '/multi-outlet/transfers',  icon: TruckIcon      },
+      { label: 'All Branches',    path: '/multi-outlet/overview',  icon: BarChartIcon },
+      { label: 'Menu Overrides',  path: '/multi-outlet/menu',      icon: MenuIcon     },
+      { label: 'Stock Transfers', path: '/multi-outlet/transfers', icon: TruckIcon    },
     ],
   },
   {
     label: 'CRM',
     icon: UsersIcon,
+    requiresModule: 'CRM',
     children: [
-      { label: 'Customers',       path: '/crm/customers',       icon: UsersIcon       },
-      { label: 'Credit (Khata)',  path: '/crm/credit-accounts', icon: FileTextIcon    },
-      { label: 'Loyalty',         path: '/crm/loyalty',         icon: TrendingUpIcon  },
-      { label: 'Attendance',      path: '/crm/attendance',      icon: ClockIcon       },
+      { label: 'Customers',      path: '/crm/customers',       icon: UsersIcon      },
+      { label: 'Credit (Khata)', path: '/crm/credit-accounts', icon: FileTextIcon   },
+      { label: 'Loyalty',        path: '/crm/loyalty',         icon: TrendingUpIcon },
+      { label: 'Attendance',     path: '/crm/attendance',      icon: ClockIcon      },
     ],
   },
   {
     label: 'Reports',
     icon: BarChartIcon,
     children: [
-      { label: 'Sales & Analytics', path: '/reports/sales',       icon: BarChartIcon },
-      { label: 'Audit Log',         path: '/reports/audit',       icon: FileTextIcon },
-      { label: 'Fraud & Risk',      path: '/reports/fraud',       icon: ShieldIcon   },
-      { label: 'Dish Complaints',   path: '/reports/complaints',  icon: AlertIcon    },
+      { label: 'Sales & Analytics', path: '/reports/sales',      icon: BarChartIcon },
+      { label: 'Audit Log',         path: '/reports/audit',      icon: FileTextIcon },
+      { label: 'Fraud & Risk',      path: '/reports/fraud',      icon: ShieldIcon   },
+      { label: 'Dish Complaints',   path: '/reports/complaints', icon: AlertIcon    },
     ],
   },
   {
     label: 'Inventory',
     icon: PackageIcon,
+    requiresModule: 'INVENTORY',
     children: [
-      { label: 'Ingredients',      path: '/inventory/ingredients',     icon: PackageIcon },
-      { label: 'Recipes',          path: '/inventory/recipes',         icon: MenuIcon },
-      { label: 'Stock',            path: '/inventory/stock',           icon: GridIcon },
-      { label: 'Suppliers',        path: '/inventory/suppliers',       icon: BuildingIcon },
-      { label: 'Purchase Orders',  path: '/inventory/purchase-orders', icon: TruckIcon },
+      { label: 'Ingredients',     path: '/inventory/ingredients',     icon: PackageIcon  },
+      { label: 'Recipes',         path: '/inventory/recipes',         icon: MenuIcon     },
+      { label: 'Stock',           path: '/inventory/stock',           icon: GridIcon     },
+      { label: 'Suppliers',       path: '/inventory/suppliers',       icon: BuildingIcon },
+      { label: 'Purchase Orders', path: '/inventory/purchase-orders', icon: TruckIcon    },
     ],
   },
-  { label: 'Online Orders',   path: '/online-orders',   icon: ShoppingBagIcon },
-  { label: 'Devices',        path: '/devices',          icon: MonitorIcon },
-  { label: 'System Monitor', path: '/system/monitor',   icon: SystemIcon },
+  { label: 'Online Orders', path: '/online-orders',  icon: ShoppingBagIcon, requiresModule: 'ONLINE_ORDERS' },
+  { label: 'Devices',       path: '/devices',         icon: MonitorIcon,     requiresModule: 'DEVICES' },
+  { label: 'System Monitor',path: '/system/monitor',  icon: SystemIcon },
   {
     label: 'Settings',
     icon: SettingsIcon,
     children: [
       { label: 'Restaurant',   path: '/settings/restaurant',   icon: BuildingIcon },
-      { label: 'Tax',          path: '/settings/tax',          icon: TaxIcon },
-      { label: 'Charges',      path: '/settings/charges',      icon: DollarIcon },
-      { label: 'Payments',     path: '/settings/payments',     icon: DollarIcon },
-      { label: 'Discounts',    path: '/settings/discounts',    icon: TagIcon },
-      { label: 'Receipt',      path: '/settings/receipt',      icon: ReceiptIcon },
-      { label: 'Security',     path: '/settings/security',     icon: ShieldIcon },
-      { label: 'Integrations', path: '/settings/integrations', icon: LinkIcon },
+      { label: 'Tax',          path: '/settings/tax',          icon: TaxIcon      },
+      { label: 'Charges',      path: '/settings/charges',      icon: DollarIcon   },
+      { label: 'Payments',     path: '/settings/payments',     icon: DollarIcon   },
+      { label: 'Discounts',    path: '/settings/discounts',    icon: TagIcon      },
+      { label: 'Receipt',      path: '/settings/receipt',      icon: ReceiptIcon  },
+      { label: 'Security',     path: '/settings/security',     icon: ShieldIcon   },
+      { label: 'Integrations', path: '/settings/integrations', icon: LinkIcon     },
+      { label: 'Modules',      path: '/settings/modules',      icon: GridIcon     },
     ],
   },
   {
     label: 'Accounting',
     icon: DollarIcon,
+    requiresModule: 'ACCOUNTING',
     children: [
-      { label: 'P&L Report',  path: '/accounting/pnl',    icon: BarChartIcon },
+      { label: 'P&L Report', path: '/accounting/pnl', icon: BarChartIcon },
     ],
   },
 ];
@@ -191,8 +205,27 @@ function NavSection({
 }
 
 export function Sidebar() {
-  const { sidebarCollapsed, toggleSidebar } = useUIStore();
-  const { user, logout } = useAuthStore();
+  const { sidebarCollapsed, mobileSidebarOpen, closeMobileSidebar } = useUIStore();
+  const { user, logout, activeModules } = useAuthStore();
+  const location = useLocation();
+
+  // Close mobile sidebar on navigation
+  useEffect(() => { closeMobileSidebar(); }, [location.pathname]);
+
+  // If activeModules is empty (not yet loaded), show everything
+  const isVisible = (mod?: string) =>
+    !mod || activeModules.length === 0 || activeModules.includes(mod);
+
+  const visibleNav = navItems
+    .filter((item) => isVisible(item.requiresModule))
+    .map((item) =>
+      item.children
+        ? {
+            ...item,
+            children: item.children.filter((c) => isVisible(c.requiresModule)),
+          }
+        : item,
+    );
 
   const initials = user?.name
     ? user.name.split(' ').map((w) => w[0]).slice(0, 2).join('').toUpperCase()
@@ -200,9 +233,16 @@ export function Sidebar() {
 
   return (
     <aside
-      className="sidebar-transition flex flex-col h-full overflow-hidden flex-shrink-0"
+      className={`sidebar-transition flex flex-col overflow-hidden flex-shrink-0
+        /* Desktop: inline, always visible */
+        hidden md:flex
+        /* Mobile: fixed overlay drawer, toggled by mobileSidebarOpen */
+        ${mobileSidebarOpen ? '!flex fixed inset-y-0 left-0 z-50 h-full' : ''}
+      `}
       style={{
-        width: sidebarCollapsed ? 'var(--sidebar-collapsed-width)' : 'var(--sidebar-width)',
+        width: sidebarCollapsed && !mobileSidebarOpen
+          ? 'var(--sidebar-collapsed-width)'
+          : 'var(--sidebar-width)',
         background: 'var(--sidebar-bg)',
       }}
     >
@@ -223,7 +263,7 @@ export function Sidebar() {
 
       {/* Nav */}
       <nav className="flex-1 overflow-y-auto overflow-x-hidden py-3 space-y-0.5">
-        {navItems.map((item) => (
+        {visibleNav.map((item) => (
           <NavSection key={item.label} item={item} collapsed={sidebarCollapsed} />
         ))}
       </nav>

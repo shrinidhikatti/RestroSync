@@ -1,4 +1,4 @@
-import { IsEnum, IsOptional, IsString, MinLength, IsEmail } from 'class-validator';
+import { IsEnum, IsOptional, IsString, MinLength, IsEmail, IsArray } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { OperatingMode, UserRole } from '@prisma/client';
 
@@ -53,6 +53,13 @@ export class SetOperatingModeDto {
   @ApiPropertyOptional({ enum: OperatingMode })
   @IsEnum(OperatingMode)
   operatingMode!: OperatingMode;
+}
+
+export class UpdateActiveModulesDto {
+  @ApiProperty({ type: [String] })
+  @IsArray()
+  @IsString({ each: true })
+  modules!: string[];
 }
 
 export class CreateStaffDto {

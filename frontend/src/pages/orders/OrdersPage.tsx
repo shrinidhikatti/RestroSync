@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { orderApi, billApi, tableApi, categoryApi, menuApi, complaintsApi } from '../../lib/api';
 import { Modal } from '../../components/ui/Modal';
+import { BillReceipt } from '../../components/print/BillReceipt';
 import {
   PlusIcon, SearchIcon, RefreshIcon, ClockIcon, CheckIcon, TableIcon, MinusIcon,
   AlertIcon,
@@ -453,6 +454,7 @@ function OrderDetailModal({ orderId, onClose }: { orderId: string; onClose: () =
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState('');
   const [paymentAmounts, setPaymentAmounts] = useState<Record<string, string>>({});
+  const [printBillId, setPrintBillId] = useState<string | null>(null);
 
   // ── Complaint state ────────────────────────────────────────────────────────
   const [complaintItem, setComplaintItem] = useState<{ id: string; name: string } | null>(null);
@@ -599,6 +601,7 @@ function OrderDetailModal({ orderId, onClose }: { orderId: string; onClose: () =
   const hasPaidBill = order?.bills?.some((b: any) => b.status === 'PAID');
 
   return (
+    <>
     <Modal
       open={true}
       onClose={onClose}
@@ -716,7 +719,7 @@ function OrderDetailModal({ orderId, onClose }: { orderId: string; onClose: () =
                   )}
 
                   {/* Items list */}
-                  <div className="max-h-64 overflow-y-auto divide-y divide-slate-50">
+                  <div className="max-h-64 md:max-h-72 overflow-y-auto divide-y divide-slate-50">
                     {loadingMenu ? (
                       <div className="p-4 space-y-2">
                         {[1, 2, 3].map((i) => <div key={i} className="skeleton h-10 rounded-lg" />)}
@@ -739,24 +742,24 @@ function OrderDetailModal({ orderId, onClose }: { orderId: string; onClose: () =
                                   <>
                                     <button
                                       onClick={() => adjustCart(item.id, -1)}
-                                      className="w-7 h-7 rounded-lg bg-slate-200 hover:bg-slate-300 flex items-center justify-center text-slate-700"
+                                      className="w-9 h-9 rounded-xl bg-slate-200 hover:bg-slate-300 active:bg-slate-400 flex items-center justify-center text-slate-700 touch-target"
                                     >
-                                      <MinusIcon className="w-3 h-3" />
+                                      <MinusIcon className="w-4 h-4" />
                                     </button>
-                                    <span className="w-6 text-center text-sm font-semibold font-display text-slate-800">{qty}</span>
+                                    <span className="w-7 text-center text-sm font-semibold font-display text-slate-800">{qty}</span>
                                     <button
                                       onClick={() => adjustCart(item.id, 1)}
-                                      className="w-7 h-7 rounded-lg bg-red-500 hover:bg-red-600 flex items-center justify-center text-white"
+                                      className="w-9 h-9 rounded-xl bg-red-500 hover:bg-red-600 active:bg-red-700 flex items-center justify-center text-white touch-target"
                                     >
-                                      <PlusIcon className="w-3 h-3" />
+                                      <PlusIcon className="w-4 h-4" />
                                     </button>
                                   </>
                                 ) : (
                                   <button
                                     onClick={() => adjustCart(item.id, 1)}
-                                    className="w-7 h-7 rounded-lg bg-slate-100 hover:bg-red-500 hover:text-white flex items-center justify-center text-slate-500 transition-colors"
+                                    className="w-9 h-9 rounded-xl bg-slate-100 hover:bg-red-500 active:bg-red-600 hover:text-white flex items-center justify-center text-slate-500 transition-colors touch-target"
                                   >
-                                    <PlusIcon className="w-3 h-3" />
+                                    <PlusIcon className="w-4 h-4" />
                                   </button>
                                 )}
                               </div>
@@ -836,20 +839,44 @@ function OrderDetailModal({ orderId, onClose }: { orderId: string; onClose: () =
                 </button>
               )}
               {activeBill && (
-                <button
-                  onClick={handlePayCash}
-                  disabled={actionLoading === 'pay'}
-                  className="flex-1 py-2.5 rounded-xl text-sm font-semibold font-display text-white bg-emerald-600 hover:bg-emerald-700 disabled:opacity-60"
-                >
-                  {actionLoading === 'pay' ? 'Processing...' : `Pay ₹${Number(activeBill.grandTotal).toFixed(0)} (Cash)`}
-                </button>
+                <>
+                  <button
+                    onClick={() => setPrintBillId(activeBill.id)}
+                    className="px-3 py-2.5 rounded-xl border border-slate-200 text-slate-600 text-sm font-semibold font-display hover:bg-slate-50 transition-colors"
+                    title="Print Bill"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                    </svg>
+                  </button>
+                  <button
+                    onClick={handlePayCash}
+                    disabled={actionLoading === 'pay'}
+                    className="flex-1 py-2.5 rounded-xl text-sm font-semibold font-display text-white bg-emerald-600 hover:bg-emerald-700 disabled:opacity-60"
+                  >
+                    {actionLoading === 'pay' ? 'Processing...' : `Pay ₹${Number(activeBill.grandTotal).toFixed(0)} (Cash)`}
+                  </button>
+                </>
               )}
             </div>
           )}
 
           {hasPaidBill && (
-            <div className="flex items-center gap-2 text-emerald-600 bg-emerald-50 border border-emerald-100 rounded-xl p-3 text-sm font-display">
-              <CheckIcon className="w-4 h-4" /> Order completed and paid
+            <div className="space-y-3">
+              <div className="flex items-center gap-2 text-emerald-600 bg-emerald-50 border border-emerald-100 rounded-xl p-3 text-sm font-display">
+                <CheckIcon className="w-4 h-4" /> Order completed and paid
+              </div>
+              {order.bills?.find((b: any) => b.status === 'PAID') && (
+                <button
+                  onClick={() => setPrintBillId(order.bills.find((b: any) => b.status === 'PAID').id)}
+                  className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl border border-slate-200 text-slate-600 text-sm font-semibold font-display hover:bg-slate-50 transition-colors"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                  </svg>
+                  Print / Reprint Receipt
+                </button>
+              )}
             </div>
           )}
         </div>
@@ -857,6 +884,14 @@ function OrderDetailModal({ orderId, onClose }: { orderId: string; onClose: () =
         <p className="text-slate-400 text-sm text-center py-10">Order not found</p>
       )}
     </Modal>
+
+    {/* ── Receipt Print Modal ──────────────────────────────────────────────── */}
+    {printBillId && (
+      <BillReceipt
+        billId={printBillId}
+        onClose={() => setPrintBillId(null)}
+      />
+    )}
 
     {/* ── Complaint Modal ──────────────────────────────────────────────────── */}
     {complaintItem && (
@@ -920,5 +955,6 @@ function OrderDetailModal({ orderId, onClose }: { orderId: string; onClose: () =
         </div>
       </Modal>
     )}
+    </>
   );
 }

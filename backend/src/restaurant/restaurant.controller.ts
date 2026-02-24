@@ -5,7 +5,7 @@ import { RestaurantService } from './restaurant.service';
 import { CurrentUser, JwtPayload } from '../common/decorators/current-user.decorator';
 import { Roles } from '../common/decorators/roles.decorator';
 import { RolesGuard } from '../common/guards/roles.guard';
-import { UpdateRestaurantDto, SetOperatingModeDto, CreateStaffDto } from './dto/restaurant.dto';
+import { UpdateRestaurantDto, SetOperatingModeDto, CreateStaffDto, UpdateActiveModulesDto } from './dto/restaurant.dto';
 
 @ApiTags('Restaurant')
 @Controller('restaurants')
@@ -28,6 +28,16 @@ export class RestaurantController {
     @Body() dto: UpdateRestaurantDto,
   ) {
     return this.restaurantService.updateRestaurant(user.restaurantId!, dto);
+  }
+
+  @Patch('me/modules')
+  @Roles('OWNER', 'MANAGER')
+  @ApiOperation({ summary: 'Owner updates their active modules (subset of SA-granted modules)' })
+  async updateActiveModules(
+    @CurrentUser() user: JwtPayload,
+    @Body() dto: UpdateActiveModulesDto,
+  ) {
+    return this.restaurantService.updateActiveModules(user.restaurantId!, dto.modules);
   }
 
   @Patch('me/operating-mode')

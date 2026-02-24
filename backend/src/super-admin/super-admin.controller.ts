@@ -3,7 +3,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { ApiTags, ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
 import { SuperAdminService } from './super-admin.service';
 import { SuperAdminGuard } from '../common/guards/super-admin.guard';
-import { CreateRestaurantDto, ListRestaurantsQueryDto } from './dto/super-admin.dto';
+import { CreateRestaurantDto, ListRestaurantsQueryDto, UpdateModulesDto } from './dto/super-admin.dto';
 
 @ApiTags('Super Admin')
 @Controller('super-admin')
@@ -52,6 +52,12 @@ export class SuperAdminController {
   @ApiOperation({ summary: 'Change operating mode for a restaurant' })
   async updateOperatingMode(@Param('id') id: string, @Body() body: { mode: string }) {
     return this.superAdminService.updateOperatingMode(id, body.mode);
+  }
+
+  @Patch('restaurants/:id/modules')
+  @ApiOperation({ summary: 'Update enabled feature modules for a restaurant' })
+  async updateModules(@Param('id') id: string, @Body() dto: UpdateModulesDto) {
+    return this.superAdminService.updateEnabledModules(id, dto.modules);
   }
 
   @Patch('restaurants/:id/plan')

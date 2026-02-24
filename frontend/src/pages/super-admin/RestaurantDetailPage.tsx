@@ -12,6 +12,19 @@ const MODES = [
   { value: 'FULL_SERVICE', label: 'Full Service',           emoji: '🍾' },
 ];
 
+const MODULE_META = [
+  { key: 'TABLES',        label: 'Tables',          desc: 'Table map & floor plan' },
+  { key: 'RESERVATIONS',  label: 'Reservations',    desc: 'Advance booking system' },
+  { key: 'KDS',           label: 'Kitchen Display', desc: 'KDS screen for kitchen' },
+  { key: 'INVENTORY',     label: 'Inventory',       desc: 'Stock, recipes, purchase orders' },
+  { key: 'CRM',           label: 'CRM',             desc: 'Customers, loyalty & attendance' },
+  { key: 'ONLINE_ORDERS', label: 'Online Orders',   desc: 'Zomato / Swiggy feed' },
+  { key: 'MULTI_OUTLET',  label: 'Multi-Outlet',    desc: 'Branch comparison & menu sync' },
+  { key: 'DEVICES',       label: 'Devices',         desc: 'POS device management' },
+  { key: 'ACCOUNTING',    label: 'Accounting',      desc: 'P&L reports & Tally export' },
+  { key: 'DAY_CLOSE',     label: 'Day Close',       desc: 'End-of-day cash reconciliation' },
+];
+
 function Stat({ label, value, sub }: { label: string; value: any; sub?: string }) {
   return (
     <div className="bg-slate-800/50 border border-slate-700 rounded-2xl p-4">
@@ -33,6 +46,8 @@ export default function RestaurantDetailPage() {
   const [selectedPlan, setSelectedPlan] = useState('');
   const [modeLoading, setModeLoading] = useState(false);
   const [planLoading, setPlanLoading] = useState(false);
+  const [enabledModules, setEnabledModules] = useState<string[]>([]);
+  const [modulesLoading, setModulesLoading] = useState(false);
 
   useEffect(() => {
     const api = saApi();
@@ -45,6 +60,7 @@ export default function RestaurantDetailPage() {
         const r = rDetail.data.restaurant ?? rDetail.data;
         setSelectedMode(r.operatingMode ?? '');
         setSelectedPlan(r.planId ?? '');
+        setEnabledModules(r.enabledModules ?? []);
         setPlans(rPlans.data);
       })
       .catch(console.error)
@@ -75,6 +91,21 @@ export default function RestaurantDetailPage() {
       alert('Plan updated successfully.');
     } catch (e: any) { alert(e.response?.data?.userMessage ?? 'Failed to update plan'); }
     finally { setPlanLoading(false); }
+  };
+
+  const toggleModule = (key: string) => {
+    setEnabledModules((prev) =>
+      prev.includes(key) ? prev.filter((m) => m !== key) : [...prev, key]
+    );
+  };
+
+  const handleModulesUpdate = async () => {
+    setModulesLoading(true);
+    try {
+      await saApi().patch(`/super-admin/restaurants/${id}/modules`, { modules: enabledModules });
+      alert('Feature modules updated successfully.');
+    } catch (e: any) { alert(e.response?.data?.userMessage ?? 'Failed to update modules'); }
+    finally { setModulesLoading(false); }
   };
 
   const doAction = async (action: 'suspend' | 'activate' | 'delete') => {
@@ -282,6 +313,52 @@ export default function RestaurantDetailPage() {
             </div>
           </div>
         )}
+
+        {/* Feature Modules */}
+        <div>
+          <div className="flex items-center justify-between mb-2">
+            <p className="text-xs text-slate-400">Feature Modules</p>
+            <span className="text-xs text-violet-400">{enabledModules.length} / {MODULE_META.length} enabled</span>
+          </div>
+          <div className="grid grid-cols-2 gap-2 mb-3">
+            {MODULE_META.map(({ key, label, desc }) => {
+              const on = enabledModules.includes(key);
+              return (
+                <button
+                  key={key}
+                  type="button"
+                  onClick={() => toggleModule(key)}
+                  className={`flex items-center gap-2.5 px-3 py-2 rounded-xl border transition-all text-left ${
+                    on
+                      ? 'border-violet-500/50 bg-violet-500/10 text-white'
+                      : 'border-slate-700 bg-slate-800/50 text-slate-500 opacity-50'
+                  }`}
+                >
+                  <div className={`w-3.5 h-3.5 rounded flex items-center justify-center flex-shrink-0 border transition-colors ${
+                    on ? 'bg-violet-600 border-violet-600' : 'border-slate-600'
+                  }`}>
+                    {on && (
+                      <svg className="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                      </svg>
+                    )}
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-xs font-semibold truncate">{label}</p>
+                    <p className="text-[10px] text-slate-500 truncate">{desc}</p>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+          <button
+            onClick={handleModulesUpdate}
+            disabled={modulesLoading}
+            className="w-full px-3 py-2 rounded-xl text-xs font-semibold bg-violet-600 text-white hover:bg-violet-500 disabled:opacity-40 transition-colors"
+          >
+            {modulesLoading ? 'Saving…' : 'Save Module Configuration'}
+          </button>
+        </div>
       </div>
     </div>
   );

@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
+import { Injectable, NotFoundException, ConflictException, BadRequestException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { PrismaService } from '../prisma/prisma.service';
 import { PlanLimitsService } from '../common/plan-limits.service';
@@ -92,6 +92,23 @@ export class RestaurantService {
         id: true, name: true, email: true, role: true, branchId: true,
         isActive: true, mustChangePassword: true, createdAt: true,
       },
+    });
+  }
+
+  async updateActiveModules(restaurantId: string, modules: string[]) {
+    const restaurant = await this.prisma.restaurant.findUnique({ where: { id: restaurantId } });
+    if (!restaurant) throw new NotFoundException();
+
+    // Owner can only activate modules that SA has granted
+    const invalid = modules.filter((m) => !restaurant.enabledModules.includes(m));
+    if (invalid.length > 0) {
+      throw new BadRequestException(`Modules not available in your plan: ${invalid.join(', ')}`);
+    }
+
+    return this.prisma.restaurant.update({
+      where: { id: restaurantId },
+      data: { activeModules: modules },
+      select: { id: true, activeModules: true, enabledModules: true },
     });
   }
 

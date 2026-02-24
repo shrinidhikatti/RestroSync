@@ -1,4 +1,4 @@
-import { IsEmail, IsNotEmpty, IsOptional, IsString, IsEnum } from 'class-validator';
+import { IsEmail, IsNotEmpty, IsOptional, IsString, IsArray } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class CreateRestaurantDto {
@@ -35,6 +35,24 @@ export class CreateRestaurantDto {
   @IsOptional()
   @IsString()
   planId?: string;
+
+  @ApiPropertyOptional({ enum: ['COUNTER', 'TABLE_SIMPLE', 'FULL_SERVICE'], example: 'FULL_SERVICE' })
+  @IsOptional()
+  @IsString()
+  operatingMode?: string;
+
+  @ApiPropertyOptional({ type: [String], example: ['TABLES', 'KDS', 'CRM'] })
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  enabledModules?: string[];
+}
+
+export class UpdateModulesDto {
+  @ApiProperty({ type: [String], example: ['TABLES', 'KDS', 'CRM'] })
+  @IsArray()
+  @IsString({ each: true })
+  modules!: string[];
 }
 
 export class ListRestaurantsQueryDto {

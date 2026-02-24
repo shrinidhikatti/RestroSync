@@ -1,6 +1,18 @@
 import React, { lazy, Suspense } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Layout } from './components/layout/Layout';
+import { useAuthStore } from './stores/auth.store';
+import { InstallPrompt } from './components/pwa/InstallPrompt';
+
+/** Redirects to / if the module is not active for this restaurant */
+function ModuleGuard({ mod, children }: { mod: string; children: React.ReactNode }) {
+  const { activeModules } = useAuthStore();
+  // Empty array = not yet loaded, allow through
+  if (activeModules.length > 0 && !activeModules.includes(mod)) {
+    return <Navigate to="/" replace />;
+  }
+  return <>{children}</>;
+}
 
 // Super Admin
 const SuperAdminLoginPage     = lazy(() => import('./pages/super-admin/SuperAdminLoginPage'));
@@ -31,6 +43,7 @@ const ReceiptSettings     = lazy(() => import('./pages/settings/ReceiptSettingsP
 const PaymentSettings     = lazy(() => import('./pages/settings/PaymentSettingsPage'));
 const ChargesPage         = lazy(() => import('./pages/settings/ChargesPage'));
 const SecuritySettings    = lazy(() => import('./pages/settings/SecuritySettingsPage'));
+const ModulesSettings     = lazy(() => import('./pages/settings/ModulesSettingsPage'));
 const OrdersPage         = lazy(() => import('./pages/orders/OrdersPage'));
 const KitchenDisplay     = lazy(() => import('./pages/kitchen/KitchenDisplay'));
 
@@ -95,6 +108,7 @@ function PageLoader() {
 
 function App() {
   return (
+    <>
     <BrowserRouter>
       <Suspense fallback={<PageLoader />}>
         <Routes>
@@ -134,17 +148,17 @@ function App() {
 
             {/* Operations */}
             <Route path="/orders"       element={<OrdersPage />} />
-            <Route path="/tables"       element={<TablesPage />} />
-            <Route path="/reservations" element={<ReservationsPage />} />
-            <Route path="/day-close"    element={<DayClosePage />} />
+            <Route path="/tables"       element={<ModuleGuard mod="TABLES"><TablesPage /></ModuleGuard>} />
+            <Route path="/reservations" element={<ModuleGuard mod="RESERVATIONS"><ReservationsPage /></ModuleGuard>} />
+            <Route path="/day-close"    element={<ModuleGuard mod="DAY_CLOSE"><DayClosePage /></ModuleGuard>} />
 
             {/* People */}
             <Route path="/staff" element={<StaffPage />} />
 
             {/* Multi-Outlet */}
-            <Route path="/multi-outlet/overview"   element={<ConsolidatedDashboardPage />} />
-            <Route path="/multi-outlet/menu"       element={<BranchMenuOverridePage />} />
-            <Route path="/multi-outlet/transfers"  element={<StockTransfersPage />} />
+            <Route path="/multi-outlet/overview"  element={<ModuleGuard mod="MULTI_OUTLET"><ConsolidatedDashboardPage /></ModuleGuard>} />
+            <Route path="/multi-outlet/menu"      element={<ModuleGuard mod="MULTI_OUTLET"><BranchMenuOverridePage /></ModuleGuard>} />
+            <Route path="/multi-outlet/transfers" element={<ModuleGuard mod="MULTI_OUTLET"><StockTransfersPage /></ModuleGuard>} />
 
             {/* CRM */}
             <Route path="/crm/customers"          element={<CustomersPage />} />
@@ -170,11 +184,11 @@ function App() {
             <Route path="/system/monitor" element={<SystemMonitorPage />} />
 
             {/* Online orders & devices */}
-            <Route path="/online-orders"       element={<OnlineOrdersPage />} />
-            <Route path="/devices"             element={<DevicesPage />} />
+            <Route path="/online-orders" element={<ModuleGuard mod="ONLINE_ORDERS"><OnlineOrdersPage /></ModuleGuard>} />
+            <Route path="/devices"       element={<ModuleGuard mod="DEVICES"><DevicesPage /></ModuleGuard>} />
 
             {/* Accounting */}
-            <Route path="/accounting/pnl"      element={<PnLPage />} />
+            <Route path="/accounting/pnl" element={<ModuleGuard mod="ACCOUNTING"><PnLPage /></ModuleGuard>} />
 
             {/* Settings */}
             <Route path="/settings/restaurant"   element={<RestaurantSettings />} />
@@ -185,6 +199,7 @@ function App() {
             <Route path="/settings/payments"     element={<PaymentSettings />} />
             <Route path="/settings/charges"      element={<ChargesPage />} />
             <Route path="/settings/security"     element={<SecuritySettings />} />
+            <Route path="/settings/modules"      element={<ModulesSettings />} />
 
             {/* Catch-all redirect */}
             <Route path="*" element={<Navigate to="/" replace />} />
@@ -192,6 +207,8 @@ function App() {
         </Routes>
       </Suspense>
     </BrowserRouter>
+    <InstallPrompt />
+    </>
   );
 }
 

@@ -191,7 +191,7 @@ export default function ComplaintsPage() {
                       tick={{ fontSize: 11 }}
                     />
                     <Tooltip
-                      formatter={(v: number) => [`${v} complaint${v !== 1 ? 's' : ''}`, 'Count']}
+                      formatter={(v: number | undefined) => { const n = v ?? 0; return [`${n} complaint${n !== 1 ? 's' : ''}`, 'Count']; }}
                     />
                     <Bar dataKey="count" fill="#ef4444" radius={[0, 4, 4, 0]} />
                   </BarChart>
@@ -213,7 +213,7 @@ export default function ComplaintsPage() {
                     <XAxis dataKey="date" tick={{ fontSize: 10 }}
                       tickFormatter={(d) => d.slice(5)} />
                     <YAxis tick={{ fontSize: 11 }} allowDecimals={false} />
-                    <Tooltip formatter={(v: number) => [v, 'Complaints']} />
+                    <Tooltip formatter={(v: number | undefined) => [v ?? 0, 'Complaints']} />
                     <Line
                       type="monotone" dataKey="count" stroke="#ef4444"
                       strokeWidth={2} dot={{ r: 3 }} />

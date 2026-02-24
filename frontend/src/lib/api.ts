@@ -22,6 +22,8 @@ export const restaurantApi = {
   update: (data: any) => api.patch('/restaurants/me', data),
   setMode: (operatingMode: string) =>
     api.patch('/restaurants/me/operating-mode', { operatingMode }),
+  updateActiveModules: (modules: string[]) =>
+    api.patch('/restaurants/me/modules', { modules }),
 };
 
 // ─── Categories ───────────────────────────────────────────────────────────────
