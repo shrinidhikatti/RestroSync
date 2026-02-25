@@ -9,6 +9,7 @@ services:
     name: restrosync-redis
     plan: free
     maxmemoryPolicy: noeviction
+    ipAllowList: []
 
   # ── Backend API (NestJS) ──────────────────────────────────────────────────────
   - type: web
