@@ -6,7 +6,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { RedisService } from '../redis/redis.service';
 import { AppGateway } from '../gateway/app.gateway';
 
-@SkipThrottle()
+@SkipThrottle({ short: true, login: true })
 @ApiTags('Health')
 @Controller()
 export class HealthController {
