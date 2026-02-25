@@ -1,32 +1,17 @@
-# ── Stage 1: Build ────────────────────────────────────────────────────────────
-FROM node:20-alpine AS builder
+FROM node:20-alpine
 
 WORKDIR /app
 
 COPY package*.json ./
 COPY prisma ./prisma/
 
-# Install all deps (including dev) so nest build has everything it needs
+# Install all deps (dev included) so nest CLI is available for build
 RUN npm ci && npx prisma generate
 
 COPY . .
-RUN npm run build
 
-# ── Stage 2: Production ────────────────────────────────────────────────────────
-FROM node:20-alpine AS production
-
-WORKDIR /app
-
-ENV NODE_ENV=production
-
-COPY package*.json ./
-RUN npm ci --only=production
-
-# Copy Prisma generated client
-COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
-COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
-COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/prisma ./prisma
+# Build and then prune dev dependencies
+RUN npm run build && npm prune --production
 
 EXPOSE 3000
 

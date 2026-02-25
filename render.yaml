@@ -14,10 +14,9 @@ services:
   # ── Backend API (NestJS) ──────────────────────────────────────────────────────
   - type: web
     name: restrosync-backend
-    env: node
-    rootDir: backend
-    buildCommand: npm ci --include=dev && npx prisma generate && npm run build
-    startCommand: node dist/main
+    env: docker
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
     plan: free
     healthCheckPath: /api/v1/health
     envVars:
