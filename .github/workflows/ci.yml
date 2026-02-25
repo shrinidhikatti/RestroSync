@@ -124,14 +124,5 @@ jobs:
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
 
     steps:
-      - name: Trigger Render deploy (backend)
-        if: ${{ secrets.RENDER_BACKEND_DEPLOY_HOOK != '' }}
-        run: curl -s "${{ secrets.RENDER_BACKEND_DEPLOY_HOOK }}"
-
-      - name: Trigger Render deploy (frontend)
-        if: ${{ secrets.RENDER_FRONTEND_DEPLOY_HOOK != '' }}
-        run: curl -s "${{ secrets.RENDER_FRONTEND_DEPLOY_HOOK }}"
-
-      - name: Skip (Render auto-deploys on push)
-        if: ${{ secrets.RENDER_BACKEND_DEPLOY_HOOK == '' }}
-        run: echo "Render will auto-deploy from GitHub. Add RENDER_BACKEND_DEPLOY_HOOK / RENDER_FRONTEND_DEPLOY_HOOK secrets to trigger manually."
+      - name: Render deploys automatically
+        run: echo "CI passed. Render will auto-deploy from the connected GitHub repo."
