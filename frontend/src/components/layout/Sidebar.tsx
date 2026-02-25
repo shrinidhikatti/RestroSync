@@ -233,11 +233,10 @@ export function Sidebar() {
 
   return (
     <aside
-      className={`sidebar-transition flex flex-col overflow-hidden flex-shrink-0
-        /* Desktop: inline, always visible */
-        hidden md:flex
-        /* Mobile: fixed overlay drawer, toggled by mobileSidebarOpen */
-        ${mobileSidebarOpen ? '!flex fixed inset-y-0 left-0 z-50 h-full' : ''}
+      className={`sidebar-transition overflow-hidden flex-shrink-0
+        ${mobileSidebarOpen
+          ? 'flex flex-col fixed inset-y-0 left-0 z-50 h-full'
+          : 'hidden md:flex md:flex-col'}
       `}
       style={{
         width: sidebarCollapsed && !mobileSidebarOpen
