@@ -231,18 +231,25 @@ export function Sidebar() {
     ? user.name.split(' ').map((w) => w[0]).slice(0, 2).join('').toUpperCase()
     : 'RS';
 
+  const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+
   return (
     <aside
-      className={`sidebar-transition overflow-hidden flex-shrink-0
-        ${mobileSidebarOpen
-          ? 'flex flex-col fixed inset-y-0 left-0 z-50 h-full'
-          : 'hidden md:flex md:flex-col'}
-      `}
+      className="sidebar-transition flex flex-col flex-shrink-0"
       style={{
         width: sidebarCollapsed && !mobileSidebarOpen
           ? 'var(--sidebar-collapsed-width)'
           : 'var(--sidebar-width)',
         background: 'var(--sidebar-bg)',
+        // On mobile: hidden unless drawer is open; on desktop: always visible
+        display: mobileSidebarOpen ? 'flex' : (isMobile ? 'none' : 'flex'),
+        position: mobileSidebarOpen ? 'fixed' : 'relative',
+        top: mobileSidebarOpen ? 0 : undefined,
+        bottom: mobileSidebarOpen ? 0 : undefined,
+        left: mobileSidebarOpen ? 0 : undefined,
+        zIndex: mobileSidebarOpen ? 50 : undefined,
+        height: mobileSidebarOpen ? '100dvh' : '100%',
+        overflowX: 'hidden',
       }}
     >
       {/* Brand */}
