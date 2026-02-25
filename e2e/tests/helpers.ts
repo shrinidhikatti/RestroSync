@@ -57,10 +57,12 @@ export async function logout(page: Page) {
 }
 
 export async function expectSidebarItem(page: Page, label: string) {
-  await expect(page.getByRole('link', { name: label })).toBeVisible({ timeout: 15_000 });
+  // exact: true prevents 'Orders' from matching 'Online Orders'
+  await expect(page.getByRole('link', { name: label, exact: true })).toBeVisible({ timeout: 15_000 });
 }
 
 export async function expectNoSidebarItem(page: Page, label: string) {
+  // exact: true prevents 'Tables' from matching 'Multi-Outlet' etc.
   // Wait up to 10s for modules to load and item to disappear
-  await expect(page.getByRole('link', { name: label })).not.toBeVisible({ timeout: 10_000 });
+  await expect(page.getByRole('link', { name: label, exact: true })).not.toBeVisible({ timeout: 10_000 });
 }
