@@ -6,12 +6,11 @@ WORKDIR /app
 COPY package*.json ./
 COPY prisma ./prisma/
 
-RUN npm ci --only=production && \
-    npm install --save-dev typescript @nestjs/cli && \
-    npx prisma generate
+# Install all deps (including dev) so nest build has everything it needs
+RUN npm ci && npx prisma generate
 
 COPY . .
-RUN npx nest build
+RUN npm run build
 
 # ── Stage 2: Production ────────────────────────────────────────────────────────
 FROM node:20-alpine AS production
