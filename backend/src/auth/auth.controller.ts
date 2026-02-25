@@ -23,14 +23,14 @@ export class AuthController {
 
   @Post('login')
   @ApiOperation({ summary: 'Login with email and password' })
-  @Throttle({ login: { ttl: 900000, limit: process.env.NODE_ENV === 'development' ? 1000 : 5 } })
+  @Throttle({ login: { ttl: 900000, limit: process.env.NODE_ENV === 'development' ? 1000 : 50 } })
   async login(@Body() dto: LoginDto) {
     return this.authService.login(dto);
   }
 
   @Post('pin-login')
   @ApiOperation({ summary: 'Login with 4-digit PIN (registered devices only)' })
-  @Throttle({ login: { ttl: 900000, limit: process.env.NODE_ENV === 'development' ? 1000 : 5 } })
+  @Throttle({ login: { ttl: 900000, limit: process.env.NODE_ENV === 'development' ? 1000 : 50 } })
   async pinLogin(@Body() dto: PinLoginDto) {
     return this.authService.pinLogin(dto);
   }
