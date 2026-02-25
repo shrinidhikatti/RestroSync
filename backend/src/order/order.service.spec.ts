@@ -10,7 +10,7 @@ const mockPrisma: any = {
   order:        { findFirst: jest.fn(), findMany: jest.fn(), create: jest.fn(), update: jest.fn() },
   orderItem:    { findMany: jest.fn(), findUnique: jest.fn(), update: jest.fn(), updateMany: jest.fn(), delete: jest.fn(), create: jest.fn() },
   bill:         { findFirst: jest.fn() },
-  table:        { findFirst: jest.fn(), update: jest.fn() },
+  table:        { findFirst: jest.fn(), update: jest.fn(), updateMany: jest.fn() },
   branch:       { findFirst: jest.fn() },
   menuItem:     { findFirst: jest.fn() },
   discount:     { findMany: jest.fn(), update: jest.fn() },
