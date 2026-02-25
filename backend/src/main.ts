@@ -13,9 +13,10 @@ async function bootstrap() {
 
   // Security
   app.use(helmet());
+  const frontendUrl = configService.get<string>('FRONTEND_URL');
   app.enableCors({
     origin: configService.get('NODE_ENV') === 'production'
-      ? ['https://admin.restrosync.com']
+      ? (frontendUrl ? [frontendUrl] : false)
       : true,
     credentials: true,
   });
