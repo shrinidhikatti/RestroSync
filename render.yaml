@@ -16,7 +16,7 @@ services:
     name: restrosync-backend
     env: node
     rootDir: backend
-    buildCommand: npm ci && npx prisma generate && npm run build
+    buildCommand: npm ci --include=dev && npx prisma generate && npm run build
     startCommand: node dist/main
     plan: free
     healthCheckPath: /api/v1/health
