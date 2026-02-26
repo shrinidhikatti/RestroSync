@@ -48,7 +48,8 @@ test.describe('COUNTER mode — QuickBite Counter', () => {
     await login(page, USERS.counter.owner.email);
     await page.goto('/orders');
     await page.waitForLoadState('networkidle');
-    const newOrderBtn = page.getByRole('button', { name: /new order|add order|\+ order/i });
+    // .first() avoids strict mode if multiple buttons match the pattern
+    const newOrderBtn = page.getByRole('button', { name: /new order|add order|\+ order/i }).first();
     if (await newOrderBtn.isVisible()) {
       await newOrderBtn.click();
       // Modal/Drawer renders as div.fixed.inset-0 (no role="dialog")

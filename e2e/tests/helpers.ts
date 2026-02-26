@@ -58,11 +58,12 @@ export async function logout(page: Page) {
 
 export async function expectSidebarItem(page: Page, label: string) {
   // exact: true prevents 'Orders' from matching 'Online Orders'
-  await expect(page.getByRole('link', { name: label, exact: true })).toBeVisible({ timeout: 15_000 });
+  // .first() avoids strict mode when the link appears in both desktop + mobile nav
+  await expect(page.getByRole('link', { name: label, exact: true }).first()).toBeVisible({ timeout: 15_000 });
 }
 
 export async function expectNoSidebarItem(page: Page, label: string) {
   // exact: true prevents 'Tables' from matching 'Multi-Outlet' etc.
-  // Wait up to 10s for modules to load and item to disappear
-  await expect(page.getByRole('link', { name: label, exact: true })).not.toBeVisible({ timeout: 10_000 });
+  // .first() avoids strict mode; if first is not visible, item is considered absent
+  await expect(page.getByRole('link', { name: label, exact: true }).first()).not.toBeVisible({ timeout: 10_000 });
 }

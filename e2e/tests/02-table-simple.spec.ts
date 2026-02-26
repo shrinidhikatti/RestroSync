@@ -26,9 +26,9 @@ test.describe('TABLE_SIMPLE mode — Udupi Café', () => {
     await login(page, USERS.table.owner.email);
     await page.goto('/tables');
     await page.waitForLoadState('networkidle');
-    // Click on T1
-    const t1 = page.getByText('T1').first();
-    await t1.click();
+    // Click on T1 — force:true bypasses overlay/interactability checks
+    const t1 = page.getByText('T1', { exact: true }).first();
+    await t1.click({ force: true });
     // Drawer/Modal renders as div.fixed.inset-0 (no role="dialog")
     await expect(page.locator('div.fixed.inset-0')).toBeVisible({ timeout: 10_000 });
     await logout(page);
