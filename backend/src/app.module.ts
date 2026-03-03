@@ -35,8 +35,8 @@ import { ReceiptSettingsModule } from './receipt-settings/receipt-settings.modul
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
     ThrottlerModule.forRoot([
-      { name: 'short', ttl: 60000, limit: process.env.NODE_ENV === 'development' ? 10000 : 100 },
-      { name: 'login', ttl: 900000, limit: process.env.NODE_ENV === 'development' ? 1000 : 50 },
+      { name: 'short', ttl: 60000, limit: process.env.NODE_ENV === 'development' ? 10000 : 300 },
+      { name: 'login', ttl: 900000, limit: process.env.NODE_ENV === 'development' ? 1000 : 100 },
     ]),
     PrismaModule,
     RedisModule,

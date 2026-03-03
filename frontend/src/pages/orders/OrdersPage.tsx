@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { orderApi, billApi, tableApi, categoryApi, menuApi, complaintsApi } from '../../lib/api';
 import { Modal } from '../../components/ui/Modal';
 import { BillReceipt } from '../../components/print/BillReceipt';
@@ -40,12 +41,21 @@ const TYPE_LABELS: Record<string, string> = {
 };
 
 export default function OrdersPage() {
+  const [searchParams, setSearchParams] = useSearchParams();
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState('');
   const [search, setSearch] = useState('');
   const [showNewModal, setShowNewModal] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+
+  // Auto-open new order modal when navigated from Tables page with tableId
+  const initialTableId = searchParams.get('tableId') || '';
+  useEffect(() => {
+    if (initialTableId) {
+      setShowNewModal(true);
+    }
+  }, [initialTableId]);
 
   const fetchOrders = async () => {
     try {
@@ -190,11 +200,17 @@ export default function OrdersPage() {
       {/* New Order Modal */}
       <NewOrderModal
         open={showNewModal}
-        onClose={() => setShowNewModal(false)}
+        onClose={() => {
+          setShowNewModal(false);
+          // Clear tableId from URL so it doesn't re-open on next render
+          if (searchParams.has('tableId')) setSearchParams({}, { replace: true });
+        }}
+        initialTableId={initialTableId}
         onCreated={(newOrder) => {
           setOrders((prev) => [newOrder, ...prev]);
           setSelectedOrder(newOrder);
           setShowNewModal(false);
+          if (searchParams.has('tableId')) setSearchParams({}, { replace: true });
         }}
       />
 
@@ -285,19 +301,28 @@ function NewOrderModal({
   open,
   onClose,
   onCreated,
+  initialTableId = '',
 }: {
   open: boolean;
   onClose: () => void;
   onCreated: (order: Order) => void;
+  initialTableId?: string;
 }) {
   const [form, setForm] = useState({
     type: 'DINE_IN',
-    tableId: '',
+    tableId: initialTableId,
     customerName: '',
     customerPhone: '',
     customerAddress: '',
     notes: '',
   });
+
+  // Sync initialTableId when modal opens from tables page
+  useEffect(() => {
+    if (open && initialTableId) {
+      setForm((f) => ({ ...f, type: 'DINE_IN', tableId: initialTableId }));
+    }
+  }, [open, initialTableId]);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
   const [tables, setTables] = useState<Array<{ id: string; number: string; capacity: number; status: string }>>([]);
@@ -400,7 +425,7 @@ function NewOrderModal({
               >
                 <option value="">No table (counter service)</option>
                 {tables
-                  .filter((t) => t.status === 'AVAILABLE')
+                  .filter((t) => t.status === 'AVAILABLE' || t.id === initialTableId)
                   .sort((a, b) => Number(a.number) - Number(b.number) || a.number.localeCompare(b.number))
                   .map((t) => (
                     <option key={t.id} value={t.id}>

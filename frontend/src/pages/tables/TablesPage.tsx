@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { tableApi, advancedPosApi } from '../../lib/api';
 import { Drawer } from '../../components/ui/Drawer';
 import { Modal } from '../../components/ui/Modal';
@@ -40,6 +41,7 @@ function timeAgo(dateStr: string) {
 }
 
 export default function TablesPage() {
+  const navigate = useNavigate();
   const [tables, setTables] = useState<Table[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedTable, setSelectedTable] = useState<Table | null>(null);
@@ -250,14 +252,15 @@ export default function TablesPage() {
                       onClick={() => !isMerged && setSelectedTable(table)}
                       className={`relative p-4 rounded-2xl border-2 ${cfg.bg} ${cfg.border} text-left transition-all shadow-sm group ${isMerged ? 'cursor-not-allowed opacity-70' : 'hover:scale-[1.03] active:scale-[0.98] cursor-pointer'}`}
                     >
-                      {/* Edit btn — hidden for merged tables */}
+                      {/* Edit btn — hidden for merged tables; uses div to avoid button-in-button */}
                       {!isMerged && (
-                        <button
+                        <div
+                          role="button"
                           onClick={(e) => openEdit(table, e)}
-                          className="absolute top-2 right-2 p-1 rounded-lg opacity-0 group-hover:opacity-100 bg-white/80 text-slate-500 hover:text-slate-800 transition-all"
+                          className="absolute top-2 right-2 p-1 rounded-lg opacity-0 group-hover:opacity-100 bg-white/80 text-slate-500 hover:text-slate-800 transition-all cursor-pointer"
                         >
                           <EditIcon className="w-3 h-3" />
-                        </button>
+                        </div>
                       )}
 
                       {/* Status dot */}
@@ -357,8 +360,16 @@ export default function TablesPage() {
                 )}
               </div>
             ) : (
-              <div className="bg-slate-50 rounded-2xl p-4 text-center text-slate-400 text-sm">
-                No active order
+              <div className="bg-slate-50 rounded-2xl p-4 text-center space-y-3">
+                <p className="text-slate-400 text-sm">No active order</p>
+                <button
+                  onClick={() => navigate(`/orders?tableId=${selectedTable.id}&tableNumber=${selectedTable.number}`)}
+                  className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-semibold font-display text-white hover:brightness-95 transition-all"
+                  style={{ background: 'var(--accent)' }}
+                >
+                  <PlusIcon className="w-4 h-4" />
+                  New Order for T{selectedTable.number}
+                </button>
               </div>
             )}
 

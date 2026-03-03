@@ -80,7 +80,7 @@ export default function DashboardPage() {
       try {
         const [tablesRes, menuRes] = await Promise.allSettled([
           api.get('/tables'),
-          api.get('/menu/items'),
+          api.get('/menu-items'),
         ]);
 
         if (tablesRes.status === 'fulfilled') {
