@@ -26,8 +26,10 @@ export function Drawer({ open, onClose, title, children, width = 'w-[480px]', fo
 
   if (!open) return null;
 
+  const container = document.getElementById('app-content') || document.body;
+
   return createPortal(
-    <div className="fixed inset-0 z-50 flex anim-fade" style={{ backgroundColor: 'rgba(15, 23, 42, 0.5)' }}>
+    <div className="absolute inset-0 z-50 flex anim-fade" style={{ backgroundColor: 'rgba(15, 23, 42, 0.5)' }}>
       {/* Backdrop */}
       <div className="flex-1" onClick={onClose} />
 
@@ -55,6 +57,6 @@ export function Drawer({ open, onClose, title, children, width = 'w-[480px]', fo
         )}
       </div>
     </div>,
-    document.body
+    container
   );
 }

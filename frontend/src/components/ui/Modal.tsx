@@ -28,9 +28,11 @@ export function Modal({ open, onClose, title, children, size = 'md', footer }: M
 
   const sizeClass = { sm: 'max-w-sm', md: 'max-w-lg', lg: 'max-w-2xl' }[size];
 
+  const container = document.getElementById('app-content') || document.body;
+
   return createPortal(
     <div
-      className="fixed inset-0 z-50 flex items-end md:items-center justify-center md:p-4 anim-fade"
+      className="absolute inset-0 z-50 flex items-end md:items-center justify-center md:p-4 anim-fade"
       style={{ backgroundColor: 'rgba(15, 23, 42, 0.6)' }}
       onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
     >
@@ -68,7 +70,7 @@ export function Modal({ open, onClose, title, children, size = 'md', footer }: M
         )}
       </div>
     </div>,
-    document.body
+    container
   );
 }
 

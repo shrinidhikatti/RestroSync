@@ -9,6 +9,7 @@ import {
   Min,
   Max,
   IsUUID,
+  IsArray,
 } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { ReservationStatus, TableStatus } from '@prisma/client';
@@ -69,6 +70,17 @@ export class UpdateTableStatusDto {
   @ApiProperty({ enum: TableStatus })
   @IsEnum(TableStatus)
   status: TableStatus;
+}
+
+export class MergeTablesDto {
+  @ApiProperty({ description: 'The primary table that guests will order from', example: 'uuid' })
+  @IsUUID()
+  primaryTableId: string;
+
+  @ApiProperty({ description: 'Tables to merge into the primary table', example: ['uuid'] })
+  @IsArray()
+  @IsString({ each: true })
+  mergeTableIds: string[];
 }
 
 // ─── Reservation DTOs ────────────────────────────────────────────

@@ -54,6 +54,12 @@ export default function TablesPage() {
   const [transferring, setTransferring] = useState(false);
   const [transferError, setTransferError] = useState('');
 
+  // ── Merge Tables state ─────────────────────────────────────────────────────
+  const [showMerge, setShowMerge] = useState(false);
+  const [mergeSelection, setMergeSelection] = useState<string[]>([]);
+  const [merging, setMerging] = useState(false);
+  const [mergeError, setMergeError] = useState('');
+
   const fetchTables = async () => {
     try {
       const res = await tableApi.getAll();
@@ -121,6 +127,44 @@ export default function TablesPage() {
     } finally {
       setTransferring(false);
     }
+  };
+
+  const handleMerge = async () => {
+    if (!selectedTable || mergeSelection.length === 0) return;
+    setMerging(true);
+    setMergeError('');
+    try {
+      // Use table-level merge (works even without orders)
+      await tableApi.merge({ primaryTableId: selectedTable.id, mergeTableIds: mergeSelection });
+      setShowMerge(false);
+      setMergeSelection([]);
+      setSelectedTable(null);
+      await fetchTables();
+    } catch (err: any) {
+      setMergeError(err?.response?.data?.message ?? 'Merge failed. Please try again.');
+    } finally {
+      setMerging(false);
+    }
+  };
+
+  const handleUnmerge = async () => {
+    if (!selectedTable) return;
+    setMerging(true);
+    try {
+      await tableApi.unmerge(selectedTable.id);
+      setSelectedTable(null);
+      await fetchTables();
+    } catch (err: any) {
+      setMergeError(err?.response?.data?.message ?? 'Unmerge failed.');
+    } finally {
+      setMerging(false);
+    }
+  };
+
+  const toggleMergeSelect = (tableId: string) => {
+    setMergeSelection((prev) =>
+      prev.includes(tableId) ? prev.filter((id) => id !== tableId) : [...prev, tableId]
+    );
   };
 
   // Group by section/floor
@@ -299,7 +343,7 @@ export default function TablesPage() {
                     )}
                   </div>
                 ))}
-                {/* Transfer button — only when there's an active order on an OCCUPIED table */}
+                {/* Transfer — only with active order */}
                 {selectedTable.status === 'OCCUPIED' && (
                   <button
                     onClick={() => { setShowTransfer(true); setTransferError(''); }}
@@ -308,13 +352,42 @@ export default function TablesPage() {
                     <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
                     </svg>
-                    Move Customers to Another Table
+                    Move to Another Table
                   </button>
                 )}
               </div>
             ) : (
               <div className="bg-slate-50 rounded-2xl p-4 text-center text-slate-400 text-sm">
                 No active order
+              </div>
+            )}
+
+            {/* Merge / Unmerge — works for AVAILABLE and OCCUPIED tables */}
+            {(selectedTable.status === 'AVAILABLE' || selectedTable.status === 'OCCUPIED') && (
+              <div className="space-y-2">
+                <button
+                  onClick={() => { setShowMerge(true); setMergeError(''); setMergeSelection([]); }}
+                  className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl border-2 border-dashed border-indigo-200 text-sm font-semibold font-display text-indigo-500 hover:border-indigo-400 hover:text-indigo-700 hover:bg-indigo-50 transition-colors"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+                  </svg>
+                  Merge with Another Table
+                </button>
+
+                {/* Show Unmerge if this table has other tables merged into it */}
+                {tables.some((t) => t.mergedIntoTableId === selectedTable.id) && (
+                  <button
+                    onClick={handleUnmerge}
+                    disabled={merging}
+                    className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl border-2 border-dashed border-rose-200 text-sm font-semibold font-display text-rose-500 hover:border-rose-400 hover:text-rose-700 hover:bg-rose-50 transition-colors disabled:opacity-60"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728L5.636 5.636" />
+                    </svg>
+                    {merging ? 'Unmerging…' : `Unmerge Tables (${tables.filter((t) => t.mergedIntoTableId === selectedTable.id).map((t) => 'T' + t.number).join(', ')})`}
+                  </button>
+                )}
               </div>
             )}
 
@@ -428,6 +501,112 @@ export default function TablesPage() {
           })()}
           {transferring && (
             <p className="text-center text-sm text-slate-400 font-display animate-pulse">Moving order…</p>
+          )}
+        </div>
+      </Modal>
+      {/* ── Merge Tables Modal ──────────────────────────────────────────────── */}
+      <Modal
+        open={showMerge}
+        onClose={() => { setShowMerge(false); setMergeError(''); setMergeSelection([]); }}
+        title={`Merge T${selectedTable?.number ?? ''} with...`}
+        size="md"
+        footer={
+          <>
+            <button
+              onClick={() => { setShowMerge(false); setMergeSelection([]); }}
+              className="px-4 py-2 rounded-xl text-sm font-medium text-slate-600 bg-slate-100 hover:bg-slate-200 transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleMerge}
+              disabled={merging || mergeSelection.length === 0}
+              className="px-4 py-2 rounded-xl text-sm font-semibold text-white disabled:opacity-60 hover:brightness-95 transition-colors"
+              style={{ background: 'var(--accent)' }}
+            >
+              {merging ? 'Merging…' : `Merge ${mergeSelection.length + 1} Tables`}
+            </button>
+          </>
+        }
+      >
+        <div className="space-y-4">
+          <p className="text-sm text-slate-500">
+            Tap nearby tables to join them with <strong className="text-slate-700">T{selectedTable?.number}</strong>. Orders will go to T{selectedTable?.number} only.
+          </p>
+
+          {mergeError && (
+            <div className="flex items-center gap-2 px-3 py-2.5 bg-rose-50 rounded-xl border border-rose-200 text-sm text-rose-700">
+              <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              {mergeError}
+            </div>
+          )}
+
+          {(() => {
+            // Show AVAILABLE + OCCUPIED tables (not MERGED, RESERVED, or BILLING)
+            const mergeable = tables.filter(
+              (t) => (t.status === 'AVAILABLE' || t.status === 'OCCUPIED') && t.id !== selectedTable?.id,
+            );
+            if (mergeable.length === 0) {
+              return (
+                <div className="text-center py-8 text-slate-400">
+                  <p className="text-2xl mb-2">🪑</p>
+                  <p className="text-sm font-display font-medium">No tables available to merge</p>
+                  <p className="text-xs mt-1">Tables must be available or occupied to merge.</p>
+                </div>
+              );
+            }
+            return (
+              <div className="grid grid-cols-3 gap-3">
+                {mergeable.map((t) => {
+                  const selected = mergeSelection.includes(t.id);
+                  const isOccupied = t.status === 'OCCUPIED';
+                  const cfg = statusConfig[t.status];
+                  return (
+                    <button
+                      key={t.id}
+                      onClick={() => toggleMergeSelect(t.id)}
+                      className={`relative p-4 rounded-2xl border-2 text-left transition-all hover:scale-[1.04] active:scale-[0.97] ${
+                        selected
+                          ? 'bg-indigo-50 border-indigo-400 ring-2 ring-indigo-200'
+                          : `${cfg.bg} ${cfg.border} hover:border-indigo-300`
+                      }`}
+                    >
+                      {selected && (
+                        <div className="absolute top-2 right-2 w-5 h-5 rounded-full bg-indigo-500 flex items-center justify-center">
+                          <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" strokeWidth={3} viewBox="0 0 24 24">
+                            <polyline points="20 6 9 17 4 12" />
+                          </svg>
+                        </div>
+                      )}
+                      <div className={`w-2 h-2 rounded-full mb-2 ${selected ? 'bg-indigo-500' : cfg.dot}`} />
+                      <p className={`font-display font-bold text-xl ${selected ? 'text-indigo-700' : cfg.text}`}>T{t.number}</p>
+                      <p className="text-xs text-slate-500 mt-0.5">{t.capacity} seats</p>
+                      {isOccupied && t.orders?.[0] && (
+                        <p className="text-xs text-slate-400 mt-0.5 truncate">
+                          ₹{Number(t.orders[0].grandTotal ?? 0).toLocaleString('en-IN')}
+                        </p>
+                      )}
+                      {!isOccupied && t.section && (
+                        <p className="text-xs text-slate-400 mt-0.5 truncate">{t.section}</p>
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+            );
+          })()}
+
+          {mergeSelection.length > 0 && (
+            <div className="bg-indigo-50 rounded-xl p-3 border border-indigo-100">
+              <p className="text-xs font-display font-semibold text-indigo-700">
+                T{selectedTable?.number} + {mergeSelection.map((id) => `T${tables.find((t) => t.id === id)?.number}`).join(' + ')}
+              </p>
+              <p className="text-xs text-indigo-500 mt-0.5">
+                Selected tables will be marked as merged. Place orders on T{selectedTable?.number}.
+              </p>
+            </div>
           )}
         </div>
       </Modal>

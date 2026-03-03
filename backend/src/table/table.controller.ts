@@ -20,6 +20,7 @@ import {
   CreateTableDto,
   UpdateTableDto,
   UpdateTableStatusDto,
+  MergeTablesDto,
   CreateReservationDto,
   UpdateReservationDto,
 } from './dto/table.dto';
@@ -82,6 +83,20 @@ export class TableController {
   @ApiOperation({ summary: 'Deactivate table (soft delete)' })
   deleteTable(@CurrentUser() user: JwtPayload, @Param('id') id: string) {
     return this.tableService.delete(user.branchId!, id);
+  }
+
+  @Post('tables/merge')
+  @Roles('OWNER', 'MANAGER', 'CAPTAIN')
+  @ApiOperation({ summary: 'Merge tables (before or after ordering). Secondary tables point to the primary.' })
+  mergeTables(@CurrentUser() user: JwtPayload, @Body() dto: MergeTablesDto) {
+    return this.tableService.mergeTables(user.branchId!, dto.primaryTableId, dto.mergeTableIds);
+  }
+
+  @Post('tables/:id/unmerge')
+  @Roles('OWNER', 'MANAGER', 'CAPTAIN')
+  @ApiOperation({ summary: 'Unmerge all tables merged into the given primary table' })
+  unmergeTables(@CurrentUser() user: JwtPayload, @Param('id') id: string) {
+    return this.tableService.unmergeTables(user.branchId!, id);
   }
 
   // ─── Reservations ─────────────────────────────────────────────

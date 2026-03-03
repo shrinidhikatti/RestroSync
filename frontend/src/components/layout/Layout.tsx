@@ -34,7 +34,7 @@ export function Layout() {
 
       <Sidebar />
 
-      <div className="flex flex-col flex-1 overflow-hidden min-w-0">
+      <div id="app-content" className="relative flex flex-col flex-1 overflow-hidden min-w-0">
         <Header />
         {/* pb-16 on mobile to clear the bottom nav bar */}
         <main className="flex-1 overflow-y-auto pb-16 md:pb-0">

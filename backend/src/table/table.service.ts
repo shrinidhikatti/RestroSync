@@ -134,6 +134,88 @@ export class TableService {
     return { message: 'Table deactivated' };
   }
 
+  /**
+   * Merge tables at the table level (before any order is placed).
+   * Primary table becomes OCCUPIED; secondary tables become MERGED.
+   */
+  async mergeTables(branchId: string, primaryTableId: string, mergeTableIds: string[]) {
+    if (mergeTableIds.length === 0) {
+      throw new BadRequestException('Provide at least one table to merge');
+    }
+
+    const allIds = [primaryTableId, ...mergeTableIds];
+    const tables = await this.prisma.table.findMany({
+      where: { id: { in: allIds }, branchId, isActive: true },
+    });
+
+    if (tables.length !== allIds.length) {
+      throw new NotFoundException('One or more tables not found in this branch');
+    }
+
+    // All tables must be AVAILABLE or OCCUPIED (not already MERGED, RESERVED, BILLING)
+    for (const t of tables) {
+      if (t.status !== 'AVAILABLE' && t.status !== 'OCCUPIED') {
+        throw new BadRequestException(`Table ${t.number} is ${t.status} and cannot be merged`);
+      }
+    }
+
+    return this.prisma.$transaction(async (tx) => {
+      // Mark primary table as OCCUPIED
+      await tx.table.update({
+        where: { id: primaryTableId },
+        data: { status: 'OCCUPIED', occupiedSince: new Date() },
+      });
+
+      // Mark secondary tables as MERGED → pointing to primary
+      for (const id of mergeTableIds) {
+        await tx.table.update({
+          where: { id },
+          data: { status: 'MERGED', mergedIntoTableId: primaryTableId, occupiedSince: new Date() },
+        });
+      }
+
+      this.gateway.emitToBranch(branchId, 'table:merged', {
+        primaryTableId,
+        mergedTableIds: mergeTableIds,
+      });
+
+      return { message: 'Tables merged successfully', primaryTableId, mergedTableIds: mergeTableIds };
+    });
+  }
+
+  /**
+   * Unmerge: release all secondary tables merged into the given primary table.
+   */
+  async unmergeTables(branchId: string, primaryTableId: string) {
+    const primary = await this.prisma.table.findFirst({
+      where: { id: primaryTableId, branchId },
+      include: {
+        orders: { where: { status: { notIn: ['COMPLETED', 'CANCELLED'] } }, take: 1 },
+      },
+    });
+    if (!primary) throw new NotFoundException('Table not found');
+
+    return this.prisma.$transaction(async (tx) => {
+      // Release all secondary tables
+      await tx.table.updateMany({
+        where: { mergedIntoTableId: primaryTableId },
+        data: { status: 'AVAILABLE', mergedIntoTableId: null, occupiedSince: null },
+      });
+
+      // If primary has no active orders, mark it AVAILABLE too
+      if (!primary.orders || primary.orders.length === 0) {
+        await tx.table.update({
+          where: { id: primaryTableId },
+          data: { status: 'AVAILABLE', occupiedSince: null },
+        });
+      }
+
+      this.gateway.emitToBranch(branchId, 'table:unmerged', { primaryTableId });
+
+      return { message: 'Tables unmerged successfully' };
+    });
+  }
+
   // Called by the reservation scheduler
   async markNoOrderAlert(branchId: string, tableId: string) {
     this.gateway.emitToBranch(branchId, 'table:no_order_alert', { tableId });

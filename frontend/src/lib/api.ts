@@ -74,6 +74,9 @@ export const tableApi = {
   updateStatus: (id: string, status: string) =>
     api.patch(`/tables/${id}/status`, { status }),
   remove: (id: string) => api.delete(`/tables/${id}`),
+  merge: (data: { primaryTableId: string; mergeTableIds: string[] }) =>
+    api.post('/tables/merge', data),
+  unmerge: (id: string) => api.post(`/tables/${id}/unmerge`),
 };
 
 // ─── Reservations ─────────────────────────────────────────────────────────────
