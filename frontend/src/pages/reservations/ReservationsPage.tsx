@@ -87,6 +87,11 @@ export default function ReservationsPage() {
     await fetchData();
   };
 
+  const handleUnseat = async (id: string) => {
+    await reservationApi.unseat(id);
+    await fetchData();
+  };
+
   const statusColor: Record<string, string> = {
     CONFIRMED: 'bg-blue-500',
     SEATED: 'bg-emerald-500',
@@ -195,6 +200,16 @@ export default function ReservationsPage() {
                       className="px-3 py-1.5 rounded-lg bg-slate-100 text-slate-600 text-xs font-semibold font-display hover:bg-slate-200 transition-colors"
                     >
                       Cancel
+                    </button>
+                  </div>
+                )}
+                {r.status === 'SEATED' && (
+                  <div className="flex gap-2 flex-shrink-0">
+                    <button
+                      onClick={() => handleUnseat(r.id)}
+                      className="px-3 py-1.5 rounded-lg bg-amber-500 text-white text-xs font-semibold font-display hover:bg-amber-600 transition-colors"
+                    >
+                      Undo Seat
                     </button>
                   </div>
                 )}

@@ -38,14 +38,14 @@ export function Modal({ open, onClose, title, children, size = 'md', footer }: M
     >
       {/* Mobile: full-width bottom sheet | Desktop: centered dialog */}
       <div className={`
-        bg-white shadow-2xl w-full overflow-hidden
+        bg-white shadow-2xl w-full overflow-hidden flex flex-col
         rounded-t-2xl md:rounded-2xl
         anim-slide-up md:anim-scale-in
         max-h-[92vh] md:max-h-[85vh]
         md:${sizeClass}
       `}>
         {/* Header */}
-        <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100">
+        <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100 flex-shrink-0">
           {/* Mobile drag handle */}
           <div className="absolute top-2 left-1/2 -translate-x-1/2 w-10 h-1 bg-slate-200 rounded-full md:hidden" />
           <h2 className="font-display font-semibold text-slate-900 text-base md:text-lg">{title}</h2>
@@ -58,11 +58,11 @@ export function Modal({ open, onClose, title, children, size = 'md', footer }: M
         </div>
 
         {/* Body */}
-        <div className="px-5 py-4 overflow-y-auto max-h-[70vh]">{children}</div>
+        <div className="px-5 py-4 overflow-y-auto flex-1 min-h-0">{children}</div>
 
         {/* Footer */}
         {footer && (
-          <div className="px-5 py-4 bg-slate-50 border-t border-slate-100 flex justify-end gap-3"
+          <div className="px-5 py-4 bg-slate-50 border-t border-slate-100 flex justify-end gap-3 flex-shrink-0"
             style={{ paddingBottom: 'max(16px, env(safe-area-inset-bottom))' }}
           >
             {footer}

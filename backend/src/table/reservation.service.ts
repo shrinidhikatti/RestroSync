@@ -187,4 +187,31 @@ export class ReservationService implements OnModuleInit, OnModuleDestroy {
 
     return updatedReservation;
   }
+
+  async unseat(branchId: string, id: string) {
+    const reservation = await this.getOne(branchId, id);
+
+    if (reservation.status !== ReservationStatus.SEATED) {
+      throw new BadRequestException('Only seated reservations can be reverted');
+    }
+
+    // Revert reservation to CONFIRMED + free the table
+    const [updatedReservation] = await this.prisma.$transaction([
+      this.prisma.reservation.update({
+        where: { id },
+        data: { status: ReservationStatus.CONFIRMED },
+      }),
+      this.prisma.table.update({
+        where: { id: reservation.tableId },
+        data: { status: 'AVAILABLE', occupiedSince: null },
+      }),
+    ]);
+
+    this.gateway.emitToBranch(branchId, 'table:status_updated', {
+      tableId: reservation.tableId,
+      status: 'AVAILABLE',
+    });
+
+    return updatedReservation;
+  }
 }

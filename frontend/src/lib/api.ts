@@ -87,6 +87,7 @@ export const reservationApi = {
   update: (id: string, data: any) => api.patch(`/reservations/${id}`, data),
   cancel: (id: string) => api.patch(`/reservations/${id}/cancel`),
   seat: (id: string) => api.patch(`/reservations/${id}/seat`),
+  unseat: (id: string) => api.patch(`/reservations/${id}/unseat`),
 };
 
 // ─── Tax ─────────────────────────────────────────────────────────────────────

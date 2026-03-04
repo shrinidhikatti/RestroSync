@@ -148,4 +148,11 @@ export class TableController {
   seatReservation(@CurrentUser() user: JwtPayload, @Param('id') id: string) {
     return this.reservationService.seat(user.branchId!, id);
   }
+
+  @Patch('reservations/:id/unseat')
+  @Roles('OWNER', 'MANAGER', 'CAPTAIN', 'BILLER')
+  @ApiOperation({ summary: 'Undo seat — revert SEATED reservation back to CONFIRMED, free the table' })
+  unseatReservation(@CurrentUser() user: JwtPayload, @Param('id') id: string) {
+    return this.reservationService.unseat(user.branchId!, id);
+  }
 }
