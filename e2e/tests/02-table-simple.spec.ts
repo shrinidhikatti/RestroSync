@@ -29,8 +29,8 @@ test.describe('TABLE_SIMPLE mode — Udupi Café', () => {
     // Click on T1 — force:true bypasses overlay/interactability checks
     const t1 = page.getByText('T1', { exact: true }).first();
     await t1.click({ force: true });
-    // Drawer/Modal renders as div.fixed.inset-0 (no role="dialog")
-    await expect(page.locator('div.fixed.inset-0')).toBeVisible({ timeout: 10_000 });
+    // Drawer/Modal renders as div.absolute.inset-0 (no role="dialog")
+    await expect(page.locator('div.absolute.inset-0')).toBeVisible({ timeout: 10_000 });
     await logout(page);
   });
 

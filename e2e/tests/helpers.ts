@@ -63,7 +63,13 @@ export async function expectSidebarItem(page: Page, label: string) {
 }
 
 export async function expectNoSidebarItem(page: Page, label: string) {
-  // exact: true prevents 'Tables' from matching 'Multi-Outlet' etc.
-  // .first() avoids strict mode; if first is not visible, item is considered absent
-  await expect(page.getByRole('link', { name: label, exact: true }).first()).not.toBeVisible({ timeout: 10_000 });
+  // First wait for sidebar to fully load by checking Dashboard link is visible
+  await expect(page.getByRole('link', { name: 'Dashboard', exact: true }).first()).toBeVisible({ timeout: 15_000 });
+  // Small delay for activeModules to filter the sidebar
+  await page.waitForTimeout(2000);
+  // Now check the item is not visible
+  await expect(page.getByRole('link', { name: label, exact: true })).toHaveCount(0, { timeout: 5_000 }).catch(async () => {
+    // If elements exist, verify none are visible
+    await expect(page.getByRole('link', { name: label, exact: true }).first()).not.toBeVisible({ timeout: 5_000 });
+  });
 }

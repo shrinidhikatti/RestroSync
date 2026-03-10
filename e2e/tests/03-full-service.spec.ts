@@ -22,11 +22,10 @@ test.describe('FULL_SERVICE mode — Grand Spice', () => {
     await expect(page.getByText('T9', { exact: true })).toBeVisible();
     await expect(page.getByText('T12', { exact: true })).toBeVisible();
 
-    // 3 sections — seed stores title-case; CSS uppercase is visual only
-    // .first() avoids strict mode if section name appears in multiple DOM nodes
-    await expect(page.getByText('Main Hall').first()).toBeVisible();
-    await expect(page.getByText('Balcony').first()).toBeVisible();
-    await expect(page.getByText('Private Room').first()).toBeVisible();
+    // 3 sections — target h3 headers to avoid matching hidden <option> in filter dropdown
+    await expect(page.locator('h3', { hasText: 'Main Hall' })).toBeVisible();
+    await expect(page.locator('h3', { hasText: 'Balcony' })).toBeVisible();
+    await expect(page.locator('h3', { hasText: 'Private Room' })).toBeVisible();
 
     await logout(page);
   });
@@ -46,8 +45,8 @@ test.describe('FULL_SERVICE mode — Grand Spice', () => {
     // .first() avoids strict mode if T1 label appears in multiple elements
     // force:true bypasses overlay/interactability checks
     await page.getByText('T1', { exact: true }).first().click({ force: true });
-    // Drawer renders as div.fixed.inset-0 (no role="dialog")
-    await expect(page.locator('div.fixed.inset-0')).toBeVisible({ timeout: 10_000 });
+    // Drawer renders as div.absolute.inset-0 (no role="dialog")
+    await expect(page.locator('div.absolute.inset-0')).toBeVisible({ timeout: 10_000 });
     await logout(page);
   });
 

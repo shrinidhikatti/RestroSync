@@ -52,8 +52,8 @@ test.describe('COUNTER mode — QuickBite Counter', () => {
     const newOrderBtn = page.getByRole('button', { name: /new order|add order|\+ order/i }).first();
     if (await newOrderBtn.isVisible()) {
       await newOrderBtn.click();
-      // Modal/Drawer renders as div.fixed.inset-0 (no role="dialog")
-      await expect(page.locator('div.fixed.inset-0')).toBeVisible({ timeout: 10_000 });
+      // Modal/Drawer renders as div.absolute.inset-0 (no role="dialog")
+      await expect(page.locator('div.absolute.inset-0')).toBeVisible({ timeout: 10_000 });
     }
     await logout(page);
   });
